@@ -1,4 +1,4 @@
-require_relative "../lib/activejob/web/sion"
+require_relative "./lib/activejob/web/version"
 
 Gem::Specification.new do |spec|
   spec.name        = "activejob-web"
