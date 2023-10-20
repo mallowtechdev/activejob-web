@@ -16,5 +16,7 @@ group :development, :test do
   gem 'rubocop', require: false
 end
 
+gem 'overcommit'
+
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"
