@@ -1,12 +1,10 @@
-# frozen_string_literal: true
-
-require_relative './lib/activejob/web/version'
+require_relative 'lib/activejob/web/version'
 
 Gem::Specification.new do |spec|
   spec.name        = 'activejob-web'
   spec.version     = Activejob::Web::VERSION
-  spec.authors     = ['gowtham']
-  spec.email       = ['gowtham.kuppusamy@mallow-tech.com']
+  spec.authors     = %w[gowtham mohammednazeer]
+  spec.email       = %w[gowtham.kuppusamy@mallow-tech.com mohammednazeer@mallow-tech.com]
   spec.homepage    = 'TODO'
   spec.summary     = 'TODO: Summary of Activejob::Web.'
   spec.description = 'TODO: Description of Activejob::Web.'
@@ -24,5 +22,6 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
+  spec.required_ruby_version = '>= 3.2.2'
   spec.add_dependency 'rails', '>= 7.0.8'
 end

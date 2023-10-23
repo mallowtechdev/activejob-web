@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
-require './lib/activejob/web/version'
-require './lib/activejob/web/engine'
+require 'activejob/web/version'
+require 'activejob/web/engine'
 
 module Activejob
   module Web
