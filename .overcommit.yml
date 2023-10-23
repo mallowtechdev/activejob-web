@@ -4,3 +4,13 @@ PreCommit:
     enabled: true
     on_warn: fail
     problem_on_unmodified_line: ignore
+
+  BundlerAudit:
+    enabled: true
+    command: [ 'bundle', 'audit', 'check', '--update' ]
+    on_warn: fail
+
+  Brakeman:
+    enabled: true
+    command: [ 'brakeman' ]
+    on_warn: fail
