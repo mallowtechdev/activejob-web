@@ -8,8 +8,6 @@ gem "puma"
 
 gem 'pg'
 
-gem "sqlite3"
-
 gem "sprockets-rails"
 
 # Start debugger with binding.b [https://github.com/ruby/debug]
