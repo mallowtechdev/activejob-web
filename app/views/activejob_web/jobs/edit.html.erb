@@ -1,0 +1,20 @@
+<h1>Edit Job</h1>
+
+<%= form_with model: @job do |form| %>
+  <% if @job.errors.any? %>
+    <% @job.errors.full_messages.each do |message| %>
+      <p><%= message %></p>
+    <% end %>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :job_approvers %>
+    <%= form.select :job_approvers, options_for_select(Activejob::Web.job_approvers_class.to_s.constantize.pluck(:name, :id)), { }, { class: 'form-control input-sm', data: { behavior: 'select2-ajax', source: 'job_approvers' }, placeholder: 'Job Approvers' } %>
+  </div><br>
+
+  <div class="field">
+    <%= form.label :job_executors %>
+    <%= form.select :job_executors, options_for_select(Activejob::Web.job_executors_class.to_s.constantize.pluck(:name, :id)), { }, { class: 'form-control input-sm', data: { behavior: 'select2-ajax', source: 'job_executors' }, placeholder: 'Job Executors' } %>
+  </div><br>
+  <%= form.submit %>
+<% end %>
