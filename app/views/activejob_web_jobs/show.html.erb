@@ -1,0 +1,15 @@
+<h1><%= @activejob_web_job.title %></h1>
+
+<p><strong>Description:</strong> <%= @activejob_web_job.description %></p>
+<p><strong>Input Arguments:</strong> <%= @activejob_web_job.input_arguments %></p>
+<p><strong>Max Run Time:</strong> <%= @activejob_web_job.max_run_time %></p>
+<p><strong>Minimum Approvals Required:</strong> <%= @activejob_web_job.minimum_approvals_required %></p>
+<p><strong>Priority:</strong> <%= @activejob_web_job.priority %></p>
+<p><strong>Queue:</strong> <%= @activejob_web_job.queue %></p>
+<% if @activejob_web_job.template_file.attached? %>
+  <%= link_to "Download PDF", rails_blob_path(@activejob_web_job.template_file, disposition: "attachment"), class: "btn btn-primary" %>
+<% else %>
+  <p>no template available</p>
+<% end %>
+
+<%= link_to 'Back', activejob_web_jobs_path %>

@@ -3,6 +3,8 @@ require "activejob/web/engine"
 
 module Activejob
   module Web
-    # Your code goes here...
+    # config.generators do |g|
+    #   g.test_framework :rspec
+    # end
   end
 end
