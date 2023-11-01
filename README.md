@@ -1,8 +1,10 @@
 # Activejob::Web
-Short description and motivation.
+ActiveJob::Web is a Rails engine that provides a web-based dashboard for managing and monitoring background job processing  in a Ruby on Rails application.
+
 
 ## Usage
-How to use my plugin.
+rails plugin new activejob-web --full
+
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -13,7 +15,7 @@ gem "activejob-web"
 
 And then execute:
 ```bash
-$ bundle
+$ bundle install
 ```
 
 Or install it yourself as:
