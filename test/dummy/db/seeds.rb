@@ -1,5 +1,5 @@
 10.times do |i|
-  job = ActivejobWebJob.new(
+  job = ActivejobWeb::Job.new(
     title: "Job Title #{i + 1}",
     description: "Job Description #{i + 1}",
     input_arguments: [
@@ -46,4 +46,4 @@ end
 #==== specified the file path and used File.open method to get the file, then attached the file
 file_path = "app/assets/images/activejob/web/sample.png"
 file = File.open(file_path, 'rb')
-ActivejobWebJob.first.template_file.attach(io: file, filename: 'sample.png')
+ActivejobWeb::Job.first.template_file.attach(io: file, filename: 'sample.png')

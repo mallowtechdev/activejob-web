@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
-  resources :activejob_web_jobs do
+  namespace :activejob_web do
+    root 'jobs#index'
+    resources :jobs do
     member do
       get :download_pdf
+    end
     end
   end
 

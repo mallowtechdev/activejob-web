@@ -1,4 +1,4 @@
-class ActivejobWebJob < ApplicationRecord
+class ActivejobWeb::Job < ApplicationRecord
   self.primary_key = 'id'
   # Validations
   validates :title, presence: true, length: { maximum: 255 } # Maximum 255 characters for title

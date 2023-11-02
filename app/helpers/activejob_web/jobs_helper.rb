@@ -1,0 +1,2 @@
+module ActivejobWeb::JobsHelper
+end
