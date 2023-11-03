@@ -1,0 +1,15 @@
+verify_signatures: false
+PreCommit:
+  RuboCop:
+    enabled: true
+    on_warn: fail
+
+  BundlerAudit:
+    enabled: true
+    command: [ 'bundle', 'audit', 'check', '--update' ]
+    on_warn: fail
+
+  Brakeman:
+    enabled: true
+    command: [ 'brakeman' ]
+    on_warn: fail
