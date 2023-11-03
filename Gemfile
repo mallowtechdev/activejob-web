@@ -2,16 +2,12 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Specify your gem's dependencies in activejob-web.gemspec.
-
-ruby '3.2.2'
-
 gemspec
 
 gem 'puma'
 
-gem 'sqlite3'
-
 gem 'pg'
+
 gem 'sprockets-rails'
 
 group :development do
