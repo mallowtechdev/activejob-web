@@ -139,7 +139,6 @@ GEM
     parser (3.2.2.4)
       ast (~> 2.4.1)
       racc
-    pg (1.5.3)
     pg (1.5.4)
     psych (5.1.1.1)
       stringio
@@ -206,11 +205,6 @@ GEM
     rubocop-ast (1.29.0)
       parser (>= 3.2.1.0)
     ruby-progressbar (1.13.0)
-    rake (13.0.6)
-    rdoc (6.5.0)
-      psych (>= 4.0.0)
-    reline (0.3.9)
-      io-console (~> 0.5)
     ruby2_keywords (0.0.5)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -241,6 +235,7 @@ DEPENDENCIES
   overcommit (~> 0.60.0)
   pg
   puma
+  rubocop
   sprockets-rails
 
 BUNDLED WITH
