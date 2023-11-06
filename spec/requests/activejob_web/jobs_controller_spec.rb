@@ -2,9 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Jobs', type: :request do
+RSpec.describe ActivejobWeb::JobsController, type: :request do
+  let(:valid_attributes) { { title: 'Activejob', description: 'Web Gem' } }
   describe 'GET #edit' do
-    let(:job) { ActivejobWeb::Job.create(title: 'Activejob', description: 'Web Gem') }
+    let(:job) { ActivejobWeb::Job.create(valid_attributes) }
     context 'valid' do
       it 'valid edit' do
         get edit_activejob_web_job_path(job.id)
@@ -14,24 +15,33 @@ RSpec.describe 'Jobs', type: :request do
 
     context 'invalid' do
       it 'invalid edit without parameters' do
-        data = ActivejobWeb::Job.create(description: 'Web Gem')
-        expect { get edit_activejob_web_job_path(data.id) }.to raise_error(ActionController::UrlGenerationError)
+        job = ActivejobWeb::Job.create(description: 'Web Gem')
+        expect { get edit_activejob_web_job_path(job.id) }.to raise_error(ActionController::UrlGenerationError)
       end
     end
   end
 
   describe 'PATCH #update' do
+    let(:job) { ActivejobWeb::Job.create(valid_attributes) }
+    let(:approver) { User.create(name: 'Test approver') }
+    let(:executor) { User.create(name: 'Test executor') }
     context 'valid' do
-      it 'valid update of job and redirect to show page' do
-        job = ActivejobWeb::Job.create(title: 'Activejob', description: 'Web Gem')
-        approver = User.create(name: 'Test approver')
-        executor = User.create(name: 'Test executor')
-
-        put :update, params: { id: job.id, activejob_web_job: { approvers: approver, executors: executor } }
-
+      it 'valid update of job with approvers and executors' do
+        patch activejob_web_job_path(job.id),
+              params: { id: job.id, activejob_web_job: valid_attributes.merge(approvers: approver.id, executors: executor.id) }
         job.reload
-        expect(job.approvers).to eq(approver)
         expect(response).to redirect_to(activejob_web_job_path(job))
+        expect(job.approvers).to include(approver)
+        expect(job.executors).to include(executor)
+      end
+    end
+
+    context 'invalid' do
+      it 'invalid update of job without approvers and executors' do
+        expect do
+          patch activejob_web_job_path(job.id),
+                params: { id: job.id, activejob_web_job: valid_attributes }
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
