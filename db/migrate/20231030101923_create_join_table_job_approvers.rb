@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateJoinTableJobApprovers < ActiveRecord::Migration[7.1]
   def change
     create_table :activejob_web_job_approvers, id: false do |t|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserRoleConstraint
   def initialize(lambda_function)
     @lambda_function = lambda_function
