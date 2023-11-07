@@ -1,5 +1,5 @@
-require "activejob/web/version"
-require "activejob/web/engine"
+require 'activejob/web/version'
+require 'activejob/web/engine'
 
 module Activejob
   module Web

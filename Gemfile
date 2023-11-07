@@ -1,16 +1,21 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Specify your gem's dependencies in activejob-web.gemspec.
 gemspec
 
-gem "puma"
+gem 'puma'
 
 gem 'pg'
 
 gem "image_processing", ">= 1.2"
 
 gem "sprockets-rails"
+gem 'sprockets-rails'
+
+group :development, :test do
+  gem 'rubocop', require: false
+end
 
 group :development, :test do
   gem 'rspec-rails'
