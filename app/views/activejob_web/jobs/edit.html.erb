@@ -37,12 +37,12 @@
 
   <div>
     <%= form.label :approvers %>
-    <%= form.select :approvers, options_for_select(Activejob::Web.job_approvers_class.to_s.constantize.pluck(:name, :id)), { }, placeholder: 'Job Approvers' %>
+    <%= form.collection_select(:approver_ids, Activejob::Web.job_approvers_class.to_s.constantize.all, :id, :name, { multiple: true }) %>
   </div><br>
 
   <div>
     <%= form.label :executors %>
-    <%= form.select :executors, options_for_select(Activejob::Web.job_executors_class.to_s.constantize.pluck(:name, :id)), { }, placeholder: 'Job Executors' %>
+    <%= form.collection_select(:executor_ids, Activejob::Web.job_approvers_class.to_s.constantize.all, :id, :name, {}, { multiple: true }) %>
   </div><br>
   <div><%= form.submit %></div>
 <% end %>

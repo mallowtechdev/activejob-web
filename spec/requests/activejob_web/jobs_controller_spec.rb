@@ -28,7 +28,7 @@ RSpec.describe ActivejobWeb::JobsController, type: :request do
     context 'valid' do
       it 'valid update of job with approvers and executors' do
         patch activejob_web_job_path(job.id),
-              params: { id: job.id, activejob_web_job: valid_attributes.merge(approvers: approver.id, executors: executor.id) }
+              params: { id: job.id, activejob_web_job: valid_attributes.merge(approver_ids: [approver.id], executor_ids: [executor.id]) }
         job.reload
         expect(response).to redirect_to(activejob_web_job_path(job))
         expect(job.approvers).to include(approver)
@@ -40,7 +40,7 @@ RSpec.describe ActivejobWeb::JobsController, type: :request do
       it 'invalid update of job without approvers and executors' do
         expect do
           patch activejob_web_job_path(job.id),
-                params: { id: job.id, activejob_web_job: valid_attributes }
+                params: { id: job.id, activejob_web_job: valid_attributes.merge(approver_ids: ['4'], executor_ids: ['Test']) }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

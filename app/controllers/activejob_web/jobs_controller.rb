@@ -13,8 +13,8 @@ module ActivejobWeb
     def edit; end
 
     def update
-      @job.approvers << Activejob::Web.job_approvers_class.constantize.find(params.dig(:activejob_web_job, :approvers))
-      @job.executors << Activejob::Web.job_executors_class.constantize.find(params.dig(:activejob_web_job, :executors))
+      @job.approver_ids = params.dig(:activejob_web_job, :approver_ids).compact_blank.map(&:to_i)
+      @job.executor_ids = params.dig(:activejob_web_job, :executor_ids).compact_blank.map(&:to_i)
       if @job.save
         redirect_to activejob_web_job_path(@job)
       else
@@ -26,10 +26,6 @@ module ActivejobWeb
 
     def set_job
       @job = ActivejobWeb::Job.find(params[:id])
-    end
-
-    def job_params
-      params.require(:activejob_web_job).permit(:title, :description, :approvers, :executors)
     end
   end
 end
