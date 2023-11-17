@@ -1,0 +1,31 @@
+<% if flash[:notice] %>
+  <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 15px;">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
+<div>
+  <h3>Assigned approvers for <%= @job.title %></h3>
+  <ul>
+    <% if @job.approvers.length > 0 %>
+      <% @job.approvers.each do |assigned| %>
+        <li><%= assigned.name %></li>
+      <% end %>
+    <% else %>
+      <%= 'No approvers assigned' %>
+    <% end %>
+  </ul>
+</div>
+
+<div>
+  <h3>Assigned executors for <%= @job.title %></h3>
+  <ul>
+    <% if @job.executors.length > 0 %>
+      <% @job.executors.each do |assigned| %>
+        <li><%= assigned.name %></li>
+      <% end %>
+    <% else %>
+      <%= 'No executors assigned' %>
+    <% end %>
+  </ul>
+</div>
+<p><%= link_to 'Edit Job', edit_activejob_web_job_path(@job) %></p>

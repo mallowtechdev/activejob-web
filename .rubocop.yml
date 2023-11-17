@@ -19,8 +19,3 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Exclude:
     - 'db/migrate/20231024051840_create_jobs.rb'
-
-#Todo have to check this cop
-Metrics/AbcSize:
-  Exclude:
-    - 'app/controllers/activejob_web/jobs_controller.rb'

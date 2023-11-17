@@ -39,7 +39,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_01_105617) do
     t.datetime 'updated_at', null: false
   end
 
-  create_table 'linguists', force: :cascade do |t|
+  create_table 'authors', force: :cascade do |t|
     t.string 'name'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false

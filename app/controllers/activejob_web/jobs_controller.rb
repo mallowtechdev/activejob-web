@@ -13,10 +13,11 @@ module ActivejobWeb
     def edit; end
 
     def update
-      @job.approver_ids = params.dig(:activejob_web_job, :approver_ids).compact_blank.map(&:to_i)
-      @job.executor_ids = params.dig(:activejob_web_job, :executor_ids).compact_blank.map(&:to_i)
+      @job.approver_ids = job_params[:approver_ids]
+      @job.executor_ids = job_params[:executor_ids]
       if @job.save
         redirect_to activejob_web_job_path(@job)
+        flash[:notice] = 'Job was successfully updated.'
       else
         render :edit
       end
@@ -26,6 +27,10 @@ module ActivejobWeb
 
     def set_job
       @job = ActivejobWeb::Job.find(params[:id])
+    end
+
+    def job_params
+      params.require(:activejob_web_job).permit(approver_ids: [], executor_ids: [])
     end
   end
 end
