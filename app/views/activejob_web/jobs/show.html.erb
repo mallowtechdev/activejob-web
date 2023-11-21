@@ -3,29 +3,31 @@
     <%= flash[:notice] %>
   </div>
 <% end %>
-<div>
-  <h3>Assigned approvers for <%= @job.title %></h3>
-  <ul>
-    <% if @job.approvers.length > 0 %>
-      <% @job.approvers.each do |assigned| %>
-        <li><%= assigned.name %></li>
+<% if Activejob::Web.job_approvers_class.constantize.super_admin_user.include?(current_user) %>
+  <div>
+    <h3>Assigned approvers for <%= @job.title %></h3>
+    <ul>
+      <% if @job.approvers.length > 0 %>
+        <% @job.approvers.each do |assigned| %>
+          <li><%= assigned.name %></li>
+        <% end %>
+      <% else %>
+        <%= 'No approvers assigned' %>
       <% end %>
-    <% else %>
-      <%= 'No approvers assigned' %>
-    <% end %>
-  </ul>
-</div>
+    </ul>
+  </div>
 
-<div>
-  <h3>Assigned executors for <%= @job.title %></h3>
-  <ul>
-    <% if @job.executors.length > 0 %>
-      <% @job.executors.each do |assigned| %>
-        <li><%= assigned.name %></li>
+  <div>
+    <h3>Assigned executors for <%= @job.title %></h3>
+    <ul>
+      <% if @job.executors.length > 0 %>
+        <% @job.executors.each do |assigned| %>
+          <li><%= assigned.name %></li>
+        <% end %>
+      <% else %>
+        <%= 'No executors assigned' %>
       <% end %>
-    <% else %>
-      <%= 'No executors assigned' %>
-    <% end %>
-  </ul>
-</div>
-<p><%= link_to 'Edit Job', edit_activejob_web_job_path(@job) %></p>
+    </ul>
+  </div>
+  <p><%= link_to 'Edit Job', edit_activejob_web_job_path(@job) %></p>
+<% end %>

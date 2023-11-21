@@ -19,3 +19,5 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Exclude:
     - 'db/migrate/20231024051840_create_jobs.rb'
+    - 'test/dummy/db/migrate/20231118052244_devise_create_users.rb'
+    - 'test/dummy/config/initializers/devise.rb'

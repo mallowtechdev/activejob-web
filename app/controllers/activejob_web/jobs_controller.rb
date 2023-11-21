@@ -2,13 +2,21 @@
 
 module ActivejobWeb
   class JobsController < ApplicationController
+    before_action :authenticate_user!
     before_action :set_job, only: %i[show edit update]
 
     def index
-      @jobs = ActivejobWeb::Job.all
+      @jobs = ActivejobWeb::Job.includes(:executors).where(activejob_web_job_executors: { executor_id: current_user.id })
     end
 
-    def show; end
+    def show
+      if @job.executors.include?(current_user)
+        render :show
+      else
+        redirect_to root_path
+        flash[:notice] = 'You are not authorized to perform this action.'
+      end
+    end
 
     def edit; end
 

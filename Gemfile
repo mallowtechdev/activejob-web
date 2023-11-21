@@ -20,6 +20,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'devise'
   gem 'factory_bot_rails'
   gem 'rspec-rails'
   gem 'rubocop', require: false
