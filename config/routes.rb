@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     member do
       get :download_pdf
     end
+    resources :job_executions
     end
   end
 

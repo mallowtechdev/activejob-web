@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_10_30_145254) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_06_105039) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,21 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_30_145254) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "activejob_web_job_executions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "requestor_id"
+    t.uuid "activejob_web_jobs_id", null: false
+    t.string "requestor_comments"
+    t.json "arguments"
+    t.integer "status"
+    t.string "reason_for_failure"
+    t.boolean "auto_execute_on_approval"
+    t.datetime "run_at", precision: nil
+    t.datetime "execution_started_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activejob_web_jobs_id"], name: "index_activejob_web_job_executions_on_activejob_web_jobs_id"
+  end
+
   create_table "activejob_web_jobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title"
     t.string "description"
@@ -56,4 +71,5 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_30_145254) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activejob_web_job_executions", "activejob_web_jobs", column: "activejob_web_jobs_id"
 end

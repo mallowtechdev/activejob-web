@@ -1,0 +1,49 @@
+<h1>Edit Job Execution</h1>
+
+<%= form_for @job_execution do |f| %>
+  <% if @job_execution.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@job_execution.errors.count, "error") %> prohibited this job_execution from being saved:</h2>
+
+      <ul>
+        <% @job_execution.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :requestor_comments %>
+    <%= f.text_field :requestor_comments %>
+  </div>
+
+  <div class="field">
+    <%= f.label :status %>
+    <%= f.select :status, JobExecution.statuses.keys %>
+  </div>
+
+  <div class="field">
+    <%= f.label :reason_for_failure %>
+    <%= f.text_field :reason_for_failure %>
+  </div>
+
+  <div class="field">
+    <%= f.label :auto_execute_on_approval %>
+    <%= f.check_box :auto_execute_on_approval %>
+  </div>
+
+  <div class="field">
+    <%= f.label :run_at %>
+    <%= f.datetime_field :run_at %>
+  </div>
+
+  <div class="field">
+    <%= f.label :execution_started_at %>
+    <%= f.datetime_field :execution_started_at %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,12 @@
+<h1>Job Execution Details</h1>
+
+<p><strong>ID:</strong> <%= @job_execution.id %></p>
+<p><strong>Status:</strong> <%= @job_execution.status %></p>
+<p><strong>Requestor Comments:</strong> <%= @job_execution.requestor_comments %></p>
+<p><strong>Reason for Failure:</strong> <%= @job_execution.reason_for_failure %></p>
+<p><strong>Auto Execute on Approval:</strong> <%= @job_execution.auto_execute_on_approval %></p>
+<p><strong>Run At:</strong> <%= @job_execution.run_at %></p>
+<p><strong>Execution Started At:</strong> <%= @job_execution.execution_started_at %></p>
+
+<%= link_to 'Edit', edit_job_execution_path(@job_execution) %> |
+<%= link_to 'Back', job_executions_path %>
