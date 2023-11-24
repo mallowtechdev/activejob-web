@@ -1,0 +1,29 @@
+<%= form_with(model: @job_approval_request, url: activejob_web_job_job_execution_job_approval_request_path(@job_approval_request)) do |form| %>
+  <% if @job_approval_request.errors.any? %>
+    <% @job_approval_request.errors.full_messages.each do |message| %>
+      <p><%= message %></p>
+    <% end %>
+  <% end %>
+  <h1>Job Approval Request: <%= @job_approval_request.job_execution.job.title %></h1>
+  <p><strong>Job Title:</strong> <%= @job_approval_request.job_execution.job.title %></p>
+  <p><strong>Job Description:</strong> <%= @job_approval_request.job_execution.job.description %></p>
+  <p><strong>Minimum Approvals Required:</strong> <%= @job_approval_request.job_execution.job.minimum_approvals_required %></p>
+  <p><strong>Priority:</strong> <%= @job_approval_request.job_execution.job.priority %></p>
+  <p><strong>Requestor Name:</strong> <%= @job_approval_request.job_execution.user.name %></p>
+  <p><strong>Requestor email:</strong> <%= @job_approval_request.job_execution.user.email %></p>
+
+  <div>
+    <%= form.label :response, 'Approve' %>
+    <%= form.radio_button :response, 1, checked: @job_approval_request.response == 1 %>
+
+    <%= form.label :response, 'Decline' %>
+    <%= form.radio_button :response, 0, checked: @job_approval_request.response == 0 %>
+  </div><br>
+
+  <div>
+    <%= form.label :approver_comments %>
+    <%= form.text_field :approver_comments %>
+  </div><br>
+
+  <div><%= form.submit 'submit' %></div>
+<% end %>

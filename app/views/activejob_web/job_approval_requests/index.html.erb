@@ -1,0 +1,24 @@
+<h1>Jobs Waiting for Approval Request</h1>
+<% if flash[:notice] %>
+  <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 15px;">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
+<table>
+  <thead>
+    <tr>
+      <th>Job title</th>
+      <th>Requestor name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @job_approval_requests.each do |approval_request|  %>
+      <tr>
+        <td><%= approval_request.job_execution.job.title %></td>
+        <td><%= approval_request.job_execution.user.name %></td>
+        <td><%= button_to 'Approve/Decline', edit_activejob_web_job_job_execution_job_approval_request_path(approval_request.job_execution.job, approval_request.job_execution, approval_request), method: :get %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

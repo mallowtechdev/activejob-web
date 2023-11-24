@@ -1,7 +1,11 @@
-require "test_helper"
+# frozen_string_literal: true
 
-class Activejob::WebTest < ActiveSupport::TestCase
-  test "it has a version number" do
-    assert Activejob::Web::VERSION
+require 'test_helper'
+
+module Activejob
+  class WebTest < ActiveSupport::TestCase
+    test 'it has a version number' do
+      assert Activejob::Web::VERSION
+    end
   end
 end

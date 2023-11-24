@@ -1,0 +1,47 @@
+<h1>Job: <%= @job.title %></h1>
+
+<%= form_with model: @job do |form| %>
+  <% if @job.errors.any? %>
+    <% @job.errors.full_messages.each do |message| %>
+      <p><%= message %></p>
+    <% end %>
+  <% end %>
+
+  <div>
+    <h3>Assigned approvers for <%= @job.title %></h3>
+    <ul>
+      <% if @job.approvers.length > 0 %>
+        <% @job.approvers.each do |assigned| %>
+          <li><%= assigned.name %></li>
+        <% end %>
+      <% else %>
+        <%= 'No approvers assigned' %>
+      <% end %>
+    </ul>
+  </div>
+
+  <div>
+    <h3>Assigned executors for <%= @job.title %></h3>
+    <ul>
+      <% if @job.executors.length > 0 %>
+        <% @job.executors.each do |assigned| %>
+          <li><%= assigned.name %></li>
+        <% end %>
+      <% else %>
+        <%= 'No executors assigned' %>
+      <% end %>
+    </ul>
+  </div>
+
+  <% users = Activejob::Web.job_approvers_class.to_s.constantize.all %>
+  <div>
+    <%= form.label :approvers %>
+    <%= form.collection_select(:approver_ids, users, :id, :name, { multiple: true }) %>
+  </div><br>
+
+  <div>
+    <%= form.label :executors %>
+    <%= form.collection_select(:executor_ids, users, :id, :name, {}, { multiple: true }) %>
+  </div><br>
+  <div><%= form.submit %></div>
+<% end %>

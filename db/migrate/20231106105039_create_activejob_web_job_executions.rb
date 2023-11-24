@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class CreateActivejobWebJobExecutions < ActiveRecord::Migration[7.1]
   def change
-    create_table :activejob_web_job_executions ,id: :uuid do |t|
+    create_table :activejob_web_job_executions do |t|
       t.integer :requestor_id
-      t.references :activejob_web_jobs,type: :uuid, null: false, foreign_key: true
+      t.uuid :job_id
       t.string :requestor_comments
       t.json :arguments
       t.integer :status
