@@ -1,22 +1,16 @@
 <h1>Job Executions</h1>
-<!-- Form to create new job execution -->
-<%= form_for( @new_job_execution, url: activejob_web_job_job_executions_path) do |form| %>
-  <div class="form-group">
-    <%= form.select :status, ActivejobWeb::JobExecution.statuses.keys %>
-  </div>
-  <div class="form-group">
-    <%= form.text_field :requestor_comments, placeholder: "Requestor Comments" %>
-  </div>
-  <!-- Add other fields as needed -->
-  <div class="form-group">
-    <%= form.submit "Create Job Execution" %>
+<% if flash[:notice].present? %>
+  <div class="alert alert-success">
+    <%= flash[:notice] %>
   </div>
 <% end %>
+<%= render partial: 'job_execution_form',locals: {url:activejob_web_job_job_executions_path(@job)}%>
 <table>
   <tr>
     <th>ID</th>
     <th>Status</th>
     <th>Requestor Comments</th>
+    <th>Auto Execute On Approval</th>
     <th>Actions</th>
   </tr>
   <% @job_executions.each do |job_execution| %>
@@ -24,12 +18,10 @@
       <td><%= job_execution.id %></td>
       <td><%= job_execution.status %></td>
       <td><%= job_execution.requestor_comments %></td>
-<!--      <td><%#= link_to 'Show', job_execution %></td>-->
+      <td><%= job_execution.auto_execute_on_approval %></td>
+      <td><%= link_to 'Show', activejob_web_job_job_execution_path(@job,job_execution) %></td>
+      <td><%= link_to 'Back', activejob_web_jobs_path %></td>
     </tr>
   <% end %>
 </table>
-<% if flash[:notice].present? %>
-  <div class="alert alert-success">
-    <%= flash[:notice] %>
-  </div>
-<% end %>
+

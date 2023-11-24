@@ -7,7 +7,7 @@ class ActivejobWeb::Job < ApplicationRecord
   # Default value for queue
   after_initialize :set_default_queue
   has_one_attached :template_file
-  has_many :activejob_web_job_executions, :class_name => 'ActivejobWeb::JobExecution'
+  has_many :job_executions, :class_name => 'ActivejobWeb::JobExecution'
   private
   # Default value for queue
   def set_default_queue

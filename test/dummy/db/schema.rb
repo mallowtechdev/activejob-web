@@ -44,7 +44,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_06_105039) do
 
   create_table "activejob_web_job_executions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "requestor_id"
-    t.uuid "activejob_web_jobs_id", null: false
+    t.uuid "job_id"
     t.string "requestor_comments"
     t.json "arguments"
     t.integer "status"
@@ -54,7 +54,6 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_06_105039) do
     t.datetime "execution_started_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["activejob_web_jobs_id"], name: "index_activejob_web_job_executions_on_activejob_web_jobs_id"
   end
 
   create_table "activejob_web_jobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -71,5 +70,4 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_06_105039) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "activejob_web_job_executions", "activejob_web_jobs", column: "activejob_web_jobs_id"
 end

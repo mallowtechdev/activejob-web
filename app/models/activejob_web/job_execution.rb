@@ -9,10 +9,10 @@ class ActivejobWeb::JobExecution < ApplicationRecord
     failed: 6
   }
 
-  validates :requestor_comments, presence: true
+   validates :requestor_comments, presence: true
 
   after_initialize :set_default_status
-  belongs_to :activejob_web_job, :class_name => 'ActivejobWeb::Job'
+  belongs_to :job, :class_name => 'ActivejobWeb::Job', foreign_key: 'job_id'
 
   private
 
