@@ -13,7 +13,7 @@ class User < ApplicationRecord
   validates :name, presence: true, length: { maximum: 50 }
 
   # == Scopes ========================================================================================================
-  scope :super_admin_user, -> { User.all.limit(3) }
+  scope :super_admin_user, -> { User.all }
 
   def self.custom_lambda
     lambda do |request|

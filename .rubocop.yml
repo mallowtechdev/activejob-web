@@ -14,7 +14,9 @@ Style/NumericLiterals:
 Metrics/BlockLength:
   Exclude:
     - 'test/dummy/db/schema.rb'
-    - 'spec/requests/activejob_web/jobs_controller_spec.rb'
+    - 'spec/requests/activejob_web/jobs_spec.rb'
+    - 'spec/requests/activejob_web/job_executions_spec.rb'
+    - 'spec/requests/activejob_web/job_approval_requests_spec.rb'
     - 'test/dummy/db/seeds.rb'
 
 Metrics/MethodLength:

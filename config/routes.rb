@@ -6,7 +6,11 @@ Rails.application.routes.draw do
   namespace :activejob_web do
     resources :jobs, only: %i[index show update] do
       resources :job_executions do
-        resources :job_approval_requests
+        resources :job_approval_requests do
+          member do
+            get :action
+          end
+        end
       end
       member do
         get :download_pdf

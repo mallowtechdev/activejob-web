@@ -1,3 +1,8 @@
+<% if flash[:notice] %>
+  <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 15px;">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
 <h1>Active Job Web Jobs</h1>
 
 <table>
@@ -22,8 +27,3 @@
   <% end %>
   </tbody>
 </table>
-<% if flash[:notice] %>
-  <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin-bottom: 15px;">
-    <%= flash[:notice] %>
-  </div>
-<% end %>

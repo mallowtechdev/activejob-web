@@ -17,7 +17,7 @@
       <tr>
         <td><%= approval_request.job_execution.job.title %></td>
         <td><%= approval_request.job_execution.user.name %></td>
-        <td><%= button_to 'Approve/Decline', edit_activejob_web_job_job_execution_job_approval_request_path(approval_request.job_execution.job, approval_request.job_execution, approval_request), method: :get %></td>
+        <td><%= button_to 'Approve/Decline', action_activejob_web_job_job_execution_job_approval_request_path(approval_request.job_execution.job, approval_request.job_execution, approval_request), method: :get %></td>
       </tr>
     <% end %>
   </tbody>

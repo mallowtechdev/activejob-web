@@ -2,13 +2,14 @@
 
 module ActivejobWeb
   class JobApprovalRequestsController < ApplicationController
-    before_action :set_approval_request, only: %i[edit update]
+    before_action :set_approval_request, only: %i[action update]
 
     def index
-      @job_approval_requests = ActivejobWeb::JobApprovalRequest.where(job_execution_id: params[:job_execution_id], response: nil).includes(job_execution: %i[job user])
+      @job_approval_requests = ActivejobWeb::JobApprovalRequest.where(job_execution_id: params[:job_execution_id],
+                                                                      response: nil).includes(job_execution: %i[job user])
     end
 
-    def edit; end
+    def action; end
 
     def update
       return unless @job_approval_request.update(job_approval_request_params)
