@@ -6,7 +6,7 @@ module ActivejobWeb
 
     def index
       @job_approval_requests = ActivejobWeb::JobApprovalRequest.where(job_execution_id: params[:job_execution_id],
-                                                                      response: nil).includes(job_execution: %i[job user])
+                                                                      approver_id: current_user.id).includes(job_execution: %i[job user])
     end
 
     def action; end

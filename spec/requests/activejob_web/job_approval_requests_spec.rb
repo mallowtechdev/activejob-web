@@ -11,10 +11,25 @@ RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
   let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: @user.id) }
   let(:job_approval_request) { create(:job_approval_request, job_execution_id: job_execution.id, approver_id: @user.id) }
   describe 'GET #index' do
-    it 'renders the index template' do
-      get activejob_web_job_job_execution_job_approval_requests_path(job.id, job_execution.id)
-      expect(response).to render_template('index')
-      expect(response).to have_http_status 200
+    context 'valid index page' do
+      it 'valid list of approval requests in the index page' do
+        job_approval_request
+        get activejob_web_job_job_execution_job_approval_requests_path(job, job_execution)
+        expect(response).to render_template('index')
+        expect(response).to have_http_status 200
+        expect(assigns(:job_approval_requests).count).to eql 1
+      end
+    end
+
+    context 'invalid index page' do
+      let(:user2) { create(:approver) }
+      it 'should not show invalid list of approval requests in the index page' do
+        job_approval_request.update(approver_id: user2.id)
+        get activejob_web_job_job_execution_job_approval_requests_path(job, job_execution)
+        expect(response).to render_template('index')
+        expect(response).to have_http_status 200
+        expect(assigns(:job_approval_requests).count).to eql 0
+      end
     end
   end
 

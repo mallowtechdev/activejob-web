@@ -23,16 +23,44 @@ module ActivejobWeb
 
     def show
       @job_execution = ActivejobWeb::JobExecution.find(params[:id])
+      @cancel_job_exec_status = @job_execution.cancel_execution
     end
 
     def create
       @job_execution = @job.job_executions.new(job_execution_params)
+      @job_execution.requestor_id = current_user.id
       if @job_execution.save
         flash[:notice] = 'Job execution created successfully.'
         redirect_to activejob_web_job_job_executions_path(@job)
       else
         @job_executions = ActivejobWeb::JobExecution.where(job_id: params[:job_id])
         render :index
+      end
+    end
+
+    def cancel
+      @job_execution = ActivejobWeb::JobExecution.find(params[:id])
+      @cancel_job_exec_status = @job_execution.cancel_execution == true
+      if @cancel_job_exec_status
+        @job_execution.update(status: 'cancelled')
+        redirect_to activejob_web_job_job_executions_path(@job_execution.job)
+        flash[:notice] = 'Job execution cancelled successfully.'
+      else
+        redirect_to activejob_web_job_job_execution_path(@job_execution.job)
+        flash[:notice] = 'Unable to cancel job execution.'
+      end
+    end
+
+    def reinitiate
+      @job_execution = ActivejobWeb::JobExecution.find(params[:id])
+      if @job_execution.status == 'cancelled'
+        @job_execution.update(status: 'requested')
+        @job_execution.send_job_approval_request
+        redirect_to activejob_web_job_job_executions_path(@job_execution.job)
+        flash[:notice] = 'Job execution Reinitiated successfully.'
+      else
+        redirect_to activejob_web_job_job_execution_path(@job_execution.job)
+        flash[:notice] = 'Unable to Reinitiate job execution.'
       end
     end
   end

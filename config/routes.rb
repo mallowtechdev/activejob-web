@@ -11,6 +11,10 @@ Rails.application.routes.draw do
             get :action
           end
         end
+        member do
+          patch :cancel
+          post :reinitiate
+        end
       end
       member do
         get :download_pdf
