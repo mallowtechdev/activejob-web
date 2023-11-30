@@ -14,10 +14,10 @@
 
   <div>
     <%= form.label :response, 'Approve' %>
-    <%= form.radio_button :response, 1, checked: @job_approval_request.response == 1 %>
+    <%= form.radio_button :response, 'approved', checked: @job_approval_request.response == 'approved' %>
 
     <%= form.label :response, 'Decline' %>
-    <%= form.radio_button :response, 0, checked: @job_approval_request.response == 0 %>
+    <%= form.radio_button :response, 'declined', checked: @job_approval_request.response == 'declined' %>
   </div><br>
 
   <div>

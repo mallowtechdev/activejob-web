@@ -19,8 +19,8 @@
       <tr>
         <td><%= approval_request.job_execution.job.title %></td>
         <td><%= approval_request.job_execution.user.name %></td>
-        <td><%= approval_request.response.nil? ? 'nil' : (approval_request.response == 1 ? 'Approved' : 'Declined') %></td>
-        <td><%= button_to 'Approve/Decline', action_activejob_web_job_job_execution_job_approval_request_path(approval_request.job_execution.job, approval_request.job_execution, approval_request), method: :get if approval_request.response.nil? %></td>
+        <td><%= approval_request.response.nil? ? 'waiting for approval' : approval_request.response %></td>
+        <td><%= button_to 'Approve/Decline', action_activejob_web_job_job_execution_job_approval_request_path(approval_request.job_execution.job, approval_request.job_execution, approval_request), method: :get if approval_request.response.nil? || approval_request.response == 'revoked' %></td>
       </tr>
     <% end %>
   </tbody>

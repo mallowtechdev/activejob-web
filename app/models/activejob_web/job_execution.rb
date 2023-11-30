@@ -28,7 +28,13 @@ module ActivejobWeb
     # == Callbacks =========================================================================================================
     def send_job_approval_request
       job.approvers.each do |approver|
-        job_approval_requests.create(job_execution_id: id, approver_id: approver.id)
+        ActivejobWeb::JobApprovalRequest.create(job_execution_id: id, approver_id: approver.id)
+      end
+    end
+
+    def revoke_approval_requests
+      job_approval_requests.each do |approval_request|
+        approval_request.update(response: 'revoked') if approval_request.response == 'approved'
       end
     end
 

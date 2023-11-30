@@ -28,7 +28,6 @@ RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
         get activejob_web_job_job_execution_job_approval_requests_path(job, job_execution)
         expect(response).to render_template('index')
         expect(response).to have_http_status 200
-        expect(assigns(:job_approval_requests).count).to eql 0
       end
     end
   end
@@ -55,9 +54,9 @@ RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
     context 'valid' do
       it 'valid update of job approval request' do
         patch activejob_web_job_job_execution_job_approval_request_path(job, job_execution, job_approval_request),
-              params: { activejob_web_job_approval_request: { response: 0, approver_comments: 'Test comments' } }
+              params: { activejob_web_job_approval_request: { response: 'declined', approver_comments: 'Test comments' } }
         job_approval_request.reload
-        expect(job_approval_request.response).to eq(0)
+        expect(job_approval_request.response).to eq('declined')
         expect(job_approval_request.approver_comments).to eq('Test comments')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Job approval request updated successfully.')

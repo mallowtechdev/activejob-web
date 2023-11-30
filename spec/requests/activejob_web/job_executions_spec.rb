@@ -41,6 +41,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
       let(:valid_execution_attributes) { attributes_for(:valid_job_execution) }
 
       it 'creates a new job execution' do
+        job.update(approvers: [@user])
         post activejob_web_job_job_executions_path(job), params: {
           activejob_web_job_execution: valid_execution_attributes
         }
@@ -48,6 +49,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
         expect(response).to have_http_status(302) # Redirect status
         expect(flash[:notice]).to eq('Job execution created successfully.')
         expect(response).to redirect_to(activejob_web_job_job_executions_path(job))
+        expect(job_execution.job_approval_requests.count).to eql 1
       end
     end
 
@@ -126,13 +128,17 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
   describe 'POST #reinitiate' do
     context 'valid reinitiate job execution' do
       it 'should reinitiate the job execution if the state is cancelled' do
+        job.update(approvers: [@user])
         job_execution.update(status: 'cancelled')
+        job_execution.job_approval_requests.first.update(response: 'approved')
         post reinitiate_activejob_web_job_job_execution_path(job, job_execution)
         job_execution.reload
         expect(job_execution.status).to eq('requested')
+        expect(job_execution.job_approval_requests.first.response).to eql('revoked')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Job execution Reinitiated successfully.')
         expect(response).to redirect_to(activejob_web_job_job_executions_path(job))
+        expect(job_execution.job_approval_requests.count).to eql 1
       end
     end
 

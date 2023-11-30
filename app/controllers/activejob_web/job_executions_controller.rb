@@ -55,7 +55,7 @@ module ActivejobWeb
       @job_execution = ActivejobWeb::JobExecution.find(params[:id])
       if @job_execution.status == 'cancelled'
         @job_execution.update(status: 'requested')
-        @job_execution.send_job_approval_request
+        @job_execution.revoke_approval_requests
         redirect_to activejob_web_job_job_executions_path(@job_execution.job)
         flash[:notice] = 'Job execution Reinitiated successfully.'
       else
