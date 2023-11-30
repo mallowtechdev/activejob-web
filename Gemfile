@@ -21,6 +21,9 @@ group :development, :test do
   gem 'rspec-rails'
 end
 gem 'rails-controller-testing', '~> 1.0', '>= 1.0.5'
+group :test do
+  gem 'factory_bot_rails'
+end
 
 
 # Start debugger with binding.b [https://github.com/ruby/debug]
