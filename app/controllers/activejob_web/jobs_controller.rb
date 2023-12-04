@@ -2,7 +2,6 @@
 
 module ActivejobWeb
   class JobsController < ApplicationController
-    before_action :authenticate_user!
     before_action :set_job, only: %i[show edit update]
 
     def index
@@ -10,7 +9,7 @@ module ActivejobWeb
     end
 
     def show
-      if @job.executors.include?(current_user)
+      if @job.executors.include?(job_current_user)
         render :show
       else
         redirect_to root_path

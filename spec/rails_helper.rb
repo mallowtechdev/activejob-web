@@ -8,6 +8,7 @@ require File.expand_path('../test/dummy/config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'factory_bot_rails'
+require 'support/authentication_helpers'
 require 'support/factory_bot'
 FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
 FactoryBot.find_definitions
@@ -64,6 +65,10 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+
+  config.include FactoryBot::Syntax::Methods
+
+  config.include AuthenticationHelpers, type: :request
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end

@@ -4,7 +4,7 @@
     <title>Activejob Web Gem</title>
     <div>
       <% if user_signed_in? %>
-        <a>Signed in as : <%= current_user.email %></a>
+        <a>Signed in as : <%= job_current_user.email %></a>
         <%= link_to 'Edit Profile', edit_user_registration_path %>
         <%= button_to 'Logout', destroy_user_session_path, method: :delete, data: { confirm: 'Are you sure?' } %>
       <% else %>
