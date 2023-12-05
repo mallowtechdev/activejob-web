@@ -3,12 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe ActivejobWeb::JobsController, type: :request do
-  before(:each) do
-    @user = create(:user)
-    sign_in_user(@user)
-  end
   let(:valid_attributes) { { title: 'Activejob', description: 'Web Gem' } }
   let(:job) { create(:job) }
+  let!(:user) { create(:user) }
   describe 'GET #edit' do
     context 'valid' do
       it 'valid edit' do

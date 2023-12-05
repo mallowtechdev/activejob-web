@@ -83,7 +83,6 @@ GEM
       tzinfo (~> 2.0)
     ast (2.4.2)
     base64 (0.2.0)
-    bcrypt (3.1.19)
     bigdecimal (3.1.4)
     brakeman (6.0.1)
     builder (3.2.4)
@@ -95,12 +94,6 @@ GEM
     connection_pool (2.4.1)
     crass (1.0.6)
     date (3.3.4)
-    devise (4.9.3)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0)
-      responders
-      warden (~> 1.2.3)
     diff-lcs (1.5.0)
     drb (2.2.0)
       ruby2_keywords
@@ -145,7 +138,6 @@ GEM
     nio4r (2.6.0)
     nokogiri (1.15.4-x86_64-darwin)
       racc (~> 1.4)
-    orm_adapter (0.5.0)
     overcommit (0.60.0)
       childprocess (>= 0.6.3, < 5)
       iniparse (~> 1.4)
@@ -204,9 +196,6 @@ GEM
     regexp_parser (2.8.2)
     reline (0.4.0)
       io-console (~> 0.5)
-    responders (3.1.1)
-      actionpack (>= 5.2)
-      railties (>= 5.2)
     rexml (3.2.6)
     rspec-core (3.12.2)
       rspec-support (~> 3.12.0)
@@ -253,8 +242,6 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
-    warden (1.2.9)
-      rack (>= 2.0.9)
     webrick (1.8.1)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
@@ -268,7 +255,6 @@ DEPENDENCIES
   activejob-web!
   brakeman
   bundler-audit
-  devise
   factory_bot_rails
   overcommit (~> 0.60.0)
   pg

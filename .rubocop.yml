@@ -14,10 +14,9 @@ Style/NumericLiterals:
 Metrics/BlockLength:
   Exclude:
     - 'test/dummy/db/schema.rb'
-    - 'spec/requests/activejob_web/jobs_controller_spec.rb'
+    - 'spec/requests/activejob_web/jobs_spec.rb'
 
 Metrics/MethodLength:
   Exclude:
     - 'db/migrate/20231024051840_create_jobs.rb'
-    - 'test/dummy/db/migrate/20231118052244_devise_create_users.rb'
-    - 'test/dummy/config/initializers/devise.rb'
+    - 'test/dummy/db/migrate/20231118052244_create_users.rb'

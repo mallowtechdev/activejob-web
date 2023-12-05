@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
-
+  extend ActivejobWeb::JobsHelper
   # == Associations ==================================================================================================
   has_and_belongs_to_many :executors, class_name: ActivejobWeb::Job.to_s, join_table: 'activejob_web_job_executors',
                                       association_foreign_key: 'executor_id'
@@ -15,8 +13,8 @@ class User < ApplicationRecord
   scope :super_admin_user, -> { User.all }
 
   def self.custom_lambda
-    lambda do |request|
-      current_user = request.env['warden'].user
+    lambda do |_request|
+      current_user = job_current_user
       super_admin_user.include?(current_user)
     end
   end
