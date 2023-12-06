@@ -63,11 +63,11 @@ For the `my_app_login_path` method, specify the path to redirect the user to whe
 ## Enabling Routes for specific users to edit the Jobs
 By enabling this route, The specified super admin users will only have permission to edit the jobs. The implementation involves utilizing `route constraints` and a custom `lambda function` to restrict access based on a `super admin scope`.
 Assuming that your model to configure is 'User'.
-### 1. Define a scope named `super_admin_users` in the `User` model 
+### 1. Define a scope named `super_admin_users` in the `User` model
 Specify the condition in the scope that it should return the users with the permission for the edit page of jobs. The example code was shown below the custom lambda
 ### 2. Define a Custom Lambda Method
 
-In your `User` model or the model you defined for approvers/executors, define a method named `custom_lambda` that represents the condition for user access. This lambda function will be used as a route constraint.
+In your `User` model or the model you defined for approvers/executors, define a method named `allow_admin_access?` that represents the condition for user access. This lambda function will be used as a route constraint.
 
 ```ruby
 # app/models/user.rb
@@ -76,21 +76,60 @@ class User < ApplicationRecord
   # Your existing user model code
 
   # Define a scope for super admins here
-  scope :super_admin_user, -> { User.all.limit(10) }
+  scope :super_admin_users, -> { User.all.limit(10) }
 
   # Your other scopes and methods...
 
-  # Define a custom lambda function for route constraint
-  def self.custom_lambda
+  # Define a custom lambda inside a method for route constraint
+  def self.allow_admin_access?
     lambda do |_request|
-      my_current_user = User.find(current_user.id)
-      super_admin_user.include?(my_current_user)
+      super_admin_users.include?(current_user)
       # Your custom logic to determine user access goes here
     end
   end
 end
 ```
-If the condition specified in the `custom_lambda` returns `true` the current user can able to edit the jobs
+If the condition specified in the `allow_admin_access?` returns `true` the current user can able to edit the jobs
+
+### 3. Route customization
+In Activejob Web, you have the flexibility to customize routes based on specific user requirements. By default, every user is allowed to edit jobs, but you can customize the routes to be accessible only by specific users.
+
+For that, first you have to specify the scope and lambda for the `User` or the required model as mentioned in the previous points.Then, start by configuring the `enable_custom_routes` option in the initializer file `activejob_web.rb`. Set it to `true` as shown below:
+
+```ruby
+# config/initializers/activejob_web.rb
+
+Rails.application.config.enable_custom_routes = true
+```
+Your routes for jobs edit will look like this
+```ruby
+# config/routes.rb
+
+if Rails.application.config.enable_custom_routes == true
+    get 'activejob_web/jobs/:id/edit', to: 'activejob_web/jobs#edit',
+                                       constraints: UserRoleConstraint.new(Activejob::Web.job_approvers_class.constantize.allow_admin_access?),
+                                       as: 'edit_activejob_web_job'
+  else
+    get 'activejob_web/jobs/:id/edit', to: 'activejob_web/jobs#edit'
+  end
+```
+In this route, you have to customize the method name `allow_admin_access?` if you are using a different name for the method.
+
+The edit jobs route uses a constraint file named `user_role_constraint.rb` for processing the lambda you define in the `allow_admin_access?` method as shown below
+```ruby
+# app/constraints/user_role_constraint.rb
+
+class UserRoleConstraint
+  def initialize(lambda_function)
+    @lambda_function = lambda_function
+  end
+
+  def matches?(request)
+    # Call the lambda function and pass the request as an argument
+    @lambda_function.call(request)
+  end
+end
+```
 
 ## Contributing
 Contribution directions go here.

@@ -13,6 +13,6 @@ class ApplicationController < ActionController::Base
     return unless job_current_user.nil?
 
     session[:authentication_checked] = true
-    redirect_to job_login_path, alert: 'Please log in'
+    redirect_to activejob_web_login_path, alert: 'Please log in'
   end
 end

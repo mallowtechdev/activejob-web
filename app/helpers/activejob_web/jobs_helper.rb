@@ -2,13 +2,13 @@
 
 module ActivejobWeb
   module JobsHelper
-    include UserHelper
+    include AuthenticationHelper
 
-    def job_current_user
+    def activejob_web_current_user
       my_app_current_user
     end
 
-    def job_login_path
+    def activejob_web_login_path
       my_app_login_path
     end
   end

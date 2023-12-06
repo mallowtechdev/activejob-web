@@ -10,12 +10,11 @@ class User < ApplicationRecord
   validates :name, presence: true, length: { maximum: 50 }
 
   # == Scopes ========================================================================================================
-  scope :super_admin_user, -> { User.all }
+  scope :super_admin_users, -> { User.all }
 
-  def self.custom_lambda
+  def self.allow_admin_access?
     lambda do |_request|
-      current_user = job_current_user
-      super_admin_user.include?(current_user)
+      super_admin_users.include?(activejob_web_current_user)
     end
   end
 end
