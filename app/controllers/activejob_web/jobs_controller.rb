@@ -2,7 +2,6 @@
 
 module ActivejobWeb
   class JobsController < ApplicationController
-    include ActivejobWeb::JobsHelper
     before_action :set_job, only: %i[show edit update]
 
     def index
