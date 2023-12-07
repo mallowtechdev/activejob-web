@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe 'ActivejobWeb::Jobs', type: :request do
-  before(:each) do
-    @user = create(:user)
-    sign_in @user
-  end
+RSpec.describe ActivejobWeb::JobsController, type: :request do
   let(:valid_attributes) { { title: 'Activejob', description: 'Web Gem' } }
   let(:job) { create(:job) }
+  let!(:user) { create(:user) }
+  before do
+    allow_any_instance_of(ActivejobWeb::ApplicationHelper).to receive(:activejob_web_current_user).and_return(user)
+  end
   describe 'GET /index' do
     context 'returns a successful response' do
       it 'Valid index' do
@@ -22,7 +22,7 @@ RSpec.describe 'ActivejobWeb::Jobs', type: :request do
   describe 'GET #show' do
     context 'returns a successful response' do
       it 'Valid show' do
-        job.executors << @user
+        job.executors << user
         get activejob_web_job_path(job.id)
         expect(response).to render_template('show')
         expect(response).to have_http_status 200

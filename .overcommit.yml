@@ -13,3 +13,8 @@ PreCommit:
     enabled: true
     command: [ 'brakeman' ]
     on_warn: fail
+
+  RSpec:
+    enabled: true
+    command: [ 'bundle', 'exec', 'rspec' ]
+    on_warn: fail

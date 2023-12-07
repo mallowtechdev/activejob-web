@@ -16,7 +16,7 @@
 <% else %>
   <p>no template available</p>
 <% end %>
-<% if Activejob::Web.job_approvers_class.constantize.super_admin_user.include?(current_user) %>
+<% if Activejob::Web.job_approvers_class.constantize.super_admin_users.include?(activejob_web_current_user) %>
   <div>
     <h3>Assigned approvers for <%= @job.title %></h3>
     <ul>

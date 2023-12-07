@@ -18,12 +18,12 @@ Metrics/BlockLength:
     - 'spec/requests/activejob_web/job_executions_spec.rb'
     - 'spec/requests/activejob_web/job_approval_requests_spec.rb'
     - 'test/dummy/db/seeds.rb'
+    - 'config/routes.rb'
 
 Metrics/MethodLength:
   Exclude:
     - 'db/migrate/20231024051840_create_jobs.rb'
-    - 'test/dummy/db/migrate/20231118052244_devise_create_users.rb'
-    - 'test/dummy/config/initializers/devise.rb'
+    - 'test/dummy/db/migrate/20231118052244_create_users.rb'
     - 'db/migrate/20231030145254_create_active_storage_tables.active_storage.rb'
     - 'db/migrate/20231106105039_create_activejob_web_job_executions.rb'
 

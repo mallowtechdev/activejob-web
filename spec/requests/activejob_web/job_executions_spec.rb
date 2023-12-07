@@ -2,15 +2,13 @@
 
 require 'rails_helper'
 RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
-  before(:each) do
-    @user = create(:user)
-    sign_in @user
+  let(:job) { create(:job) } # Assuming you have a Job model
+  let!(:user) { create(:user) }
+  let(:execution) { create(:job_execution, job:, requestor_id: user.id) }
+  before do
+    allow_any_instance_of(ActivejobWeb::ApplicationHelper).to receive(:activejob_web_current_user).and_return(user)
   end
-  let(:job) { create(:job) }
-  let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: @user.id) }
   describe 'GET #index' do
-    let(:job) { create(:job) } # Assuming you have a Job model
-
     it 'renders the index template' do
       get activejob_web_job_job_executions_path(job_id: job.id)
 
@@ -21,7 +19,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
 
   describe 'GET #show' do
     it 'renders the show template' do
-      get activejob_web_job_job_execution_path(job_id: job.id, id: job_execution.id)
+      get activejob_web_job_job_execution_path(job_id: job.id, id: execution.id)
       expect(response).to have_http_status 200
       expect(response).to render_template(:show)
     end
@@ -29,7 +27,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
 
   describe 'GET #edit' do
     it 'renders the edit template' do
-      get edit_activejob_web_job_job_execution_path(job, job_execution)
+      get edit_activejob_web_job_job_execution_path(job, execution)
 
       expect(response).to have_http_status 200
       expect(response).to render_template(:edit)
@@ -41,7 +39,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
       let(:valid_execution_attributes) { attributes_for(:valid_job_execution) }
 
       it 'creates a new job execution' do
-        job.update(approvers: [@user])
+        job.update(approvers: [user])
         post activejob_web_job_job_executions_path(job), params: {
           activejob_web_job_execution: valid_execution_attributes
         }
@@ -49,7 +47,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
         expect(response).to have_http_status(302) # Redirect status
         expect(flash[:notice]).to eq('Job execution created successfully.')
         expect(response).to redirect_to(activejob_web_job_job_executions_path(job))
-        expect(job_execution.job_approval_requests.count).to eql 1
+        expect(execution.job_approval_requests.count).to eql 1
       end
     end
 
@@ -70,7 +68,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
   describe 'PATCH #update' do
     context 'with valid parameters' do
       it 'updates the job execution and redirects to the show page' do
-        patch activejob_web_job_job_execution_path(job, job_execution),
+        patch activejob_web_job_job_execution_path(job, execution),
               params: { activejob_web_job_execution: { status: 'requested' } }
 
         expect(response).to have_http_status 302 # Redirect status
@@ -83,19 +81,19 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
   describe 'PATCH #cancel' do
     context 'valid job_execution cancel' do
       it 'should cancel the job_execution if it is in requested state' do
-        patch cancel_activejob_web_job_job_execution_path(job, job_execution)
-        job_execution.reload
-        expect(job_execution.status).to eq('cancelled')
+        patch cancel_activejob_web_job_job_execution_path(job, execution)
+        execution.reload
+        expect(execution.status).to eq('cancelled')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Job execution cancelled successfully.')
         expect(response).to redirect_to(activejob_web_job_job_executions_path(job))
       end
 
       it 'should cancel the job_execution if it is in approved state but execution not started yet' do
-        job_execution.update(status: 'approved', execution_started_at: nil)
-        patch cancel_activejob_web_job_job_execution_path(job, job_execution)
-        job_execution.reload
-        expect(job_execution.status).to eq('cancelled')
+        execution.update(status: 'approved', execution_started_at: nil)
+        patch cancel_activejob_web_job_job_execution_path(job, execution)
+        execution.reload
+        expect(execution.status).to eq('cancelled')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Job execution cancelled successfully.')
         expect(response).to redirect_to(activejob_web_job_job_executions_path(job))
@@ -104,20 +102,20 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
 
     context 'invalid job_execution cancel' do
       it 'should not cancel the job_execution if the state is other than requested or approved' do
-        job_execution.update(status: 'rejected')
-        patch cancel_activejob_web_job_job_execution_path(job, job_execution)
-        job_execution.reload
-        expect(job_execution.status).not_to eq('cancelled')
+        execution.update(status: 'rejected')
+        patch cancel_activejob_web_job_job_execution_path(job, execution)
+        execution.reload
+        expect(execution.status).not_to eq('cancelled')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Unable to cancel job execution.')
         expect(response).to redirect_to(activejob_web_job_job_execution_path(job))
       end
 
       it 'should not cancel the job_execution if the state is approved and the execution is started' do
-        job_execution.update(status: 'approved', execution_started_at: Time.current)
-        patch cancel_activejob_web_job_job_execution_path(job, job_execution)
-        job_execution.reload
-        expect(job_execution.status).not_to eq('cancelled')
+        execution.update(status: 'approved', execution_started_at: Time.current)
+        patch cancel_activejob_web_job_job_execution_path(job, execution)
+        execution.reload
+        expect(execution.status).not_to eq('cancelled')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Unable to cancel job execution.')
         expect(response).to redirect_to(activejob_web_job_job_execution_path(job))
@@ -128,26 +126,26 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
   describe 'POST #reinitiate' do
     context 'valid reinitiate job execution' do
       it 'should reinitiate the job execution if the state is cancelled' do
-        job.update(approvers: [@user])
-        job_execution.update(status: 'cancelled')
-        job_execution.job_approval_requests.first.update(response: 'approved')
-        post reinitiate_activejob_web_job_job_execution_path(job, job_execution)
-        job_execution.reload
-        expect(job_execution.status).to eq('requested')
-        expect(job_execution.job_approval_requests.first.response).to eql('revoked')
+        job.update(approvers: [user])
+        execution.update(status: 'cancelled')
+        execution.job_approval_requests.first.update(response: 'approved')
+        post reinitiate_activejob_web_job_job_execution_path(job, execution)
+        execution.reload
+        expect(execution.status).to eq('requested')
+        expect(execution.job_approval_requests.first.response).to eql('revoked')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Job execution Reinitiated successfully.')
         expect(response).to redirect_to(activejob_web_job_job_executions_path(job))
-        expect(job_execution.job_approval_requests.count).to eql 1
+        expect(execution.job_approval_requests.count).to eql 1
       end
     end
 
     context 'invalid reinitiate job execution' do
       it 'should not reinitiate the job execution if the state is other than cancelled' do
-        job_execution.update(status: 'approved')
-        post reinitiate_activejob_web_job_job_execution_path(job, job_execution)
-        job_execution.reload
-        expect(job_execution.status).not_to eq('requested')
+        execution.update(status: 'approved')
+        post reinitiate_activejob_web_job_job_execution_path(job, execution)
+        execution.reload
+        expect(execution.status).not_to eq('requested')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Unable to Reinitiate job execution.')
         expect(response).to redirect_to(activejob_web_job_job_execution_path(job))

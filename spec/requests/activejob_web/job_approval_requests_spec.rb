@@ -3,13 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
-  before(:each) do
-    @user = create(:user)
-    sign_in @user
-  end
   let(:job) { create(:job) }
-  let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: @user.id) }
-  let(:job_approval_request) { create(:job_approval_request, job_execution_id: job_execution.id, approver_id: @user.id) }
+  let(:user) { create(:user) }
+  let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: user.id) }
+  let(:job_approval_request) { create(:job_approval_request, job_execution_id: job_execution.id, approver_id: user.id) }
+  before do
+    allow_any_instance_of(ActivejobWeb::ApplicationHelper).to receive(:activejob_web_current_user).and_return(user)
+  end
   describe 'GET #index' do
     context 'valid index page' do
       it 'valid list of approval requests in the index page' do
