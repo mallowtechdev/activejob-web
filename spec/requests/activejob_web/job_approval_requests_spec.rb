@@ -46,7 +46,7 @@ RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
         expect(job_approval_request.approver_comments).to eq('Test comments')
         expect(response).to have_http_status 302
         expect(flash[:notice]).to eq('Job approval request updated successfully.')
-        expect(response).to redirect_to(activejob_web_job_job_execution_job_approval_requests_path(job_approval_request))
+        expect(response).to redirect_to(activejob_web_job_job_execution_job_approval_requests_path(job, job_execution))
       end
     end
   end
