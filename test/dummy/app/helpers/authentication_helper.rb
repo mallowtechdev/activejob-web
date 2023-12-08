@@ -3,6 +3,6 @@
 module AuthenticationHelper
   def my_app_current_user
     # Specify the current user here
-    User.first
+    current_user
   end
 end

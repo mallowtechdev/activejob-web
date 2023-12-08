@@ -53,12 +53,22 @@ end
 ```
 In the `my_app_current_user` method, specify the logic to fetch the current user for authentication. Replace the placeholder `User.find(current_user.id)` with the actual code that retrieves the current user.
 
-Make sure that your application controller includes the helper file named `ActivejobWeb::ApplicationHelper`, if not included please include the helper file for the authentication related configurations.
+Make sure that your application controller includes the helper file named `ActivejobWeb::JobsHelper` and **helper_method** `activejob_web_current_user` as shown below,
+if not included please include the helper file and helper_method for the authentication related configurations.
+
+```ruby
+# app/controllers/application_controller.rb
+
+class ApplicationController < ActionController::Base
+  include ActivejobWeb::JobsHelper
+  helper_method :activejob_web_current_user
+end
+```
 
 ## Enabling Routes for specific users to edit the Jobs
 By enabling this route, The specified super admin users will only have permission to edit the jobs. The implementation involves utilizing `route constraints` and a custom `lambda function` to restrict access based on a `super admin scope`.
 Assuming that your model to configure is 'User'.
-### 1. Define a scope named `super_admin_users` in the `User` model 
+### 1. Define a scope named `super_admin_users` in the `User` model
 Specify the condition in the scope that it should return the users with the permission for the edit page of jobs. The example code was shown below the custom lambda.
 ### 2. Define a Custom Lambda Method
 

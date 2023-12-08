@@ -3,7 +3,7 @@
     <%= flash[:notice] %>
   </div>
 <% end %>
-<%= form_with(model: @job_approval_request, url: activejob_web_job_job_execution_job_approval_request_path(@job_approval_request)) do |form| %>
+<%= form_for [@job, @job_execution, @job_approval_request], url: activejob_web_job_job_execution_job_approval_request_path(@job, @job_execution, @job_approval_request) do |form| %>
   <% if @job_approval_request.errors.any? %>
     <% @job_approval_request.errors.full_messages.each do |message| %>
       <p><%= message %></p>
