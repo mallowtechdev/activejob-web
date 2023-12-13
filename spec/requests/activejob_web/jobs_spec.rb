@@ -7,7 +7,7 @@ RSpec.describe ActivejobWeb::JobsController, type: :request do
   let(:job) { create(:job) }
   let!(:user) { create(:user) }
   before do
-    allow_any_instance_of(ActivejobWeb::JobsHelper).to receive(:activejob_web_current_user).and_return(user)
+    allow_any_instance_of(AuthenticationHelper).to receive(:activejob_web_current_user).and_return(user)
   end
   describe 'GET #edit' do
     context 'valid' do

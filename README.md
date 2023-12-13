@@ -39,34 +39,49 @@ Activejob::Web.job_executors_class = 'Author'
 where, `job_approvers_class` and `job_executors_class` were defined as `mattr_accessors` in Activejob Web gem.
 
 ## Configuration for Authentication
-The ActivejobWeb Gem integrates with the authentication system used in your Rails application. To set up authentication, create a helper file named `authentication_helper.rb` with the `my_app_current_user` method:
+The ActivejobWeb Gem integrates with the authentication system used in your Rails application. To set up authentication, specify the `current_user` and `login_path` in the `apps/helpers/authentication_helper.rb` file as shown below,
 
 ```ruby
-# app/helpers/user_helper.rb
+# app/helpers/authentication_helper.rb
 
 module AuthenticationHelper
-  def my_app_current_user
+  def activejob_web_current_user
     # Specify the current user here
-    User.find(current_user.id)
+    current_user
   end
 
-  def my_app_login_path
-    # specify the path to redirect while user not signed in
+  def activejob_web_login_path
+    # Specify the path to redirect when user not authenticated
     login_path
   end
 end
 ```
-In the `my_app_current_user` method, specify the logic to fetch the current user for authentication. Replace the placeholder `User.find(current_user.id)` with the actual code that retrieves the current user.
+In the `activejob_web_current_user` method, specify the logic to fetch the current user for authentication.
 
-Make sure that your application controller includes the helper file named `ActivejobWeb::JobsHelper` and **helper_method** `activejob_web_current_user` as shown below,
-if not included please include the helper file and helper_method for the authentication related configurations.
+In the `activejob_web_login_path` method, specify the path that the user have to redirected, if not signed in.
+
+Make sure that your application controller includes the helper file named `AuthenticationHelper` and **helper_method** `activejob_web_current_user` as shown below,
+if not included please include the helper file and helper_method for the authentication related configurations. The redirection of users were specified in the application controller with the method name `activejob_web_authenticate_user` as shown below
 
 ```ruby
 # app/controllers/application_controller.rb
 
 class ApplicationController < ActionController::Base
-  include ActivejobWeb::JobsHelper
+  include AuthenticationHelper
   helper_method :activejob_web_current_user
+  before_action :activejob_web_authenticate_user
+  protect_from_forgery with: :exception
+
+  protected
+
+  def activejob_web_authenticate_user
+    return if session[:authentication_checked]
+
+    return unless activejob_web_current_user.nil?
+
+    session[:authentication_checked] = true
+    redirect_to activejob_web_login_path, alert: 'Please log in'
+  end
 end
 ```
 
