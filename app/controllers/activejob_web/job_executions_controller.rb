@@ -27,6 +27,7 @@ module ActivejobWeb
 
     def create
       @job_execution = @job.job_executions.new(job_execution_params)
+      @job_execution.requestor_id = activejob_web_current_user.id
       if @job_execution.save
         flash[:notice] = 'Job execution created successfully.'
         redirect_to activejob_web_job_job_executions_path(@job)

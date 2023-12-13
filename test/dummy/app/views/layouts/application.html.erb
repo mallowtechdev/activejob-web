@@ -1,15 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
   <head>
     <title>Activejob Web Gem</title>
     <div>
-      <% if user_signed_in? %>
-        <a>Signed in as : <%= current_user.email %></a>
-        <%= link_to 'Edit Profile', edit_user_registration_path %>
-        <%= button_to 'Logout', destroy_user_session_path, method: :delete, data: { confirm: 'Are you sure?' } %>
-      <% else %>
-        <a>Not signed in</a>
-      <% end %>
+      <a>Signed in as : <%= activejob_web_current_user.email %></a>
     </div>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
