@@ -20,18 +20,28 @@ module ActivejobWeb
     belongs_to :job, class_name: 'ActivejobWeb::Job', foreign_key: 'job_id'
     has_many :job_approval_requests
     belongs_to :user, class_name: 'User', foreign_key: 'requestor_id'
+    def response_count
+      job_approval_requests.where(response: 1).count
+    end
+    def enqueue_job_if_approved
+      if auto_execute_on_approval? && enough_approvals?
+        # needs to enqueue the job with the job id and input arguments
+        AutoEnqueueJob.perform_later(job.id, job.input_arguments)
+      end
+    end
 
     private
-
     def set_default_status
       self.status ||= :requested
     end
-  end
-end
+    def send_job_approval_request
+      job.approvers.each do |approver|
+        job_approval_requests.create(job_execution_id: id, approver_id: approver.id)
+      end
+    end
 
-# == Callbacks =========================================================================================================
-def send_job_approval_request
-  job.approvers.each do |approver|
-    job_approval_requests.create(job_execution_id: id, approver_id: approver.id)
+    def enough_approvals?
+      response_count >= job.minimum_approvals_required
+    end
   end
 end
