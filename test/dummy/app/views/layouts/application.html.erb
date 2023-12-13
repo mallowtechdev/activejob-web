@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
   <head>
-    <title>Dummy</title>
+    <title>Activejob Web Gem</title>
+    <div>
+      <a>Signed in as : <%= activejob_web_current_user.email %></a>
+    </div>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

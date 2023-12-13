@@ -1,0 +1,18 @@
+<%= form_for [@job, @job_execution] ,url: url do |form| %>
+  <% if @job_execution.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@job_execution.errors.count, "error") %> prohibited this job_execution from being saved:</h2>
+
+      <ul>
+        <% @job_execution.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        <%end %>
+      </ul>
+    </div>
+  <%= form.select :status, ActivejobWeb::JobExecution.statuses.keys %>
+  <%= form.text_field :requestor_comments, placeholder: "Requestor Comments" %>
+  <%= form.label :auto_execute_on_approval %>
+  <%= form.check_box :auto_execute_on_approval %>
+  <%= form.submit  %>
+<% end %>
