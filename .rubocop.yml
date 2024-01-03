@@ -4,5 +4,19 @@ AllCops:
 Layout/LineLength:
   Max: 150
 
-Style/FrozenStringLiteralComment:
+Style/Documentation:
   Enabled: false
+
+Style/NumericLiterals:
+  Exclude:
+    - 'test/dummy/db/schema.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'test/dummy/db/schema.rb'
+    - 'spec/requests/activejob_web/jobs_spec.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/20231024051840_create_jobs.rb'
+    - 'test/dummy/db/migrate/20231118052244_create_users.rb'
