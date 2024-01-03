@@ -3,11 +3,11 @@
 module AuthenticationHelper
   def activejob_web_current_user
     # Specify the current user here
-    User.first
+    current_user
   end
 
   def activejob_web_login_path
     # Specify the path to redirect when user not authenticated
-    login_path
+    root_path
   end
 end

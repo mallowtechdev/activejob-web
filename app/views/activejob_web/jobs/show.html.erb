@@ -3,13 +3,13 @@
     <%= flash[:notice] %>
   </div>
 <% end %>
-<% if Activejob::Web.job_approvers_class.constantize.super_admin_users.include?(activejob_web_current_user) %>
+<% if Activejob::Web.job_admins_class.constantize.active_job_admins.include?(activejob_web_current_user) %>
   <div>
-    <h3>Assigned approvers for <%= @job.title %></h3>
+    <h3>Assigned approvers</h3>
     <ul>
       <% if @job_approvers.length > 0 %>
-        <% @job_approvers.each do |assigned| %>
-          <li><%= assigned.name %></li>
+        <% @job_approvers.each do |approver| %>
+          <li><%= approver.name %></li>
         <% end %>
       <% else %>
         <%= 'No approvers assigned' %>
@@ -18,11 +18,11 @@
   </div>
 
   <div>
-    <h3>Assigned executors for <%= @job.title %></h3>
+    <h3>Assigned executors</h3>
     <ul>
       <% if @job_executors.length > 0 %>
-        <% @job_executors.each do |assigned| %>
-          <li><%= assigned.name %></li>
+        <% @job_executors.each do |executor| %>
+          <li><%= executor.name %></li>
         <% end %>
       <% else %>
         <%= 'No executors assigned' %>

@@ -4,13 +4,15 @@ module ActivejobWeb
   class JobsController < ApplicationController
     before_action :set_job, only: %i[show edit update]
     before_action :set_approvers_and_executors, only: %i[show edit]
+    before_action :user_authorized?, only: %i[edit update]
 
     def index
-      @jobs = ActivejobWeb::Job.includes(:executors).where(activejob_web_job_executors: { executor_id: activejob_web_current_user.id })
+      @jobs = ActivejobWeb::Job.includes(:approvers, :executors).where(activejob_web_job_executors: { executor_id: activejob_web_current_user.id })
+                               .or(ActivejobWeb::Job.where(activejob_web_job_approvers: { approver_id: activejob_web_current_user.id }))
     end
 
     def show
-      if @job.executors.include?(activejob_web_current_user)
+      if @job.approvers.include?(activejob_web_current_user) || @job.executors.include?(activejob_web_current_user)
         render :show
       else
         redirect_to root_path
@@ -19,26 +21,17 @@ module ActivejobWeb
     end
 
     def edit
-      if user_authorized?
-        render :edit
-      else
-        redirect_to root_path
-        flash[:notice] = 'You are not authorized to perform this action.'
-      end
+      @all_job_approvers = Activejob::Web.job_approvers_class.to_s.constantize.all
+      @all_job_executors = Activejob::Web.job_executors_class.to_s.constantize.all
+      render :edit
     end
 
     def update
-      if user_authorized?
-        @job.update(job_params)
-        if @job.save
-          redirect_to activejob_web_job_path(@job)
-          flash[:notice] = 'Job was successfully updated.'
-        else
-          render :edit
-        end
+      if @job.update(job_params)
+        redirect_to activejob_web_job_path(@job)
+        flash[:notice] = 'Job was successfully updated.'
       else
-        redirect_to root_path
-        flash[:notice] = 'You are not authorized to perform this action.'
+        render :edit
       end
     end
 
@@ -51,12 +44,13 @@ module ActivejobWeb
     def set_approvers_and_executors
       @job_approvers = @job.approvers
       @job_executors = @job.executors
-      @all_job_approvers = Activejob::Web.job_approvers_class.to_s.constantize.all
-      @all_job_executors = Activejob::Web.job_executors_class.to_s.constantize.all
     end
 
     def user_authorized?
-      Activejob::Web.job_approvers_class.constantize.super_admin_users.include?(activejob_web_current_user)
+      return true if Activejob::Web.job_admins_class.constantize.active_job_admins.include?(activejob_web_current_user)
+
+      redirect_to root_path
+      flash[:notice] = 'You are not authorized to perform this action.'
     end
 
     def job_params

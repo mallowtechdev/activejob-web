@@ -10,11 +10,8 @@ module ActivejobWeb
     protected
 
     def activejob_web_authenticate_user
-      return if session[:authentication_checked]
-
       return unless activejob_web_current_user.nil?
 
-      session[:authentication_checked] = true
       redirect_to activejob_web_login_path, alert: 'Please log in'
     end
   end

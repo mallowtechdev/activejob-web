@@ -35,8 +35,9 @@ For example, if your model to configure is 'Author', you can set the job approve
 
 Activejob::Web.job_approvers_class = 'Author'
 Activejob::Web.job_executors_class = 'Author'
+Activejob::Web.job_admins_class = 'Author'
 ```
-where, `job_approvers_class` and `job_executors_class` were defined as `mattr_accessors` in Activejob Web gem.
+where, `job_approvers_class`, `job_executors_class` and `job_admins_class` were defined as `mattr_accessors` in Activejob Web gem.
 
 ## Configuration for Authentication
 The ActivejobWeb Gem integrates with the authentication system used in your Rails application. To set up authentication, specify the `current_user` and `login_path` in the `apps/helpers/authentication_helper.rb` file as shown below,
@@ -52,13 +53,13 @@ module AuthenticationHelper
 
   def activejob_web_login_path
     # Specify the path to redirect when user not authenticated
-    login_path
+    root_path
   end
 end
 ```
 In the `activejob_web_current_user` method, specify the logic to fetch the current user for authentication.
 
-In the `activejob_web_login_path` method, specify the path that the user have to redirected, if not signed in.
+In the `activejob_web_login_path` method, On default it will have root_path but you can specify the path that the user have to redirected, if not signed in.
 
 Make sure that your application controller includes the helper file named `AuthenticationHelper` and **helper_method** `activejob_web_current_user` as shown below,
 if not included please include the helper file and helper_method for the authentication related configurations. The redirection of users were specified in the application controller with the method name `activejob_web_authenticate_user` as shown below
@@ -88,7 +89,7 @@ end
 ## Enabling Routes for specific users to edit the Jobs
 By enabling this route, The specified super admin users will only have permission to edit the jobs. The implementation involves utilizing `route constraints` and a custom `lambda function` to restrict access based on a `super admin scope`.
 Assuming that your model to configure is 'User'.
-### 1. Define a scope named `super_admin_users` in the `User` model
+### 1. Define a scope named `active_job_admins` in the `User` model
 Specify the condition in the scope that it should return the users with the permission for the edit page of jobs. The example code was shown below the custom lambda.
 ### 2. Define a Custom Lambda Method
 
@@ -101,14 +102,14 @@ class User < ApplicationRecord
   # Your existing user model code
 
   # Define a scope for super admins here
-  scope :super_admin_users, -> { User.all.limit(10) }
+  scope :active_job_admins, -> { User.all.limit(10) }
 
   # Your other scopes and methods...
 
   # Define a custom lambda inside a method for route constraint
   def self.allow_admin_access?
     lambda do |_request|
-      super_admin_users.include?(current_user)
+      active_job_admins.include?(current_user)
       # Your custom logic to determine user access goes here
     end
   end
