@@ -3,7 +3,7 @@
     <%= flash[:notice] %>
   </div>
 <% end %>
-<% if Activejob::Web.job_admins_class.constantize.active_job_admins.include?(activejob_web_current_user) %>
+<% if Activejob::Web.job_admins_class.constantize.active_job_admins.where(id: activejob_web_current_user.id).exists? %>
   <div>
     <h3>Assigned approvers</h3>
     <ul>

@@ -7,12 +7,12 @@ module ActivejobWeb
     before_action :user_authorized?, only: %i[edit update]
 
     def index
-      @jobs = ActivejobWeb::Job.includes(:approvers, :executors).where(activejob_web_job_executors: { executor_id: activejob_web_current_user.id })
+      @jobs = ActivejobWeb::Job.joins(:approvers, :executors).where(activejob_web_job_executors: { executor_id: activejob_web_current_user.id })
                                .or(ActivejobWeb::Job.where(activejob_web_job_approvers: { approver_id: activejob_web_current_user.id }))
     end
 
     def show
-      if @job.approvers.include?(activejob_web_current_user) || @job.executors.include?(activejob_web_current_user)
+      if @job.approvers.where(id: activejob_web_current_user.id).exists? || @job.executors.where(id: activejob_web_current_user.id).exists?
         render :show
       else
         redirect_to root_path
@@ -47,7 +47,7 @@ module ActivejobWeb
     end
 
     def user_authorized?
-      return true if Activejob::Web.job_admins_class.constantize.active_job_admins.include?(activejob_web_current_user)
+      return true if Activejob::Web.job_admins_class.constantize.active_job_admins.where(id: activejob_web_current_user.id).exists?
 
       redirect_to root_path
       flash[:notice] = 'You are not authorized to perform this action.'
