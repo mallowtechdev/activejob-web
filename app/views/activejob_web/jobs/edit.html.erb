@@ -8,11 +8,11 @@
   <% end %>
 
   <div>
-    <h3>Assigned approvers for <%= @job.title %></h3>
+    <h3>Assigned approvers</h3>
     <ul>
-      <% if @job.approvers.length > 0 %>
-        <% @job.approvers.each do |assigned| %>
-          <li><%= assigned.name %></li>
+      <% if @job_approvers.length > 0 %>
+        <% @job_approvers.each do |approver| %>
+          <li><%= approver.name %></li>
         <% end %>
       <% else %>
         <%= 'No approvers assigned' %>
@@ -21,11 +21,11 @@
   </div>
 
   <div>
-    <h3>Assigned executors for <%= @job.title %></h3>
+    <h3>Assigned executors</h3>
     <ul>
-      <% if @job.executors.length > 0 %>
-        <% @job.executors.each do |assigned| %>
-          <li><%= assigned.name %></li>
+      <% if @job_executors.length > 0 %>
+        <% @job_executors.each do |executor| %>
+          <li><%= executor.name %></li>
         <% end %>
       <% else %>
         <%= 'No executors assigned' %>
@@ -33,15 +33,14 @@
     </ul>
   </div>
 
-  <% users = Activejob::Web.job_approvers_class.to_s.constantize.all %>
   <div>
     <%= form.label :approvers %>
-    <%= form.collection_select(:approver_ids, users, :id, :name, { multiple: true }) %>
+    <%= form.collection_select(:approver_ids, @all_job_approvers, :id, :name, { multiple: true }) %>
   </div><br>
 
   <div>
     <%= form.label :executors %>
-    <%= form.collection_select(:executor_ids, users, :id, :name, {}, { multiple: true }) %>
+    <%= form.collection_select(:executor_ids, @all_job_executors, :id, :name, {}, { multiple: true }) %>
   </div><br>
   <div><%= form.submit %></div>
 <% end %>
