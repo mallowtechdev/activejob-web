@@ -8,7 +8,7 @@ RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
   let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: user.id) }
   let(:job_approval_request) { create(:job_approval_request, job_execution_id: job_execution.id, approver_id: user.id) }
   before do
-    allow_any_instance_of(ActivejobWeb::JobsHelper).to receive(:activejob_web_current_user).and_return(user)
+    allow_any_instance_of(AuthenticationHelper).to receive(:activejob_web_current_user).and_return(user)
   end
   describe 'GET #index' do
     context 'valid index page' do

@@ -16,13 +16,13 @@
 <% else %>
   <p>no template available</p>
 <% end %>
-<% if Activejob::Web.job_approvers_class.constantize.super_admin_users.include?(activejob_web_current_user) %>
+<% if Activejob::Web.job_admins_class.constantize.active_job_admins.where(id: activejob_web_current_user.id).exists? %>
   <div>
-    <h3>Assigned approvers for <%= @job.title %></h3>
+    <h3>Assigned approvers</h3>
     <ul>
-      <% if @job.approvers.length > 0 %>
-        <% @job.approvers.each do |assigned| %>
-          <li><%= assigned.name %></li>
+      <% if @job_approvers.length > 0 %>
+        <% @job_approvers.each do |approver| %>
+          <li><%= approver.name %></li>
         <% end %>
       <% else %>
         <%= 'No approvers assigned' %>
@@ -31,11 +31,11 @@
   </div>
 
   <div>
-    <h3>Assigned executors for <%= @job.title %></h3>
+    <h3>Assigned executors</h3>
     <ul>
-      <% if @job.executors.length > 0 %>
-        <% @job.executors.each do |assigned| %>
-          <li><%= assigned.name %></li>
+      <% if @job_executors.length > 0 %>
+        <% @job_executors.each do |executor| %>
+          <li><%= executor.name %></li>
         <% end %>
       <% else %>
         <%= 'No executors assigned' %>
@@ -43,7 +43,6 @@
     </ul>
   </div>
   <p><%= link_to 'Edit Job', edit_activejob_web_job_path(@job) %></p>
+  <p><%= link_to 'Back', activejob_web_jobs_path %></p>
+  <p><%= link_to 'Job Executions', activejob_web_job_job_executions_path(@job, @job_executions) %></p>
 <% end %>
-<p><%= link_to 'Back', activejob_web_jobs_path %></p>
-
-<p><%= link_to 'Job Executions', activejob_web_job_job_executions_path(@job, @job_executions) %></p>

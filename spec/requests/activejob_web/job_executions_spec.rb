@@ -6,7 +6,7 @@ RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
   let!(:user) { create(:user) }
   let(:execution) { create(:job_execution, job:, requestor_id: user.id) }
   before do
-    allow_any_instance_of(ActivejobWeb::JobsHelper).to receive(:activejob_web_current_user).and_return(user)
+    allow_any_instance_of(AuthenticationHelper).to receive(:activejob_web_current_user).and_return(user)
   end
   describe 'GET #index' do
     it 'renders the index template' do
