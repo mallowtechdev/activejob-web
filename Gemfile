@@ -10,6 +10,12 @@ gem 'pg'
 
 gem 'sprockets-rails'
 
+group :development do
+  gem 'brakeman'
+  gem 'bundler-audit', require: false
+  gem 'overcommit', '~> 0.60.0'
+end
+
 group :development, :test do
   gem 'rubocop', require: false
 end

@@ -83,7 +83,12 @@ GEM
     ast (2.4.2)
     base64 (0.1.1)
     bigdecimal (3.1.4)
+    brakeman (6.0.1)
     builder (3.2.4)
+    bundler-audit (0.9.1)
+      bundler (>= 1.2.0, < 3)
+      thor (~> 1.0)
+    childprocess (4.1.0)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     crass (1.0.6)
@@ -95,6 +100,7 @@ GEM
       activesupport (>= 6.1)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    iniparse (1.5.0)
     io-console (0.6.0)
     irb (1.8.3)
       rdoc
@@ -125,6 +131,10 @@ GEM
     nio4r (2.5.9)
     nokogiri (1.15.4-x86_64-darwin)
       racc (~> 1.4)
+    overcommit (0.60.0)
+      childprocess (>= 0.6.3, < 5)
+      iniparse (~> 1.4)
+      rexml (~> 3.2)
     parallel (1.23.0)
     parser (3.2.2.4)
       ast (~> 2.4.1)
@@ -220,6 +230,9 @@ PLATFORMS
 
 DEPENDENCIES
   activejob-web!
+  brakeman
+  bundler-audit
+  overcommit (~> 0.60.0)
   pg
   puma
   rubocop

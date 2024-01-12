@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.2.2'
   spec.add_dependency 'rails', '>= 7.0.8'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end
