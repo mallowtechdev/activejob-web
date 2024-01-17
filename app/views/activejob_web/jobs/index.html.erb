@@ -1,0 +1,22 @@
+<h1>Active Job Web Jobs</h1>
+
+<table>
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Description</th>
+    <th>queue</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @jobs.each do |job| %>
+    <tr>
+      <td><%= job.title %></td>
+      <td><%= job.description %></td>
+      <td><%= job.queue == 'default' ? 'Default' : 'Long Processing' %></td>
+      <td><%= link_to 'Show', activejob_web_job_path(job) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

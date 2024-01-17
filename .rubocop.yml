@@ -4,8 +4,20 @@ AllCops:
 Layout/LineLength:
   Max: 150
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Style/Documentation:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'test/dummy/db/seeds.rb'
+    - 'test/dummy/db/schema.rb'
+    - 'spec/requests/activejob_web/jobs_spec.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/20231024051840_create_jobs.rb'
+    - 'db/migrate/20231030145254_create_active_storage_tables.active_storage.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'db/migrate/20231030145254_create_active_storage_tables.active_storage.rb'

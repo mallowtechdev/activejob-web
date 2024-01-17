@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -8,6 +10,8 @@ gem 'puma'
 
 gem 'pg'
 
+gem 'image_processing', '>= 1.2'
+
 gem 'sprockets-rails'
 
 group :development do
@@ -17,8 +21,8 @@ group :development do
 end
 
 group :development, :test do
+  gem 'rspec-rails'
   gem 'rubocop', require: false
 end
 
-# Start debugger with binding.b [https://github.com/ruby/debug]
-# gem "debug", ">= 1.0.0"
+gem 'rails-controller-testing', '~> 1.0', '>= 1.0.5'

@@ -37,6 +37,7 @@ GEM
       actionview (= 7.1.1)
       activesupport (= 7.1.1)
       nokogiri (>= 1.8.5)
+      racc
       rack (>= 2.2.4)
       rack-session (>= 1.0.1)
       rack-test (>= 0.6.3)
@@ -83,7 +84,8 @@ GEM
     ast (2.4.2)
     base64 (0.1.1)
     bigdecimal (3.1.4)
-    brakeman (6.0.1)
+    brakeman (6.1.1)
+      racc
     builder (3.2.4)
     bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
@@ -93,19 +95,24 @@ GEM
     connection_pool (2.4.1)
     crass (1.0.6)
     date (3.3.3)
+    diff-lcs (1.5.0)
     drb (2.1.1)
       ruby2_keywords
     erubi (1.12.0)
+    ffi (1.16.3)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    image_processing (1.12.2)
+      mini_magick (>= 4.9.5, < 5)
+      ruby-vips (>= 2.0.17, < 3)
     iniparse (1.5.0)
     io-console (0.6.0)
     irb (1.8.3)
       rdoc
       reline (>= 0.3.8)
-    json (2.6.3)
+    json (2.7.1)
     language_server-protocol (3.17.0.3)
     loofah (2.21.4)
       crass (~> 1.0.2)
@@ -116,6 +123,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.2)
+    mini_magick (4.12.0)
     mini_mime (1.1.5)
     minitest (5.20.0)
     mutex_m (0.1.2)
@@ -135,8 +143,8 @@ GEM
       childprocess (>= 0.6.3, < 5)
       iniparse (~> 1.4)
       rexml (~> 3.2)
-    parallel (1.23.0)
-    parser (3.2.2.4)
+    parallel (1.24.0)
+    parser (3.3.0.4)
       ast (~> 2.4.1)
       racc
     pg (1.5.4)
@@ -167,6 +175,10 @@ GEM
       activesupport (= 7.1.1)
       bundler (>= 1.15.0)
       railties (= 7.1.1)
+    rails-controller-testing (1.0.5)
+      actionpack (>= 5.0.1.rc1)
+      actionview (>= 5.0.1.rc1)
+      activesupport (>= 5.0.1.rc1)
     rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
@@ -186,25 +198,43 @@ GEM
     rake (13.0.6)
     rdoc (6.5.0)
       psych (>= 4.0.0)
-    regexp_parser (2.8.2)
+    regexp_parser (2.9.0)
     reline (0.3.9)
       io-console (~> 0.5)
     rexml (3.2.6)
-    rubocop (1.57.1)
-      base64 (~> 0.1.1)
+    rspec-core (3.12.2)
+      rspec-support (~> 3.12.0)
+    rspec-expectations (3.12.3)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
+    rspec-mocks (3.12.6)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
+    rspec-rails (6.1.0)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      railties (>= 6.1)
+      rspec-core (~> 3.12)
+      rspec-expectations (~> 3.12)
+      rspec-mocks (~> 3.12)
+      rspec-support (~> 3.12)
+    rspec-support (3.12.1)
+    rubocop (1.60.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
-      parser (>= 3.2.2.4)
+      parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.28.1, < 2.0)
+      rubocop-ast (>= 1.30.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.29.0)
+    rubocop-ast (1.30.0)
       parser (>= 3.2.1.0)
     ruby-progressbar (1.13.0)
+    ruby-vips (2.1.4)
+      ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -232,11 +262,14 @@ DEPENDENCIES
   activejob-web!
   brakeman
   bundler-audit
+  image_processing (>= 1.2)
   overcommit (~> 0.60.0)
   pg
   puma
+  rails-controller-testing (~> 1.0, >= 1.0.5)
+  rspec-rails
   rubocop
   sprockets-rails
 
 BUNDLED WITH
-   2.4.19
+   2.4.21
