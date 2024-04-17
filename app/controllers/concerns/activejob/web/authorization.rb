@@ -8,25 +8,29 @@ module Activejob
       UPDATE = %i[edit update].freeze
       DESTROY = %i[destroy].freeze
 
-      JOB_EXECUTION_FULL = READ + CREATE + UPDATE + %i[cancel reinitiate].freeze
+      JOB_FULL_ACCESS = READ + CREATE + UPDATE
+      JOB_EXECUTION_FULL_ACCESS = READ + CREATE + UPDATE + %i[cancel reinitiate].freeze
+      JOB_APPROVAL_FULL_ACCESS = READ + CREATE
 
       PERMISSIONS = {
         admin: {
-          jobs: READ + CREATE + UPDATE,
-          job_executions: JOB_EXECUTION_FULL,
-          job_approval_requests: READ + UPDATE
+          jobs: JOB_FULL_ACCESS,
+          job_executions: JOB_EXECUTION_FULL_ACCESS,
+          job_approval_requests: JOB_APPROVAL_FULL_ACCESS
         },
         approver: {
           jobs: READ,
-          job_approval_requests: READ + UPDATE
+          job_approval_requests: JOB_APPROVAL_FULL_ACCESS
         },
         executor: {
           jobs: READ,
-          job_executions: JOB_EXECUTION_FULL
+          job_executions: JOB_EXECUTION_FULL_ACCESS
         },
         common: {
           jobs: READ,
-          job_executions: JOB_EXECUTION_FULL
+          job_executions: JOB_EXECUTION_FULL_ACCESS,
+          job_approval_requests: JOB_APPROVAL_FULL_ACCESS
+
         }
       }.freeze
 

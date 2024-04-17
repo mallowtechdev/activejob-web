@@ -44,15 +44,14 @@ module Activejob
 
       def convert_user_model
         host_user_id = @activejob_web_current_user.id
-        # converted_model = if admin?
-        #                     Activejob::Web::Admin.find(host_user_id)
-        #                   elsif Activejob::Web.is_common_model
-        #                     Activejob::Web::Common.find(host_user_id)
-        #                   else
-        #                     Activejob::Web::Approver.find_by(id: host_user_id)
-        #                   end
+        converted_model = if admin?
+                            Activejob::Web::Admin.find(host_user_id)
+                          elsif Activejob::Web.is_common_model
+                            Activejob::Web::Common.find(host_user_id)
+                          else
+                            Activejob::Web::Approver.find_by(id: host_user_id)
+                          end
 
-        converted_model = Activejob::Web::Common.find(host_user_id)
         converted_model.present? ? converted_model : Activejob::Web::Executor.find(host_user_id)
       end
 
