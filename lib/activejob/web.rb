@@ -2,11 +2,10 @@
 
 require 'activejob/web/version'
 require 'activejob/web/engine'
+require 'activejob/web/configuration'
 
 module Activejob
   module Web
-    mattr_accessor :job_approvers_class, default: 'User'
-    mattr_accessor :job_executors_class, default: 'User'
-    mattr_accessor :job_admins_class, default: 'User'
+    extend Configuration
   end
 end
