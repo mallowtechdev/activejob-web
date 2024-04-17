@@ -43,6 +43,15 @@
             </div>
           </div>
 
+          <% if admin? && (action_title != 'Edit') %>
+            <div class="mb-3 row">
+              <label for="executor" class="col-sm-2 col-form-label">Executor:</label>
+              <div class="col-sm-6">
+                <%= form.select :requestor_id, @job.executors.pluck(:email, :id), {}, class: 'form-control' %>
+              </div>
+            </div>
+          <% end %>
+
           <div class="mb-3 row">
             <label for="auto_execute_on_approval" class="col-sm-2 col-form-label"> Input Arguments</label>
             <div class="col-sm-10 mt-2">
