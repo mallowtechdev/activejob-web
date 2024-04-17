@@ -31,7 +31,7 @@
 
           <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Requestor Email:</strong></div>
-            <div class="col-sm-9"><%= @job_execution.executor.email %></div>
+            <div class="col-sm-9"><%= @job_execution.executor&.email || '-' %></div>
           </div>
 
           <div class="mb-3 row">

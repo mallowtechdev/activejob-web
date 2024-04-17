@@ -26,6 +26,9 @@ module Activejob
 
       def configure
         yield self
+
+        self.is_common_model = approvers_model == executors_model
+        self.common_model = approvers_model if self.is_common_model
       end
 
       def options
@@ -41,8 +44,9 @@ module Activejob
           send(:"#{k}=", v)
         end
 
-        self.is_common_model = approvers_model == executors_model
-        self.common_model = approvers_model if self.is_common_model
+        PRIVATE_CONFIG_KEYS.each do |k, v|
+          send(:"#{k}=", v)
+        end
       end
 
       def development?

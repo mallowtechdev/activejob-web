@@ -23,7 +23,7 @@
             <% @job_approval_requests.each do |approval_request| %>
               <tr>
                 <td><%= @job.title %></td>
-                <td><%= approval_request.job_execution.executor.email %></td>
+                <td><%= approval_request.job_execution.executor&.email || '-' %></td>
                 <td>
                   <span class="badge text-bg-<%= status_badge(approval_request.response) %>">
                   <%= approval_request.response.nil? ? 'waiting for approval' : approval_request.response %>
