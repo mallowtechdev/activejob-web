@@ -58,14 +58,14 @@
           <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Approvers:</strong></div>
             <div class="col-sm-5">
-              <%= form.collection_select(:approver_ids, @all_approvers, :id, :name, {}, { multiple: true, class: 'form-select', size: '5' }) %>
+              <%= form.collection_select(:approver_ids, @all_approvers, :id, :email, {}, { multiple: true, class: 'form-select', size: '5' }) %>
             </div>
           </div>
 
           <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Executors:</strong></div>
             <div class="col-sm-5">
-              <%= form.collection_select(:executor_ids, @all_executors, :id, :name, {}, { multiple: true, class: 'form-select', size: '5' }) %>
+              <%= form.collection_select(:executor_ids, @all_executors, :id, :email, {}, { multiple: true, class: 'form-select', size: '5' }) %>
             </div>
           </div>
         </div>

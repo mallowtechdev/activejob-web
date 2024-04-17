@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Activejob
   module Web
     module Authentication
@@ -25,7 +27,7 @@ module Activejob
 
       # Try to use the method instead of Instance
       def admin?
-        return false unless @activejob_web_current_user.present?
+        return false unless @activejob_web_current_user.present? && validate_admin_model(@activejob_web_current_user)
 
         return true unless @activejob_web_current_user.respond_to?(:admin?)
 
@@ -44,21 +46,32 @@ module Activejob
 
       def convert_user_model
         host_user_id = @activejob_web_current_user.id
-        converted_model = if admin?
-                            Activejob::Web::Admin.find(host_user_id)
-                          elsif Activejob::Web.is_common_model
-                            Activejob::Web::Common.find(host_user_id)
-                          else
-                            Activejob::Web::Approver.find_by(id: host_user_id)
-                          end
-
-        converted_model.present? ? converted_model : Activejob::Web::Executor.find(host_user_id)
+        if admin?
+          Activejob::Web::Admin.find(host_user_id)
+        elsif Activejob::Web.is_common_model
+          Activejob::Web::Common.find(host_user_id)
+        elsif valid_model?(@activejob_web_current_user, 'approvers')
+          Activejob::Web::Approver.find(host_user_id)
+        elsif valid_model?(@activejob_web_current_user, 'executors')
+          Activejob::Web::Executor.find(host_user_id)
+        end
       end
 
       def validate_current_user_helper
         return if helpers.respond_to?(current_user_helper)
 
         redirect_to login_path, alert: t('current_user_helper.method_missing')
+      end
+
+      def validate_admin_model(user)
+        return true if user.respond_to?(:parsed_class_name) && user.parsed_class_name == 'Admin'
+
+        user.class.name.to_s == Activejob::Web.admins_model
+      end
+
+      def valid_model?(user, model)
+        puts "Validate Model: #{user.class.name.to_s}, #{Activejob::Web.public_send("#{model}_model")}"
+        user.class.name.to_s == Activejob::Web.public_send("#{model}_model")
       end
     end
   end
