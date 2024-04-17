@@ -1,0 +1,111 @@
+
+<%= form_for [@job, @job_approval_request], url: activejob_web_job_job_approval_request_path(@job, @job_approval_request) do |form| %>
+  <div class="row mt-3 p-3">
+    <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+      <div class="card h-100">
+        <div class="card-header pb-0 p-3">
+          <div class="row">
+            <div class="col-md-8 d-flex align-items-center">
+              <h3 class="mb-3">Job Execution Details</h3>
+            </div>
+            <div class="col-md-4 text-end mt-1">
+              <%= link_to 'Back', activejob_web_job_job_approval_requests_path(@job), class: 'btn btn-outline-secondary' %>
+              <%= form.submit 'submit', class: 'btn btn-outline-success' %>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-3">
+          <% if @job_approval_request.errors.any? %>
+            <div class="alert alert-danger" role="alert">
+              <ul>
+                <% @job_approval_request.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Requestor Name:</strong></div>
+            <div class="col-sm-9"><%= @job_execution.executor&.name || '-' %></div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Requestor Email:</strong></div>
+            <div class="col-sm-9"><%= @job_execution.executor.email %></div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Requestor Comments:</strong></div>
+            <div class="col-sm-9"><%= @job_execution.requestor_comments %></div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Auto Execute on Approval:</strong></div>
+            <div class="col-sm-9"><%= @job_execution.auto_execute_on_approval %></div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Arguments:</strong></div>
+            <div class="col-sm-9">
+              <% if @job_execution.arguments.present? %>
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-centered table-nowrap table-hover mb-0">
+                        <thead>
+                        <tr>
+                          <th>Key</th>
+                          <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% if @job_execution.input_file.attached? %>
+                          <tr>
+                            <td>
+                              <p class="font-14 my-1 fw-normal">File</p>
+                            </td>
+                            <td>
+                              <a href="<%= @job_execution.input_file.url %>" class="font-14 my-1 fw-normal" target="_blank"><%= @job_execution.input_file.blob.filename %></a>
+                            </td>
+                          </tr>
+                        <% end %>
+                        <% @job_execution.arguments.each do |argument| %>
+                          <tr>
+                            <td>
+                              <p class="font-14 my-1 fw-normal"><%= argument.first.split('_').map(&:capitalize).join(' ') %></p>
+                            </td>
+                            <td>
+                              <p class="font-14 my-1 fw-normal"><%= argument.second.presence || '-' %></p>
+                            </td>
+                          </tr>
+                        <% end %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              <% else %>
+                -
+              <% end %>
+            </div>
+          </div>
+
+          <br>
+
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Action:</strong></div>
+            <div class="col-sm-6">
+              <%= form.select :response, job_approval_response_keys, {}, class: 'form-select' %>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Approver Comments:</strong></div>
+            <div class="col-sm-6"><%= form.text_area :approver_comments, placeholder: "Approver Comments", class: 'form-control' %></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,44 @@
+<%= render partial: 'job_execution_form',locals: { url:activejob_web_job_job_executions_path(@job), action_title: 'Create New' }%>
+
+<div class="row mt-3 p-3">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+    <div class="card h-100">
+      <div class="card-header pb-0 p-3">
+        <div class="row">
+          <div class="col-md-4 d-flex align-items-center">
+            <h3 class="mb-3">Job Executions</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-3">
+        <% if @job_executions.present? %>
+          <table class="table">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Status</th>
+              <th scope="col">Comments</th>
+              <th scope="col">Status</th>
+              <th scope="col">Auto Execute On Approval</th>
+              <th scope="col">Actions</th>
+            </tr>
+            <% @job_executions.each do |job_execution| %>
+              <tr>
+                <td><%= job_execution.id %></td>
+                <td><%= job_execution.status %></td>
+                <td><%= job_execution.requestor_comments %></td>
+                <td><span class="badge text-bg-<%= status_badge(job_execution.status) %>"><%= job_execution.status %></span></td>
+                <td><%= job_execution.auto_execute_on_approval %></td>
+                <td>
+                  <%= link_to 'Edit', edit_activejob_web_job_job_execution_path(@job,job_execution), class: 'btn btn-outline-primary' %>
+                  <%= link_to 'Show', activejob_web_job_job_execution_path(@job,job_execution), class: 'btn btn-outline-primary' %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+        <% else %>
+          <h3>No Job Execution Found!!!</h3>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

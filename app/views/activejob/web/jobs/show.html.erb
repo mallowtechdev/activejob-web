@@ -1,0 +1,135 @@
+<div class="row mt-3 p-3">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+    <div class="card h-100">
+      <div class="card-header pb-0 p-3">
+        <div class="row">
+          <div class="col-md-4 d-flex align-items-center">
+            <h3 class="mb-3"><%= @job.title %></h3>
+          </div>
+          <div class="col-md-8 text-end mt-1">
+            <%= link_to 'Back', activejob_web_jobs_path, class: 'btn btn-outline-secondary' %>
+            <% if admin? %>
+              <%= link_to 'Edit Job', edit_activejob_web_job_path(@job), class: 'btn btn-outline-primary' %>
+            <% end %>
+            <% if admin? || executor? %>
+              <%= link_to 'Job Executions', activejob_web_job_job_executions_path(@job, @job_executions), class: 'btn btn-outline-primary' %>
+            <% end %>
+            <% if admin? || approver? %>
+              <%= link_to 'Job Approval Requests', activejob_web_job_job_approval_requests_path(@job), class: 'btn btn-outline-primary' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-3">
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Description:</strong></div>
+          <div class="col-sm-9"><%= @job.description %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Max Run Time:</strong></div>
+          <div class="col-sm-9"><%= @job.max_run_time %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Minimum Approvals Required:</strong></div>
+          <div class="col-sm-9"><%= @job.minimum_approvals_required %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Priority:</strong></div>
+          <div class="col-sm-9"><%= @job.priority %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Queue:</strong></div>
+          <div class="col-sm-9"><%= @job.queue %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Template:</strong></div>
+          <div class="col-sm-9">
+            <% if @job.template_file.attached? %>
+              <%= link_to "Download PDF", rails_blob_path(@job.template_file, disposition: "attachment"), class: "btn btn-primary" %>
+            <% else %>
+              <p>No template available</p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Assigned Approvers:</strong></div>
+          <div class="col-sm-9">
+            <ul class="list-group">
+              <% if @approvers.present?%>
+                <% @approvers.map do |approver| %>
+                  <li class="list-group-item"><%= approver %></li>
+                <% end %>
+              <% else %>
+                <%= 'No approvers assigned' %>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Assigned Executors:</strong></div>
+          <div class="col-sm-9">
+            <ul class="list-group">
+              <% if @executors.present?%>
+                <% @executors.map do |executor| %>
+                  <li class="list-group-item"><%= executor %></li>
+                <% end %>
+              <% else %>
+                <%= 'No executors assigned' %>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Input Arguments:</strong></div>
+          <div class="col-sm-9">
+            <div class="card">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-centered table-nowrap table-hover mb-0">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Others</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% @job.input_arguments.each do |arguments| %>
+                      <tr>
+                        <td>
+                          <p class="font-14 my-1 fw-normal"><%= arguments["name"] %></p>
+                        </td>
+                        <td>
+                          <p class="font-14 my-1 fw-normal"><%= arguments["type"] %></p>
+                        </td>
+                        <td>
+                          <p class="font-14 my-1 fw-normal"><%= arguments["required"] %></p>
+                        </td>
+                        <td>
+                          <p class="font-14 my-1 fw-normal"><%= arguments.except('name', 'type', 'required').presence || '-' %></p>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
