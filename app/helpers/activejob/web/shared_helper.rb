@@ -4,13 +4,13 @@ module Activejob
       def approver?
         return true if @activejob_web_current_user.parsed_class_name == 'Approver'
 
-        @job.approver_ids.include?(@activejob_web_current_user.id)
+        Activejob::Web.is_common_model && @job.approver_ids.include?(@activejob_web_current_user.id)
       end
 
       def executor?
         return true if @activejob_web_current_user.parsed_class_name == 'Executor'
 
-        @job.executor_ids.include?(@activejob_web_current_user.id)
+        Activejob::Web.is_common_model && @job.executor_ids.include?(@activejob_web_current_user.id)
       end
 
       def status_badge(status)

@@ -10,7 +10,7 @@ module Activejob
 
       JOB_FULL_ACCESS = READ + CREATE + UPDATE
       JOB_EXECUTION_FULL_ACCESS = READ + CREATE + UPDATE + %i[cancel reinitiate].freeze
-      JOB_APPROVAL_FULL_ACCESS = READ + CREATE
+      JOB_APPROVAL_FULL_ACCESS = READ + CREATE + UPDATE
 
       PERMISSIONS = {
         admin: {

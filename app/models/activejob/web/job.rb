@@ -20,7 +20,7 @@ module Activejob
       # == Validations ===================================================================================================
       validates :title, presence: true, length: { maximum: 255 }
       validates :description, presence: true, length: { maximum: 1000 }
-      validate :validate_approvers
+      validate :validate_approvers_executors
 
       # == Callbacks =====================================================================================================
       after_initialize :set_default_queue
@@ -32,14 +32,13 @@ module Activejob
         self.queue ||= 'default'
       end
 
-      def validate_approvers
+      def validate_approvers_executors
         if approver_ids.count < minimum_approvals_required
           errors.add(:base, "Minimum Approver required is #{minimum_approvals_required}. Please select #{minimum_approvals_required - approver_ids.count} more approver(s).")
         end
 
-        if Activejob::Web.is_common_model && (approver_ids & executor_ids).any?
-          errors.add(:base, 'Approvers and Executors cannot be same.')
-        end
+        errors.add(:base, 'Approvers and Executors cannot be same.') if Activejob::Web.is_common_model && (approver_ids & executor_ids).any?
+        errors.add(:base, 'Please select at least 1 approver.') unless approver_ids.count.positive?
       end
     end
   end

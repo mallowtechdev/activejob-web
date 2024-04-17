@@ -70,7 +70,6 @@ module Activejob
       end
 
       def valid_model?(user, model)
-        puts "Validate Model: #{user.class.name.to_s}, #{Activejob::Web.public_send("#{model}_model")}"
         user.class.name.to_s == Activejob::Web.public_send("#{model}_model")
       end
     end

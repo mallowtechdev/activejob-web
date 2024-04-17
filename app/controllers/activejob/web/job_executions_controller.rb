@@ -32,7 +32,7 @@ module Activejob
       def create
         @job_execution = @job.job_executions.new(job_execution_params)
         @job_execution.arguments = params['arguments']
-        @job_execution.requestor_id = activejob_web_current_user.id if @job_execution.requestor_id.nil?
+        @job_execution.requestor_id = @activejob_web_current_user.id if @job_execution.requestor_id.nil?
         if @job_execution.save
           redirect_to activejob_web_job_job_executions_path(@job), notice: 'Job execution created successfully.'
         else
