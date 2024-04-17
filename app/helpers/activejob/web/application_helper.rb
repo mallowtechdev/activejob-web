@@ -3,25 +3,16 @@
 module Activejob
   module Web
     module ApplicationHelper
-      def signed_in_as
-        if admin?
-          'Admin'
-        else
-          type = @activejob_web_current_user.parsed_class_name
-          type == 'Common' ? 'User' : type
-        end
-      end
+      include Activejob::Web::SharedHelper
 
-      def status_badge(status)
-        case status
-        when 'requested' then 'primary'
-        when 'approved', 'executed', 'succeeded' then 'success'
-        when 'cancelled' then 'secondary'
-        when 'revoked' then 'info'
-        when 'failed' then 'danger'
-        when 'rejected' then 'warning'
+      def signed_in_as
+        return 'Admin' if admin?
+
+        type = @activejob_web_current_user.parsed_class_name
+        if type == 'Common' && defined?(@job) && @job.present?
+          approver? ? 'Approver' : 'Executor'
         else
-          'light'
+          type == 'Common' ? 'User' : type
         end
       end
     end
