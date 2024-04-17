@@ -1,0 +1,12 @@
+en:
+  current_user_helper:
+    method_missing: "Please provide the 'current_user_method' in the ActiveJob::Web configuration or add the helper method 'activejob_web_current_user' to the ApplicationHelper."
+  jobs:
+    update:
+      success: "Job was successfully updated."
+  template:
+    not_found: "Template file not found."
+  action:
+    not_authorized: "You are not authorized to perform this action."
+  user:
+    invalid: "User not found or Invalid..."
