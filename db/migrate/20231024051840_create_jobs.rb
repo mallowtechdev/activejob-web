@@ -11,6 +11,7 @@ class CreateJobs < ActiveRecord::Migration[7.1]
       t.integer :minimum_approvals_required
       t.integer :priority
       t.integer :queue
+      t.string :job_name
 
       t.timestamps
     end

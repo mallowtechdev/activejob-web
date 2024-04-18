@@ -9,7 +9,7 @@ module Activejob
       DESTROY = %i[destroy].freeze
 
       JOB_FULL_ACCESS = READ + CREATE + UPDATE
-      JOB_EXECUTION_FULL_ACCESS = READ + CREATE + UPDATE + %i[cancel reinitiate].freeze
+      JOB_EXECUTION_FULL_ACCESS = READ + CREATE + UPDATE + %i[cancel reinitiate execute].freeze
       JOB_APPROVAL_FULL_ACCESS = READ + CREATE + UPDATE
 
       PERMISSIONS = {

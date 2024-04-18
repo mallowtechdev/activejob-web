@@ -11,6 +11,7 @@ Rails.application.routes.draw do
           member do
             patch :cancel
             post :reinitiate
+            get :execute
           end
         end
         member do

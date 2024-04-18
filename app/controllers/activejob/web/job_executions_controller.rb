@@ -5,7 +5,7 @@ module Activejob
     class JobExecutionsController < ApplicationController
       before_action :set_job
       before_action :user_authorized?
-      before_action :set_job_execution, only: %i[show edit update cancel reinitiate]
+      before_action :set_job_execution, only: %i[show edit update cancel reinitiate execute]
       before_action :validate_status, only: %i[edit]
 
       def index
@@ -55,7 +55,16 @@ module Activejob
           @job_execution.revoke_approval_requests
           flash[:notice] = 'Job execution Reinitiated successfully.'
         else
-          flash[:notice] = 'Unable to Reinitiate job execution.'
+          flash[:alert] = 'Unable to Reinitiate job execution.'
+        end
+        redirect_to activejob_web_job_job_execution_path(@job, @job_execution)
+      end
+
+      def execute
+        if @job_execution.execute
+          flash[:notice] = 'Job Execution executed successfully.'
+        else
+          flash[:alert] = 'Failed to execute Job Execution.'
         end
         redirect_to activejob_web_job_job_execution_path(@job, @job_execution)
       end
