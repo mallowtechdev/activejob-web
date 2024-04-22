@@ -14,6 +14,8 @@ module Activejob
 
 
       has_many :job_approval_requests, foreign_key: :approver_id
+      has_many :job_executions, foreign_key: :requestor_id
+
 
       def jobs
         Activejob::Web::Job.where(id: (approver_job_ids + executor_job_ids).uniq)

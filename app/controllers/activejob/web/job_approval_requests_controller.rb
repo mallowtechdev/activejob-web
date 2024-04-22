@@ -4,6 +4,7 @@ module Activejob
   module Web
     class JobApprovalRequestsController < ApplicationController
       before_action :set_job, only: %i[index show update]
+      before_action :user_authorized?
       before_action :set_approval_request, only: %i[show update]
       before_action :set_job_execution, only: %i[show update]
 
@@ -40,6 +41,11 @@ module Activejob
       def job_approval_request_params
         params.require(:activejob_web_job_approval_request).permit(:response, :approver_comments)
       end
+
+      def user_authorized?
+        redirect_to root_path, alert: t('action.not_authorized') unless admin? || @job.approver_ids.include?(@activejob_web_current_user.id)
+      end
+
     end
   end
 end

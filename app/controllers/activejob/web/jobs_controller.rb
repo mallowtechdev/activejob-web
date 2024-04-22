@@ -8,12 +8,13 @@ module Activejob
       before_action :set_all_users, only: %i[edit update]
 
       def index
-        if Activejob::Web.is_common_model
+        if !admin? && Activejob::Web.is_common_model
           @approval_jobs = @activejob_web_current_user.approver_jobs
           @execution_jobs = @activejob_web_current_user.executor_jobs
         else
           @jobs = @activejob_web_current_user.jobs
         end
+        @pending_approvals = Activejob::Web::JobApprovalRequest.includes(:job_execution).pending_requests(@activejob_web_current_user.id)
       end
 
       def show; end

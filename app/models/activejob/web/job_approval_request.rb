@@ -15,6 +15,7 @@ module Activejob
 
       # == Associations ==================================================================================================
       scope :approved_requests, -> { where(response: %w[approved revoked]) }
+      scope :pending_requests, ->(approver_id) { where(approver_id: approver_id, response: nil) }
 
       # == Callbacks ==================================================================================================
       after_update :update_job_execution_status

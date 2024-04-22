@@ -40,6 +40,48 @@
     </div>
   </div>
 
+  <% if approver? %>
+    <div class="row mt-3 p-3">
+      <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+        <div class="card h-100">
+          <div class="card-header pb-0 p-3">
+            <div class="row">
+              <div class="col-md-8 d-flex align-items-center">
+                <h3 class="mb-3">Pending Job Approval Requests</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <% if @pending_approvals.present? %>
+              <table class="table">
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Requestor Email</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+                <% @pending_approvals.each do |approval_request| %>
+                  <tr>
+                    <td><%= approval_request.job_execution.job.title %></td>
+                    <td><%= approval_request.job_execution.executor&.email || '-' %></td>
+                    <td>
+                  <span class="badge text-bg-<%= status_badge(approval_request.response) %>">waiting for approval</span>
+                    </td>
+                    <td>
+                      <%= link_to 'Show', activejob_web_job_job_approval_request_path(approval_request.job_execution.job, approval_request), class: 'btn btn-outline-primary' %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            <% else %>
+              <h6>No Pending Approval Requests Found!</h6>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <% if common_model? %>
     <%= render partial: 'activejob/web/jobs/common_user_index', locals: { approval_jobs: @approval_jobs, execution_jobs: @execution_jobs } %>
   <% else %>

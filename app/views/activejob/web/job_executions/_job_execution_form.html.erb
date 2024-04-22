@@ -27,7 +27,7 @@
           <div class="mb-3 row">
             <label for="status" class="col-sm-2 col-form-label">Status</label>
             <div class="col-sm-6">
-              <%= form.select :status, job_execution_status_keys, {}, class: 'form-control' %>
+              <%= form.select :status, [@job_execution.status], {}, class: 'form-control' %>
             </div>
           </div>
           <div class="mb-3 row">
