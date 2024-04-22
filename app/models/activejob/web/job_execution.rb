@@ -17,6 +17,7 @@ module Activejob
       validate :validate_approvers
       validates :requestor_comments, presence: true
 
+      scope :requested, -> { where(status: 'requested') }
       # == Callbacks =========================================================================================================
       after_initialize :set_default_status
       after_create :send_job_approval_request
@@ -54,6 +55,26 @@ module Activejob
         status == 'cancelled'
       end
 
+      def executed?
+        status == 'executed'
+      end
+
+      def execute(start_time = Time.now.utc)
+        return unless approved?
+
+        update(status: 'executed')
+        run_at = Time.now.utc
+        begin
+          initiate_job_execution
+          update(status: 'succeeded', execution_started_at: start_time, run_at: run_at)
+        rescue StandardError => e
+          update(status: 'failed',
+                 execution_started_at: start_time,
+                 run_at: run_at,
+                 reason_for_failure: e.message)
+        end
+      end
+
       private
 
       def set_default_status
@@ -64,6 +85,10 @@ module Activejob
         return if job.approvers.count >= job.minimum_approvals_required
 
         errors.add(:base, "Minimum Job Approver required is #{job.minimum_approvals_required}.")
+      end
+
+      def initiate_job_execution
+        job.job_name.constantize.perform_now('Dinesh', 'Suresh')
       end
     end
   end
