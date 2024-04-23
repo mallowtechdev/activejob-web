@@ -5,8 +5,7 @@ module Activejob
     class JobApprovalRequest < ApplicationRecord
       enum response: {
         rejected: 0,
-        approved: 1,
-        revoked: 2
+        approved: 1
       }
 
       # == Associations ==================================================================================================
@@ -34,7 +33,7 @@ module Activejob
       def update_job_execution_status
         return unless job_execution_requests.approved_requests.count >= job.minimum_approvals_required
 
-        job_execution.update(status: 'approved')
+        job_execution.update_columns(status: 'approved')
         return unless job_execution.auto_execute_on_approval
 
         job_execution.execute

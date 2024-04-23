@@ -22,7 +22,7 @@ module Activejob
 
       def update
         @job_execution.arguments = params['arguments']
-        if @job_execution.update(job_execution_params)
+        if @job_execution.update(job_execution_params) && @job_execution.remove_approval_requests
           redirect_to activejob_web_job_job_execution_path(@job), notice: 'Job execution was successfully updated.'
         else
           render :show
@@ -42,6 +42,7 @@ module Activejob
 
       def cancel
         if @job_execution.cancel_execution && @job_execution.update(status: 'cancelled')
+          @job_execution.remove_approval_requests
           flash[:notice] = 'Job execution cancelled successfully.'
         else
           flash[:alert] = 'Unable to cancel job execution.'
@@ -50,9 +51,7 @@ module Activejob
       end
 
       def reinitiate
-        if @job_execution.cancelled?
-          @job_execution.update(status: 'requested')
-          @job_execution.revoke_approval_requests
+        if @job_execution.cancelled? && @job_execution.update(status: 'requested') && @job_execution.remove_approval_requests
           flash[:notice] = 'Job execution Reinitiated successfully.'
         else
           flash[:alert] = 'Unable to Reinitiate job execution.'

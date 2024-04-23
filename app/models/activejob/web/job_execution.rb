@@ -35,12 +35,12 @@ module Activejob
         end
       end
 
-      def cancel_execution
-        (status == 'requested') || (status == 'approved' && execution_started_at.nil?)
+      def remove_approval_requests
+        send_job_approval_request if job_approval_requests.destroy_all && !cancelled?
       end
 
-      def revoke_approval_requests
-        job_approval_requests.where(response: 'approved').update_all(response: 'revoked')
+      def cancel_execution
+        (status == 'requested') || (status == 'approved' && execution_started_at.nil?)
       end
 
       def requested?
@@ -62,17 +62,17 @@ module Activejob
       def execute
         return unless approved?
 
-        update(status: 'executed')
+        update_columns(status: 'executed')
         initiate_job_execution
       end
 
       def self.update_job_execution_status(response)
         job_execution = Activejob::Web::JobExecution.find_by(active_job_id: response.job_id)
         execution_status = response.rescued_exception.present? ? 'failed' : 'succeeded'
-        job_execution.update(status: execution_status,
-                             execution_started_at: response.enqueued_at,
-                             run_at: response.scheduled_at,
-                             reason_for_failure: response.rescued_exception[:message])
+        job_execution.update_columns(status: execution_status,
+                                     execution_started_at: response.enqueued_at,
+                                     run_at: response.scheduled_at,
+                                     reason_for_failure: response.rescued_exception[:message])
       end
 
       private
@@ -90,7 +90,7 @@ module Activejob
       def initiate_job_execution
         values = arguments.values
         active_job = job.job_name.constantize.set(wait: 10.seconds).perform_later(*values)
-        update(active_job_id: active_job.job_id)
+        update_columns(active_job_id: active_job.job_id)
       end
     end
   end

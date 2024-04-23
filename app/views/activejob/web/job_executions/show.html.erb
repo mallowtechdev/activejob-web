@@ -1,3 +1,13 @@
+<style>
+    .terminal {
+        font-family: monospace;
+        background-color: #000;
+        color: #fff;
+        padding: 20px;
+        white-space: pre-wrap;
+        font-size: 10px;
+    }
+</style>
 <div class="row mt-3 p-3">
   <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
     <div class="card h-100">
@@ -13,6 +23,7 @@
       </div>
       <div class="card-body p-3">
         <table class="table">
+          <% if @job_approval_requests.present? %>
           <thead>
           <tr>
             <th scope="col">Approver Name</th>
@@ -31,6 +42,9 @@
             </tr>
           <% end %>
           </tbody>
+            <% else %>
+          <h6> No Approval Requests Found!</h6>
+          <% end %>
         </table>
       </div>
     </div>
@@ -136,6 +150,14 @@
             <% end %>
           </div>
         </div>
+
+        <% log_file_path = "log/#{@job_execution.id}_#{@job_execution.job_id}.log" %>
+        <% if File.exist?(log_file_path) %>
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Logs:</strong></div>
+            <div class="col-sm-9 terminal"><%= File.read(log_file_path) %></div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
