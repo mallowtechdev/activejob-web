@@ -37,7 +37,7 @@ module Activejob
         job_execution.update(status: 'approved')
         return unless job_execution.auto_execute_on_approval
 
-        job_execution.execute(Time.now.utc)
+        job_execution.execute
       end
     end
   end

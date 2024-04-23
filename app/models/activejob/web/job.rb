@@ -38,7 +38,7 @@ module Activejob
         end
 
         errors.add(:base, 'Approvers and Executors cannot be same.') if Activejob::Web.is_common_model && (approver_ids & executor_ids).any?
-        errors.add(:base, 'Please select at least 1 approver.') unless approver_ids.count.positive?
+        errors.add(:base, 'Please select at least 1 approver.') unless  minimum_approvals_required.positive? && approver_ids.count.positive?
       end
     end
   end

@@ -59,20 +59,20 @@ module Activejob
         status == 'executed'
       end
 
-      def execute(start_time = Time.now.utc)
+      def execute
         return unless approved?
 
         update(status: 'executed')
-        run_at = Time.now.utc
-        begin
-          initiate_job_execution
-          update(status: 'succeeded', execution_started_at: start_time, run_at: run_at)
-        rescue StandardError => e
-          update(status: 'failed',
-                 execution_started_at: start_time,
-                 run_at: run_at,
-                 reason_for_failure: e.message)
-        end
+        initiate_job_execution
+      end
+
+      def self.update_job_execution_status(response)
+        job_execution = Activejob::Web::JobExecution.find_by(active_job_id: response.job_id)
+        execution_status = response.rescued_exception.present? ? 'failed' : 'succeeded'
+        job_execution.update(status: execution_status,
+                             execution_started_at: response.enqueued_at,
+                             run_at: response.scheduled_at,
+                             reason_for_failure: response.rescued_exception[:message])
       end
 
       private
@@ -88,7 +88,9 @@ module Activejob
       end
 
       def initiate_job_execution
-        job.job_name.constantize.perform_now('Dinesh', 'Suresh')
+        values = arguments.values
+        active_job = job.job_name.constantize.set(wait: 10.seconds).perform_later(*values)
+        update(active_job_id: active_job.job_id)
       end
     end
   end

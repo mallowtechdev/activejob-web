@@ -9,7 +9,10 @@ module Activejob
       before_action :set_job_execution, only: %i[show update]
 
       def index
-        @job_approval_requests = @activejob_web_current_user.job_approval_requests.includes(:job_execution)
+        @job_approval_requests = Activejob::Web::JobApprovalRequest
+                                 .includes(:job_execution)
+                                 .where(job_execution_id: @job.job_execution_ids,
+                                        approver_id: @activejob_web_current_user.id)
       end
 
       def show; end
@@ -33,7 +36,6 @@ module Activejob
         @job_approval_request = @activejob_web_current_user.job_approval_requests.includes(:job_execution).find(params[:id])
       end
 
-
       def set_job_execution
         @job_execution = @job_approval_request.job_execution
       end
@@ -45,8 +47,6 @@ module Activejob
       def user_authorized?
         redirect_to root_path, alert: t('action.not_authorized') unless admin? || @job.approver_ids.include?(@activejob_web_current_user.id)
       end
-
     end
   end
 end
-

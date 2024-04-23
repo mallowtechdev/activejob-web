@@ -12,6 +12,7 @@ class CreateActivejobWebJobExecutions < ActiveRecord::Migration[7.1]
       t.boolean :auto_execute_on_approval
       t.timestamp :run_at
       t.timestamp :execution_started_at
+      t.string :active_job_id
       t.timestamps
     end
   end
