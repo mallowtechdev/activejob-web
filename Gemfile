@@ -28,5 +28,8 @@ group :development, :test do
 end
 gem 'rails-controller-testing', '~> 1.0', '>= 1.0.5'
 
+# For streaming logs to cloudwatch
+gem 'cloudwatchlogger'
+
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"

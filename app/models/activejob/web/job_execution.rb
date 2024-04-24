@@ -75,6 +75,19 @@ module Activejob
                                      reason_for_failure: response.rescued_exception[:message])
       end
 
+      def log_events
+        aws_credentials = Aws::Credentials.new(Activejob::Web.aws_credentials[:access_key_id], Activejob::Web.aws_credentials[:secret_access_key])
+        cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials: aws_credentials)
+        log_group_name = Activejob::Web.aws_credentials[:cloudwatch_log_group]
+        stream_name = "#{id}_#{job_id}"
+        begin
+          response = cloudwatch_logs.get_log_events(log_group_name:, log_stream_name: stream_name)
+          response.events.map { |event| cleaned_log(event.message) }
+        rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
+          []
+        end
+      end
+
       private
 
       def set_default_status
@@ -89,8 +102,12 @@ module Activejob
 
       def initiate_job_execution
         values = arguments.values
-        active_job = job.job_name.constantize.set(wait: 10.seconds).perform_later(*values)
+        active_job = job.job_name.constantize.set(wait: 5.seconds).perform_later(*values)
         update_columns(active_job_id: active_job.job_id)
+      end
+
+      def cleaned_log(log_string)
+        log_string.sub(/pid=\d+, thread=\d+, severity=[^,]+,/, '')
       end
     end
   end
