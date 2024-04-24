@@ -8,9 +8,14 @@
         font-size: 10px;
     }
 </style>
-<% unless job_execution.execution_started_at.blank? %>
-  <div class="mb-3 row">
-    <div class="col-sm-3"><strong class="text-dark">Logs:</strong></div>
-    <div class="col-sm-9 terminal"><%= fetch_log_events(job_execution) %></div>
-  </div>
-<% end %>
+<div class="mb-3 row">
+  <% if job_execution.execution_started_at.present? %>
+    <div class="col-sm-12 terminal p-3"><%= fetch_log_events(job_execution) %></div>
+  <% else %>
+    <div class="col-sm-12">
+      <h6>No logs found!</h6>
+    </div>
+  <% end %>
+</div>
+
+

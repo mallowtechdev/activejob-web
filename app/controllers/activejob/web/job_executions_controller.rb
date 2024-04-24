@@ -5,7 +5,7 @@ module Activejob
     class JobExecutionsController < ApplicationController
       before_action :set_job
       before_action :user_authorized?
-      before_action :set_job_execution, only: %i[show edit update cancel reinitiate execute]
+      before_action :set_job_execution, only: %i[show edit update cancel reinitiate execute logs]
       before_action :validate_status, only: %i[edit]
 
       def index
@@ -67,6 +67,8 @@ module Activejob
         end
         redirect_to activejob_web_job_job_execution_path(@job, @job_execution)
       end
+
+      def logs; end
 
       private
 
