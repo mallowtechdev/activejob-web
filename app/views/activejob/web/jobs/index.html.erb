@@ -40,7 +40,7 @@
     </div>
   </div>
 
-  <% if approver? %>
+  <% if admin? || approver? %>
     <div class="row mt-3 p-3">
       <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
         <div class="card h-100">
@@ -57,6 +57,7 @@
                 <tr>
                   <th scope="col">Title</th>
                   <th scope="col">Requestor Email</th>
+                  <th scope="col">Requestor Comment</th>
                   <th scope="col">Status</th>
                   <th scope="col">Actions</th>
                 </tr>
@@ -64,6 +65,7 @@
                   <tr>
                     <td><%= approval_request.job_execution.job.title %></td>
                     <td><%= approval_request.job_execution.executor&.email || '-' %></td>
+                    <td><%= approval_request.job_execution.requestor_comments || '-' %></td>
                     <td>
                   <span class="badge text-bg-<%= status_badge(approval_request.response) %>">waiting for approval</span>
                     </td>

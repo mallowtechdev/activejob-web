@@ -17,6 +17,7 @@
             <tr>
               <th scope="col">Title</th>
               <th scope="col">Requestor Email</th>
+              <th scope="col">Requestor Comment</th>
               <th scope="col">Status</th>
               <th scope="col">Actions</th>
             </tr>
@@ -24,6 +25,7 @@
               <tr>
                 <td><%= @job.title %></td>
                 <td><%= approval_request.job_execution.executor&.email || '-' %></td>
+                <td><%= approval_request.job_execution.requestor_comments || '-' %></td>
                 <td>
                   <span class="badge text-bg-<%= status_badge(approval_request.response) %>">
                   <%= approval_request.response.nil? ? 'waiting for approval' : approval_request.response %>
@@ -36,7 +38,7 @@
             <% end %>
           </table>
         <% else %>
-          <h3>No Job Approval Request Found!!!</h3>
+          <h6>No Job Approval Request Found!!!</h6>
         <% end %>
       </div>
     </div>

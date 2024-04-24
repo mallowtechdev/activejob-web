@@ -11,7 +11,7 @@ module Activejob
         @job_execution.arguments[argument_name]
       end
 
-      def get_log_events(job_execution)
+      def fetch_log_events(job_execution)
         job_execution.log_events.join("\n")
       end
     end

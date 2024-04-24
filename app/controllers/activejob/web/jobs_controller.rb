@@ -14,7 +14,9 @@ module Activejob
         else
           @jobs = @activejob_web_current_user.jobs
         end
-        @pending_approvals = Activejob::Web::JobApprovalRequest.includes(:job_execution).pending_requests(@activejob_web_current_user.id)
+        @pending_approvals = Activejob::Web::JobApprovalRequest
+                             .includes(:job_execution)
+                             .pending_requests(admin?, @activejob_web_current_user.id)
       end
 
       def show; end
@@ -63,4 +65,3 @@ module Activejob
     end
   end
 end
-

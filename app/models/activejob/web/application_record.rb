@@ -3,6 +3,8 @@ module Activejob
     class ApplicationRecord < ApplicationRecord
       self.abstract_class = true
 
+      default_scope { order(created_at: :desc) }
+
       def self.table_name_prefix
         'activejob_web_'
       end

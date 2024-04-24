@@ -8,11 +8,9 @@
         font-size: 10px;
     }
 </style>
-
-<%# log_file_path = "log/#{@job_execution.id}_#{@job_execution.job_id}.log" %>
-<%# if File.exist?(log_file_path) %>
+<% unless job_execution.execution_started_at.blank? %>
   <div class="mb-3 row">
     <div class="col-sm-3"><strong class="text-dark">Logs:</strong></div>
-    <div class="col-sm-9 terminal"><%= get_log_events(@job_execution) %></div>
+    <div class="col-sm-9 terminal"><%= fetch_log_events(job_execution) %></div>
   </div>
-<%# end %>
+<% end %>

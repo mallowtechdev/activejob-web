@@ -81,7 +81,11 @@ module Activejob
         log_group_name = Activejob::Web.aws_credentials[:cloudwatch_log_group]
         stream_name = "#{id}_#{job_id}"
         begin
-          response = cloudwatch_logs.get_log_events(log_group_name:, log_stream_name: stream_name)
+          response = cloudwatch_logs.get_log_events(
+            log_group_name:,
+            log_stream_name: stream_name,
+            start_from_head: true
+          )
           response.events.map { |event| cleaned_log(event.message) }
         rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
           []

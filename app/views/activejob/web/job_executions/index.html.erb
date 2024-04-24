@@ -12,8 +12,6 @@
         <% if @job_executions.present? %>
           <table class="table">
             <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Status</th>
               <th scope="col">Comments</th>
               <th scope="col">Status</th>
               <th scope="col">Auto Execute On Approval</th>
@@ -21,8 +19,6 @@
             </tr>
             <% @job_executions.each do |job_execution| %>
               <tr>
-                <td><%= job_execution.id %></td>
-                <td><%= job_execution.status %></td>
                 <td><%= job_execution.requestor_comments %></td>
                 <td><span class="badge text-bg-<%= status_badge(job_execution.status) %>"><%= job_execution.status %></span></td>
                 <td><%= job_execution.auto_execute_on_approval %></td>
@@ -41,5 +37,5 @@
   </div>
 </div>
 
-<%= render partial: 'job_execution_form',locals: { url:activejob_web_job_job_executions_path(@job), action_title: 'Create New' }%>
+<%= render partial: 'job_execution_form',locals: { url: activejob_web_job_job_executions_path(@job), action_title: 'Create New' }%>
 

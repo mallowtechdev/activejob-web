@@ -140,7 +140,7 @@
             <% end %>
           </div>
         </div>
-        <%= render partial: 'execution_log' %>
+        <%= render partial: 'execution_log', locals: { job_execution: @job_execution } %>
       </div>
     </div>
   </div>
