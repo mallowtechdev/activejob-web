@@ -9,7 +9,7 @@ module Activejob
       before_action :validate_status, only: %i[edit]
 
       def index
-        @job_executions = @job.job_executions.where(requestor_id: @activejob_web_current_user.id)
+        @job_executions = @job.job_executions.where(admin? ? nil : { requestor_id: @activejob_web_current_user.id })
         @job_execution = Activejob::Web::JobExecution.new(job_id: @job.id)
       end
 

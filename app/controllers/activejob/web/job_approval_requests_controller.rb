@@ -11,8 +11,8 @@ module Activejob
       def index
         @job_approval_requests = Activejob::Web::JobApprovalRequest
                                  .includes(:job_execution)
-                                 .where(job_execution_id: @job.job_execution_ids,
-                                        approver_id: @activejob_web_current_user.id)
+                                 .where(job_execution_id: @job.job_execution_ids)
+                                 .where(admin? ? nil : { approver_id: @activejob_web_current_user.id })
       end
 
       def show; end
