@@ -16,6 +16,7 @@ module Activejob
       # == Validations =========================================================================================================
       validate :validate_approvers
       validates :requestor_comments, presence: true
+      validates :executor, presence: true
 
       scope :requested, -> { where(status: 'requested') }
       # == Callbacks =========================================================================================================
@@ -40,7 +41,7 @@ module Activejob
       end
 
       def cancel_execution
-        (status == 'requested') || (status == 'approved' && execution_started_at.nil?)
+        status == 'requested' || (status == 'approved' && execution_started_at.nil?)
       end
 
       def requested?
@@ -48,7 +49,7 @@ module Activejob
       end
 
       def approved?
-        status == 'approved'
+        (requested? && job.minimum_approvals_required.zero?) || status == 'approved'
       end
 
       def cancelled?
