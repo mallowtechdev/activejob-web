@@ -28,8 +28,7 @@ module Activejob
       def validate_current_user_helper
         return if helpers.respond_to?(current_user_helper)
 
-        raise t('current_user_helper.method_missing')
-        # redirect_to login_path, alert: t('current_user_helper.method_missing')
+        redirect_to root_path, alert: t('current_user_helper.method_missing')
       end
 
       def set_activejob_web_current_user
@@ -75,8 +74,7 @@ module Activejob
       end
 
       def user_invalid_redirect
-        # redirect_to login_path, alert: t('user.invalid')
-        raise t('user.invalid')
+        redirect_to root_path, alert: t('user.invalid')
       end
     end
   end

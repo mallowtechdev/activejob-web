@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  root to: 'activejob/web/jobs#index'
-  get 'users/login', to: 'users#login', as: 'login'
-
   namespace :activejob do
     namespace :web do
       resources :jobs, only: %i[index show update edit] do
