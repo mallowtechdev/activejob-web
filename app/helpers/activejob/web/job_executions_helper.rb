@@ -11,6 +11,14 @@ module Activejob
         @job_execution.arguments[argument_name]
       end
 
+      def approval_request_details(job_execution)
+        [
+          job_execution.job_approval_requests.count,
+          job_execution.job_approval_requests.approved_requests.count,
+          job_execution.job_approval_requests.rejected_requests.count
+        ]
+      end
+
       def fetch_log_events(job_execution)
         job_execution.log_events.join("\n")
       end
