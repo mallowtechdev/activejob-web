@@ -18,7 +18,6 @@ module Activejob
         when 'requested' then 'primary'
         when 'approved', 'executed', 'succeeded' then 'success'
         when 'cancelled' then 'secondary'
-        when 'revoked' then 'info'
         when 'failed' then 'danger'
         when 'rejected' then 'warning'
         else
