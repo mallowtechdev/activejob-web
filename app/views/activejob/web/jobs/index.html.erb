@@ -6,7 +6,7 @@
           <div class="row align-items-center">
             <div class="col-6">
               <h5 class="text-muted fw-normal mt-0 text-truncate" title="Jobs">Jobs</h5>
-              <h3 class="my-2 py-1"><%= Activejob::Web::Job.count %></h3>
+              <h3 class="my-2 py-1"><%= job_count(@activejob_web_current_user) %></h3>
             </div>
           </div>
         </div>
@@ -19,7 +19,7 @@
           <div class="row align-items-center">
             <div class="col-6">
               <h5 class="text-muted fw-normal mt-0 text-truncate" title="Job Executions">Job Executions</h5>
-              <h3 class="my-2 py-1"><%= Activejob::Web::JobExecution.count %></h3>
+              <h3 class="my-2 py-1"><%= job_execution_count(@activejob_web_current_user) %></h3>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
           <div class="row align-items-center">
             <div class="col-12">
               <h5 class="text-muted fw-normal mt-0" title="Job Approval Requests">Job Approval Requests</h5>
-              <h3 class="my-2 py-1"><%= Activejob::Web::JobApprovalRequest.count %></h3>
+              <h3 class="my-2 py-1"><%= job_approval_count(@activejob_web_current_user) %></h3>
             </div>
           </div>
         </div>
