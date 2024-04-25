@@ -19,11 +19,10 @@ module Activejob
 
       def update
         if @job_approval_request.update(job_approval_request_params)
-          flash[:notice] = 'Job approval request updated successfully.'
+          redirect_to activejob_web_job_job_approval_requests_path(@job), notice: t('job_approval_requests.update.success')
         else
-          flash[:alert] = 'Please select either Approve or Decline to update.'
+          render :show
         end
-        redirect_to activejob_web_job_job_approval_requests_path(@job)
       end
 
       private

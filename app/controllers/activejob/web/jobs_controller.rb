@@ -26,7 +26,7 @@ module Activejob
       def update
         if @job.update(job_params)
           redirect_to activejob_web_job_path(@job)
-          flash[:notice] = t('jobs.update.success')
+          flash[:notice] = t('job.update.success')
         else
           render :edit
         end

@@ -102,7 +102,7 @@ module Activejob
       def validate_approvers
         return if job.approvers.count >= job.minimum_approvals_required
 
-        errors.add(:base, "Minimum Job Approver required is #{job.minimum_approvals_required}.")
+        errors.add(:base, t('job_executions.error.minimum_approver_required', minimum: job.minimum_approvals_required))
       end
 
       def initiate_job_execution

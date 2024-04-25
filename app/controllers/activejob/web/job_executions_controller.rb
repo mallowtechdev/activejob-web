@@ -23,7 +23,7 @@ module Activejob
       def update
         @job_execution.arguments = params['arguments']
         if @job_execution.update(job_execution_params) && @job_execution.remove_approval_requests
-          redirect_to activejob_web_job_job_execution_path(@job), notice: 'Job execution was successfully updated.'
+          redirect_to activejob_web_job_job_execution_path(@job), notice: t('job_executions.update.success')
         else
           render :show
         end
@@ -34,7 +34,7 @@ module Activejob
         @job_execution.arguments = params['arguments']
         @job_execution.requestor_id = @activejob_web_current_user.id if !admin? && @job_execution.requestor_id.nil?
         if @job_execution.save
-          redirect_to activejob_web_job_job_executions_path(@job), notice: 'Job execution created successfully.'
+          redirect_to activejob_web_job_job_executions_path(@job), notice: t('job_executions.create.success')
         else
           render :index
         end
@@ -43,27 +43,27 @@ module Activejob
       def cancel
         if @job_execution.cancel_execution && @job_execution.update(status: 'cancelled')
           @job_execution.remove_approval_requests
-          flash[:notice] = 'Job execution cancelled successfully.'
+          flash[:notice] = t('job_executions.cancel.success')
         else
-          flash[:alert] = 'Unable to cancel job execution.'
+          flash[:alert] = t('job_executions.cancel.failed')
         end
         redirect_to activejob_web_job_job_execution_path(@job, @job_execution)
       end
 
       def reinitiate
         if @job_execution.cancelled? && @job_execution.update(status: 'requested') && @job_execution.remove_approval_requests
-          flash[:notice] = 'Job execution Reinitiated successfully.'
+          flash[:notice] = t('job_executions.reinitiate.success')
         else
-          flash[:alert] = 'Unable to Reinitiate job execution.'
+          flash[:alert] = t('job_executions.reinitiate.failed')
         end
         redirect_to activejob_web_job_job_execution_path(@job, @job_execution)
       end
 
       def execute
         if @job_execution.execute
-          flash[:notice] = 'Job Execution executed successfully.'
+          flash[:notice] = t('job_executions.execute.success')
         else
-          flash[:alert] = 'Failed to execute Job Execution.'
+          flash[:alert] = t('job_executions.execute.failed')
         end
         redirect_to activejob_web_job_job_execution_path(@job, @job_execution)
       end

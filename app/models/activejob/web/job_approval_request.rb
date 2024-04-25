@@ -8,6 +8,9 @@ module Activejob
         approved: 1
       }
 
+      # == Validations ===============================================================================================
+      validates :approver_comments, presence: true
+
       # == Associations ==================================================================================================
       belongs_to :approver
       belongs_to :job_execution

@@ -35,10 +35,7 @@ module Activejob
       }.freeze
 
       def self.authorized?(user, resource, action)
-        puts "Authorized #{user.activejob_web_role} for #{resource} #{action}"
-        role = user.activejob_web_role
-        permissions = PERMISSIONS.fetch(role, {})
-        puts "Permissions: #{permissions}"
+        permissions = PERMISSIONS.fetch(user.activejob_web_role, {})
         permissions[resource.to_sym]&.include?(action.to_sym)
       end
     end

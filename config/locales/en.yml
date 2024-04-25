@@ -1,12 +1,40 @@
 en:
   current_user_helper:
     method_missing: "Please provide the 'current_user_method' in the ActiveJob::Web configuration or add the helper method 'activejob_web_current_user' to the ApplicationHelper."
-  jobs:
+
+  job:
     update:
       success: "Job was successfully updated."
+    error:
+      minimum_approver_required: "Minimum Approver required is %{minimum}. Please select %{need} more approver(s)."
+      same_permission: 'Approvers and Executors cannot be same.'
+
+  job_executions:
+    update:
+      success: 'Job execution was successfully updated.'
+    create:
+      success: 'Job execution was successfully created.'
+    cancel:
+      success: 'Job execution was successfully canceled.'
+      failed: 'Failed to cancel job execution.'
+    reinitiate:
+      success: 'Job execution was successfully reinitiated.'
+      failed: 'Failed to reinitiate job execution.'
+    execute:
+      success: 'Job execution was successfully executed.'
+      failed: 'Failed to execute job execution.'
+    error:
+      minimum_approver_required: "Minimum Job Approver required is %{minimum}."
+
+  job_approval_requests:
+    update:
+      success: "Job approval request was successfully updated."
+
   template:
     not_found: "Template file not found."
+
   action:
     not_authorized: "You are not authorized to perform this action."
+
   user:
     invalid: "User not found or Invalid..."

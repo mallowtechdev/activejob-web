@@ -34,13 +34,11 @@ module Activejob
 
       def validate_approvers_executors
         if approver_ids.count < minimum_approvals_required
-          errors.add(
-            :base,
-            "Minimum Approver required is #{minimum_approvals_required}. Please select #{minimum_approvals_required - approver_ids.count} more approver(s)."
-          )
+          errors.add(:base, t('job.error.minimum_approver_required', minimum: minimum_approvals_required,
+                                                                     need: minimum_approvals_required - approver_ids.count))
         end
 
-        errors.add(:base, 'Approvers and Executors cannot be same.') if Activejob::Web.is_common_model && approver_ids.intersect?(executor_ids)
+        errors.add(:base, t('job.error.same_permission')) if Activejob::Web.is_common_model && approver_ids.intersect?(executor_ids)
       end
     end
   end
