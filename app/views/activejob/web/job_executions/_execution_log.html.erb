@@ -10,12 +10,24 @@
 </style>
 <div class="mb-3 row">
   <% if job_execution.execution_started_at.present? %>
-    <div class="col-sm-12 terminal p-3"><%= fetch_log_events(job_execution) %></div>
+    <% if Activejob::Web.aws_credentials_present? %>
+      <div class="col-sm-12 terminal p-3"><%= fetch_log_events(job_execution) %></div>
+    <% else %>
+      <% log_file_path = "log/#{job_execution.id}_#{job_execution.job_id}.log" %>
+      <% if File.exist?(log_file_path) %>
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Logs:</strong></div>
+          <div class="col-sm-9 terminal"><%= File.read(log_file_path) %></div>
+        </div>
+      <% else %>
+        <div class="col-sm-12">
+          <h6>No logs found!</h6>
+        </div>
+      <% end %>
+    <% end %>
   <% else %>
     <div class="col-sm-12">
       <h6>No logs found!</h6>
     </div>
   <% end %>
 </div>
-
-

@@ -1,12 +1,14 @@
 # Activejob::Web
-ActiveJob::Web is a Rails engine that provides a web-based dashboard for managing and monitoring background job processing  in a Ruby on Rails application.
+`Activejob::Web` is a Rails engine, which means it's a packaged set of functionality that can be easily integrated into a Ruby on Rails application. This engine specifically focuses on providing a web-based dashboard. This dashboard serves the purpose of managing and monitoring background job processing within a Ruby on Rails application
 
 
 ## Usage
-rails plugin new activejob-web --full
+The `ActiveJob::Web` engine simplifies the execution of active jobs by providing a user-friendly interface accessible through a web browser.
 
 
-## Installation
+## Getting Started
+
+## Gem Installation
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -18,141 +20,159 @@ And then execute:
 $ bundle install
 ```
 
-Or install it yourself as:
-```bash
-$ gem install activejob-web
-```
+## Configuring Activejob Web Approvers and Executors
 
+By default, Activejob Web uses the `User` class as the model for job admins, approvers and executors. If you need to customize these classes, you can do so in the initializer file located at `config/initializers/activejob_web.rb`.
 
-## Configuring Activejob Web approvers and executors
-
-By default, Activejob Web uses the `User` class as the model for job approvers and executors. If you need to customize these classes, you can do so in the initializer file located at `config/initializers/activejob_web.rb`.
-
-For example, if your model to configure is 'Author', you can set the job approvers and executors classes as follows:
+For example, if your models to configure are 'Author' and 'User', you can set the job approvers and executors classes as follows
 
 ```ruby
 # config/initializers/activejob_web.rb
 
-Activejob::Web.job_approvers_class = 'Author'
-Activejob::Web.job_executors_class = 'Author'
-Activejob::Web.job_admins_class = 'Author'
+Activejob::Web.configure do |config|
+  config.admins_model = 'User'
+  config.approvers_model = 'User'
+  config.executors_model = 'Author'
+end
 ```
-where, `job_approvers_class`, `job_executors_class` and `job_admins_class` were defined as `mattr_accessors` in Activejob Web gem.
+where, `admins_model`, `approvers_model` and `executors_model` were defined as `mattr_accessors` in Activejob Web gem.
 
 ## Configuration for Authentication
-The ActivejobWeb Gem integrates with the authentication system used in your Rails application. To set up authentication, specify the `current_user` and `login_path` in the `apps/helpers/authentication_helper.rb` file as shown below,
+The ActivejobWeb Gem integrates with the authentication system used in your Rails application. To set up authentication,
+
+### Option One
+Specify the `current_user_method` in `config/initializers/activejob_web.rb` as shown below
 
 ```ruby
-# app/helpers/authentication_helper.rb
+# config/initializers/activejob_web.rb
 
-module AuthenticationHelper
+Activejob::Web.configure do |config|
+  ...
+  config.current_user_method = :current_user
+  ...
+end
+```
+
+Specify the `current_user` helper method in the `apps/helpers/application_helper.rb` file
+
+```ruby
+# app/helpers/application_helper.rb
+
+module ApplicationHelper
+  def current_user
+    # Specify the current user here
+  end
+end
+```
+
+### Option Two
+Specify the `activejob_web_current_user` helper method in the `apps/helpers/application_helper.rb` file
+
+```ruby
+# app/helpers/application_helper.rb
+
+module ApplicationHelper
   def activejob_web_current_user
     # Specify the current user here
     current_user
   end
-
-  def activejob_web_login_path
-    # Specify the path to redirect when user not authenticated
-    root_path
-  end
 end
 ```
-In the `activejob_web_current_user` method, specify the logic to fetch the current user for authentication.
 
-In the `activejob_web_login_path` method, On default it will have root_path but you can specify the path that the user have to redirected, if not signed in.
+Make sure that your application configured the `current_user` method.
 
-Make sure that your application controller includes the helper file named `AuthenticationHelper` and **helper_method** `activejob_web_current_user` as shown below,
-if not included please include the helper file and helper_method for the authentication related configurations. The redirection of users were specified in the application controller with the method name `activejob_web_authenticate_user` as shown below
+## Creating Activejob Web Jobs
+ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job to create the jobs
 
 ```ruby
-# app/controllers/application_controller.rb
+  job = Activejob::Web::Job.new(
+  title: "Sample Title",
+  description: "Sample Description",
+  input_arguments: [
+      ...
+    {
+      "name": "sample name",
+      "type": "String",
+      "required": true,
+      "allowed_characters": "<Regexp>",
+      "max_length": "10"
+    },
+    {
+      "name": "file",
+      "type": "File",
+      "required": true
+    } 
+      ...
+  ],
+  max_run_time: 60,
+  minimum_approvals_required: 2,
+  priority: 1,
+  job_name: '<JOB_NAME>' # SampleJob
+)
 
-class ApplicationController < ActionController::Base
-  include AuthenticationHelper
-  helper_method :activejob_web_current_user
-  before_action :activejob_web_authenticate_user
-  protect_from_forgery with: :exception
+job.save
 
-  protected
-
-  def activejob_web_authenticate_user
-    return if session[:authentication_checked]
-
-    return unless activejob_web_current_user.nil?
-
-    session[:authentication_checked] = true
-    redirect_to activejob_web_login_path, alert: 'Please log in'
-  end
-end
+#==== specified the file path and used File.open method to get the file, then attached the file
+file_path = "/../sample.png"
+file = File.open(file_path, 'rb')
+job.template_file.attach(io: file, filename: 'sample.png')
 ```
 
-## Enabling Routes for specific users to edit the Jobs
-By enabling this route, The specified super admin users will only have permission to edit the jobs. The implementation involves utilizing `route constraints` and a custom `lambda function` to restrict access based on a `super admin scope`.
-Assuming that your model to configure is 'User'.
-### 1. Define a scope named `active_job_admins` in the `User` model
-Specify the condition in the scope that it should return the users with the permission for the edit page of jobs. The example code was shown below the custom lambda.
-### 2. Define a Custom Lambda Method
-
-In your `User` model or the model you defined for approvers/executors, define a method named `allow_admin_access?` that represents the condition for user access. This lambda function will be used as a route constraint.
+## Active Job Configuration
+Include `ActiveJob::Web::JobConcern` in the Active Job you want to execute from the browser. Assign the error message to `@rescued_exception` to keep track of job failures.
 
 ```ruby
-# app/models/user.rb
+# app/jobs/job_one.rb
 
-class User < ApplicationRecord
-  # Your existing user model code
+class JobOne < ActiveJob::Base
+  include Activejob::Web::JobConcern
 
-  # Define a scope for super admins here
-  scope :active_job_admins, -> { User.all.limit(10) }
-
-  # Your other scopes and methods...
-
-  # Define a custom lambda inside a method for route constraint
-  def self.allow_admin_access?
-    lambda do |_request|
-      active_job_admins.include?(current_user)
-      # Your custom logic to determine user access goes here
-    end
+  def perform
+    # code...
+  rescue StandardError => e
+    Rails.logger.info "Error: #{e.message}"
+    @rescued_exception = { message: e.message }
   end
 end
 ```
-If the condition specified in the `allow_admin_access?` returns `true` the current user can able to edit the jobs.
 
-### 3. Route customization
-In Activejob Web, you have the flexibility to customize routes based on specific user requirements. By default, every user is allowed to edit jobs, but you can customize the routes to be accessible only by specific users.
 
-For that, first you have to specify the scope and lambda for the `User` or the required model as mentioned in the previous points.Then, start by configuring the `enable_custom_routes` option in the initializer file `activejob_web.rb`. Set it to `true` as shown below:
+## CloudWatch Configuration
+By default, ActiveJob::Web uses the default Rails.logger for logging. It creates separate logs for each execution. If you need to configure CloudWatch, you can do so in the initializer.
 
 ```ruby
 # config/initializers/activejob_web.rb
 
-Rails.application.config.enable_custom_routes = true
+Activejob::Web.configure do |config|
+  ...
+  config.aws_credentials = {
+    access_key_id: '<ACCESS_KEY_ID>',
+    secret_access_key: '<SECRET_ACCESS_KEY>',
+    cloudwatch_log_group: '<LOG_GROUP_NAME>'
+  }
+  ...
+end
 ```
-Your routes for jobs edit will look like this
+CloudWatch Log Stream name will be constructed as following
 ```ruby
-# config/routes.rb
-
-if Rails.application.config.enable_custom_routes == true
-    get 'activejob_web/jobs/:id/edit', to: 'activejob_web/jobs#edit',
-                                       constraints: UserRoleConstraint.new(Activejob::Web.job_approvers_class.constantize.allow_admin_access?),
-                                       as: 'edit_activejob_web_job'
-  else
-    get 'activejob_web/jobs/:id/edit', to: 'activejob_web/jobs#edit'
-  end
+"#{job_execution_id}_#{job_id}" # 1_865403ac-5ac3-43da-b291-d65be727a892
 ```
-In this route, you have to customize the method name `allow_admin_access?` if you are using a different name for the method.
 
-The edit jobs route uses a constraint file named `user_role_constraint.rb` for processing the lambda you define in the `allow_admin_access?` method as shown below,
+### Streaming logs to CloudWatch
+Use the `activejob_web_logger` Logger to stream the logs to CloudWatch.
+
 ```ruby
-# app/constraints/user_role_constraint.rb
+# app/jobs/job_one.rb
 
-class UserRoleConstraint
-  def initialize(lambda_function)
-    @lambda_function = lambda_function
-  end
+class JobOne < ActiveJob::Base
+  include Activejob::Web::JobConcern
 
-  def matches?(request)
-    # Call the lambda function and pass the request as an argument
-    @lambda_function.call(request)
+  def perform
+    # code...
+  rescue StandardError => e
+    Rails.logger.info "Error: #{e.message}" # This log will be handled as the default.
+    activejob_web_logger.info "Error: #{e.message}" # This log will be streamed to CloudWatch.
+    @rescued_exception = { message: e.message }
   end
 end
 ```
