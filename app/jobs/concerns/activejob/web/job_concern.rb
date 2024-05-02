@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Activejob
   module Web
     module JobConcern
@@ -6,31 +8,52 @@ module Activejob
       included do
         queue_as :default
 
+        attr_accessor :job_execution
         attr_accessor :rescued_exception
         attr_accessor :activejob_web_logger
 
-        before_perform do |job|
-          job.rescued_exception = {}
-          job_execution = Activejob::Web::JobExecution.find_by(active_job_id: job.job_id)
-          if Activejob::Web.aws_credentials_present?
-            job.activejob_web_logger = CloudWatchLogger.new({
-                                                              access_key_id: Activejob::Web.aws_credentials[:access_key_id],
-                                                              secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
-                                                            },
-                                                            Activejob::Web.aws_credentials[:cloudwatch_log_group],
-                                                            "#{job_execution.id}_#{job_execution.job_id}")
-          else
-            job.activejob_web_logger = ActiveSupport::Logger.new(Rails.root.join("log/#{job_execution.id}_#{job_execution.job_id}.log"))
-          end
-
-          job.activejob_web_logger.info '===================== JOB START ======================'
-        end
-
+        before_perform :set_job_execution
+        before_perform :set_logger
+        around_perform :set_timeout
         after_perform :update_job_executions
 
         def update_job_executions
           Activejob::Web::JobExecution.update_job_execution_status(self)
         end
+      end
+
+      private
+
+      def set_job_execution
+        self.job_execution = Activejob::Web::JobExecution.find_by(active_job_id: job_id)
+      end
+
+      def set_logger
+        self.rescued_exception = {}
+        self.activejob_web_logger = job_logger(job_execution)
+        activejob_web_logger.info '===================== JOB START ======================'
+      end
+
+      def job_logger(job_execution)
+        if Activejob::Web.aws_credentials_present?
+          CloudWatchLogger.new({
+                                 access_key_id: Activejob::Web.aws_credentials[:access_key_id],
+                                 secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
+                               },
+                               Activejob::Web.aws_credentials[:cloudwatch_log_group],
+                               "#{job_execution.id}_#{job_execution.job_id}",
+                               { http_open_timeout: 10, http_read_timeout: 10 })
+        else
+          ActiveSupport::Logger.new(Rails.root.join("log/#{job_execution.id}_#{job_execution.job_id}.log"))
+        end
+      end
+
+      def set_timeout(&)
+        Timeout.timeout(job_execution.job.max_run_time, &)
+      rescue Timeout::Error => e
+        self.rescued_exception = { message: "Timeout::Error - #{e.message}" }
+        activejob_web_logger.info "Timeout::Error - #{e.message}"
+        update_job_executions
       end
     end
   end

@@ -66,13 +66,13 @@ end
 ```
 
 ### Option Two
-Specify the `activejob_web_current_user` helper method in the `apps/helpers/application_helper.rb` file
+Specify the `activejob_web_user` helper method in the `apps/helpers/application_helper.rb` file
 
 ```ruby
 # app/helpers/application_helper.rb
 
 module ApplicationHelper
-  def activejob_web_current_user
+  def activejob_web_user
     # Specify the current user here
     current_user
   end

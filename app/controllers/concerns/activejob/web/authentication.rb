@@ -66,7 +66,7 @@ module Activejob
       end
 
       def current_user_helper
-        Activejob::Web.current_user_method.presence || :activejob_web_current_user
+        Activejob::Web.current_user_method.presence || :activejob_web_user
       end
 
       def valid_model?(user, model)
