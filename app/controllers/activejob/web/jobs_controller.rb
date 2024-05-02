@@ -49,7 +49,7 @@ module Activejob
 
       def set_job_users
         @approvers, @executors =
-          USER_TYPES.map do |user_type|
+          %w[approver executor].map do |user_type|
             @job.public_send("#{user_type}s").pluck(:email)
           end
       end
