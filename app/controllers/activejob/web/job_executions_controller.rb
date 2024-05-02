@@ -15,7 +15,7 @@ module Activejob
 
       def show
         @job_execution = @job.job_executions.find(params[:id])
-        @job_approval_requests = @job_execution.job_approval_requests
+        @job_approval_requests = Activejob::Web::JobApprovalRequest.includes(:approver).where(job_execution_id: @job_execution.id)
       end
 
       def edit; end

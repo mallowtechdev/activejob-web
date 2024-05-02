@@ -80,6 +80,8 @@ module Activejob
         PRIVATE_CONFIG_KEYS.each do |k, v|
           send(:"#{k}=", v)
         end
+
+        common_model_setup
       end
 
       def development?

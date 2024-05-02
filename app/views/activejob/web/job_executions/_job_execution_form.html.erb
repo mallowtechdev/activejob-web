@@ -69,7 +69,7 @@
                       <%= datetime_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
                     <% when "String" %>
                       <%= text_field_tag "arguments[#{argument_name}]", argument_value(argument_name), maxlength: argument["max_length"], required: argument["required"], class: 'form-control' %>
-                    <% when "integer" %>
+                    <% when "Integer" %>
                       <%= number_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
                     <% end %>
                   </div>

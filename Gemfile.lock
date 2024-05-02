@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     activejob-web (0.1.0)
-      rails (>= 7.0.8)
+      rails (>= 6.1.0)
 
 GEM
   remote: https://rubygems.org/
