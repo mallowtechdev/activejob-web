@@ -76,21 +76,16 @@ module Activejob
                                      reason_for_failure: response.rescued_exception[:message])
       end
 
-      def log_events
+      def log_events(page_token = nil)
         aws_credentials = Aws::Credentials.new(Activejob::Web.aws_credentials[:access_key_id], Activejob::Web.aws_credentials[:secret_access_key])
         cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials: aws_credentials)
         log_group_name = Activejob::Web.aws_credentials[:cloudwatch_log_group]
         stream_name = "#{id}_#{job_id}"
-        begin
-          response = cloudwatch_logs.get_log_events(
-            log_group_name:,
-            log_stream_name: stream_name,
-            start_from_head: true
-          )
-          response.events.map { |event| cleaned_log(event.message) }
-        rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
-          []
-        end
+        request_data = { log_group_name:, log_stream_name: stream_name, limit: 10_000, start_from_head: false }
+        request_data.merge!({ next_token: page_token }) if page_token.present?
+        cloudwatch_logs.get_log_events(request_data)
+      rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
+        []
       end
 
       private
@@ -109,10 +104,6 @@ module Activejob
         values = arguments.values
         active_job = job.job_name.constantize.set(wait: 5.seconds).perform_later(*values)
         update_columns(active_job_id: active_job.job_id)
-      end
-
-      def cleaned_log(log_string)
-        log_string.sub(/pid=\d+, thread=\d+, severity=[^,]+,/, '')
       end
     end
   end

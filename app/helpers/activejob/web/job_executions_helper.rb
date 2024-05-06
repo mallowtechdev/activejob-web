@@ -19,8 +19,9 @@ module Activejob
         ]
       end
 
-      def fetch_log_events(job_execution)
-        job_execution.log_events.join("\n")
+      def fetch_log_events(job_execution, page_token)
+        response = job_execution.log_events(page_token)
+        [response.events.map(&:message), response.next_backward_token, response.next_forward_token]
       end
     end
   end
