@@ -5,8 +5,8 @@ require_relative 'lib/activejob/web/version'
 Gem::Specification.new do |spec|
   spec.name        = 'activejob-web'
   spec.version     = Activejob::Web::VERSION
-  spec.authors     = %w[gowtham mohammednazeer]
-  spec.email       = %w[gowtham.kuppusamy@mallow-tech.com mohammednazeer@mallow-tech.com]
+  spec.authors     = %w[prakash surender]
+  spec.email       = %w[prakash@mallow-tech.com surender@mallow-tech.com]
   spec.homepage    = 'https://github.com/mallowtechdev/activejob-web'
   spec.summary     = 'Web-based dashboard for managing and monitoring background jobs'
   spec.description = 'Activejob-web simplifies the background job management in rails'

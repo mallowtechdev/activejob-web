@@ -58,7 +58,7 @@
                 <%= button_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-outline-danger mr-2', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancelled? %>
-                <%= button_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-outline-primary'  %>
+                <%= button_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-outline-primary mr-2'  %>
               <% end %>
               <% if @job_execution.execution_started_at.present? %>
                 <%= button_to 'Logs',logs_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-outline-info'  %>

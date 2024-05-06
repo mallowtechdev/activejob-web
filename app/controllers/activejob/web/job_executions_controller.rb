@@ -6,7 +6,6 @@ module Activejob
       before_action :set_job
       before_action :user_authorized?
       before_action :set_job_execution, only: %i[show edit update cancel reinitiate execute logs]
-      before_action :validate_status, only: %i[edit]
 
       def index
         @job_executions = @job.job_executions.where(admin? ? nil : { requestor_id: @activejob_web_current_user.id })
@@ -22,7 +21,7 @@ module Activejob
 
       def update
         @job_execution.arguments = params['arguments']
-        if @job_execution.update(job_execution_params) && @job_execution.remove_approval_requests
+        if @job_execution.update(job_execution_params.merge({ status: 'requested' })) && @job_execution.remove_approval_requests
           redirect_to activejob_web_job_job_execution_path(@job), notice: 'Job execution was successfully updated.'
         else
           render :show
@@ -86,12 +85,6 @@ module Activejob
 
       def user_authorized?
         redirect_to root_path, alert: 'You are not authorized to perform this action' unless admin? || @job.executor_ids.include?(@activejob_web_current_user.id)
-      end
-
-      def validate_status
-        # return if @job_execution.job_approval_requests.pluck(:response).blank?
-        #
-        # redirect_to activejob_web_job_job_executions_path(@job), alert: 'This job approval request has been processed. You cannot edit this!'
       end
     end
   end
