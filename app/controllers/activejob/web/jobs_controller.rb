@@ -26,7 +26,7 @@ module Activejob
       def update
         if @job.update(job_params)
           redirect_to activejob_web_job_path(@job)
-          flash[:notice] = t('job.update.success')
+          flash[:notice] = 'Job was successfully updated.'
         else
           render :edit
         end
@@ -36,7 +36,7 @@ module Activejob
         if @job.template_file.attached?
           send_file @job.template_file.download
         else
-          flash[:error] = t('template.not_found')
+          flash[:error] = 'Template file not found.'
           redirect_to @job
         end
       end

@@ -13,7 +13,7 @@ module Activejob
       private
 
       def authorized?
-        redirect_to root_path, alert: t('action.not_authorized') unless Activejob::Web::Authorization.authorized?(
+        redirect_to root_path, alert: 'You are not authorized to perform this action' unless Activejob::Web::Authorization.authorized?(
           @activejob_web_current_user,
           controller_name,
           action_name

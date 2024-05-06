@@ -19,7 +19,7 @@ module Activejob
 
       def update
         if @job_approval_request.update(job_approval_request_params)
-          redirect_to activejob_web_job_job_approval_requests_path(@job), notice: t('job_approval_requests.update.success')
+          redirect_to activejob_web_job_job_approval_requests_path(@job), notice: 'Job approval request was successfully updated.'
         else
           render :show
         end
@@ -44,7 +44,7 @@ module Activejob
       end
 
       def user_authorized?
-        redirect_to root_path, alert: t('action.not_authorized') unless admin? || @job.approver_ids.include?(@activejob_web_current_user.id)
+        redirect_to root_path, alert: 'You are not authorized to perform this action' unless admin? || @job.approver_ids.include?(@activejob_web_current_user.id)
       end
     end
   end
