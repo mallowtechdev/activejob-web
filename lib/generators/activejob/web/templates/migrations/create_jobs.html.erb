@@ -1,6 +1,6 @@
-# lib/generators/my_engine/templates/create_jobs.rb
+# frozen_string_literal: true
 
-class CreateJobs < ActiveRecord::Migration[7.0]
+class CreateJobs < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :activejob_web_jobs, id: false do |t|
       t.uuid :id, default: -> { 'gen_random_uuid()' }, null: false

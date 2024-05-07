@@ -13,7 +13,6 @@
       <% log_events, previous_token, next_token = fetch_log_events(job_execution, page_token) %>
       <% if log_events.present? %>
         <div class="col-sm-12 terminal"><%= log_events.join("\n") %></div>
-        <div class="col-sm-12 terminal">2024-05-06 16:16:25 +0000 30/06/2022 11:27:28 | Manual |  | Update |  | 123123123</div>
       <% else %>
         <div class="col-sm-12">
           <h6>No logs found!</h6>

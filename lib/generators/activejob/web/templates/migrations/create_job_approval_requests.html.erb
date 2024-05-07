@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateJobApprovalRequests < ActiveRecord::Migration[7.0]
+class CreateJobApprovalRequests < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :activejob_web_job_approval_requests do |t|
       t.integer :job_execution_id

@@ -12,17 +12,17 @@ module Activejob
         end
 
         def create_migration_files
-          migration_template 'migrations/create_jobs.rb',
+          migration_template 'migrations/create_jobs.html.erb',
                              'db/migrate/create_jobs.rb'
-          migration_template 'migrations/create_join_table_job_approvers.rb',
+          migration_template 'migrations/create_join_table_job_approvers.html.erb',
                              'db/migrate/create_join_table_job_approvers.rb'
-          migration_template 'migrations/create_join_table_job_executors.rb',
+          migration_template 'migrations/create_join_table_job_executors.html.erb',
                              'db/migrate/create_join_table_job_executors.rb'
-          migration_template 'migrations/create_activejob_web_job_executions.rb',
+          migration_template 'migrations/create_activejob_web_job_executions.html.erb',
                              'db/migrate/create_activejob_web_job_executions.rb'
-          migration_template 'migrations/create_job_approval_requests.rb',
+          migration_template 'migrations/create_job_approval_requests.html.erb',
                              'db/migrate/create_job_approval_requests.rb'
-          migration_template 'migrations/create_active_storage_tables.active_storage.rb',
+          migration_template 'migrations/create_active_storage_tables.active_storage.html.erb',
                              'db/migrate/create_active_storage_tables.active_storage.rb'
         end
 
