@@ -5,7 +5,7 @@ namespace :activejob do
     desc 'Create Activejob Web Job'
     task :create_job,
          %i[title description input_arguments max_run_time minimum_approvals_required priority job_name] => :environment do |_task, args|
-      Rake::Task['app:activejob:web:rake_log'].execute('Started creating Activejob Web Job task.')
+      Rake::Task['activejob:web:rake_log'].execute('Started creating Activejob Web Job task.')
 
       job_attributes = { title: ENV.fetch('title', args[:title]),
                          description: ENV.fetch('description', args[:description]),
@@ -17,16 +17,15 @@ namespace :activejob do
                          job_name: ENV.fetch('job_name', args[:job_name]) }
 
       begin
-        Rake::Task['app:activejob:web:rake_log'].execute("Given Args: #{job_attributes}")
+        Rake::Task['activejob:web:rake_log'].execute("Given Args: #{job_attributes}")
         Activejob::Web::Job.create!(job_attributes)
-        Rake::Task['app:activejob:web:rake_log'].execute('Activejob Web Job created successfully.')
+        Rake::Task['activejob:web:rake_log'].execute('Activejob Web Job created successfully.')
       rescue ActiveRecord::RecordInvalid => e
-        Rake::Task['app:activejob:web:rake_log'].execute("Failed To Create Job: #{e.message}")
+        Rake::Task['activejob:web:rake_log'].execute("Failed To Create Job: #{e.message}")
       end
     end
 
-    private
-
+    desc 'Logging task info'
     task :rake_log, [:message] => :environment do |_task, message|
       Rails.logger.info(message)
       puts(message)
