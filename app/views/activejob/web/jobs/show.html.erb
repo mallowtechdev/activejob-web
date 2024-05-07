@@ -115,7 +115,19 @@
                           <p class="font-14 my-1 fw-normal"><%= arguments["required"] %></p>
                         </td>
                         <td>
-                          <p class="font-14 my-1 fw-normal"><%= arguments.except('name', 'type', 'required').presence || '-' %></p>
+                          <% if arguments.except('name', 'type', 'required').present? %>
+                            <% arguments.except('name', 'type', 'required').each do |key| %>
+                              <p class="mb-0">
+                                <% if key[0] == 'allowed_characters' %>
+                                  <%= "Regex: #{key[1].last}" %>
+                                <% else %>
+                                  <%= "#{key[0]}: #{key[1]}" %>
+                                <% end %>
+                              </p>
+                            <% end %>
+                          <% else %>
+                            -
+                          <% end %>
                         </td>
                       </tr>
                     <% end %>

@@ -15,6 +15,7 @@ module Activejob
 
       # == Validations =========================================================================================================
       validate :validate_approvers
+      validate :validate_arguments
       validates :requestor_comments, presence: true
       validates :executor, presence: true
 
@@ -106,6 +107,23 @@ module Activejob
         values = arguments.values
         active_job = job.job_name.constantize.set(wait: 5.seconds).perform_later(*values)
         update_columns(active_job_id: active_job.job_id)
+      end
+
+      def validate_arguments
+        job_arguments = job.input_arguments
+        arguments.each do |key, value|
+          job_arg_regex = get_regex_for_key(key, job_arguments)
+          next if job_arg_regex.nil? || value.match?(Regexp.new(job_arg_regex.first))
+
+          errors.add(:base, "Input argument #{key} does not match regex '#{job_arg_regex.last}'")
+        end
+      end
+
+      def get_regex_for_key(key, job_args)
+        job_arg = job_args.find { |arg| arg['name'] == key }
+        return nil unless job_arg
+
+        job_arg['allowed_characters']
       end
     end
   end
