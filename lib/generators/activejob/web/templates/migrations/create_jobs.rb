@@ -1,4 +1,5 @@
 # lib/generators/my_engine/templates/create_jobs.rb
+
 class CreateJobs < ActiveRecord::Migration[7.0]
   def change
     create_table :activejob_web_jobs, id: false do |t|

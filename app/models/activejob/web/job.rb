@@ -30,10 +30,13 @@ module Activejob
       # Default value for queue
       def set_default_queue
         self.queue ||= 'default'
+        self.max_run_time ||= 60
+        self.minimum_approvals_required ||= 0
+        self.priority ||= 1
       end
 
       def validate_approvers_executors
-        return if minimum_approvals_required.zero?
+        return unless minimum_approvals_required.positive?
 
         if approver_ids.count < minimum_approvals_required
           errors.add(:base, "Minimum Approver required is #{minimum_approvals_required}. Please select #{minimum_approvals_required - approver_ids.count} more approver(s).")

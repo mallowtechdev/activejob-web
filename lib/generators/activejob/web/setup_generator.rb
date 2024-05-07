@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 module Activejob
   module Web
     module Generators
       class SetupGenerator < Rails::Generators::Base
+        include Rails::Generators::Migration
         source_root File.expand_path('templates', __dir__)
 
         def create_initializer_file
@@ -9,18 +12,23 @@ module Activejob
         end
 
         def create_migration_files
-          template 'migrations/create_jobs.rb', "db/migrate/#{generated_time_stamp}_create_jobs.rb"
-          template 'migrations/create_join_table_job_approvers.rb', "db/migrate/#{generated_time_stamp}_create_join_table_job_approvers.rb"
-          template 'migrations/create_join_table_job_executors.rb', "db/migrate/#{generated_time_stamp}_create_join_table_job_executors.rb"
-          template 'migrations/create_activejob_web_job_executions.rb', "db/migrate/#{generated_time_stamp}_create_activejob_web_job_executions.rb"
-          template 'migrations/create_job_approval_requests.rb', "db/migrate/#{generated_time_stamp}_create_job_approval_requests.rb"
+          migration_template 'migrations/create_jobs.rb',
+                             'db/migrate/create_jobs.rb'
+          migration_template 'migrations/create_join_table_job_approvers.rb',
+                             'db/migrate/create_join_table_job_approvers.rb'
+          migration_template 'migrations/create_join_table_job_executors.rb',
+                             'db/migrate/create_join_table_job_executors.rb'
+          migration_template 'migrations/create_activejob_web_job_executions.rb',
+                             'db/migrate/create_activejob_web_job_executions.rb'
+          migration_template 'migrations/create_job_approval_requests.rb',
+                             'db/migrate/create_job_approval_requests.rb'
+          migration_template 'migrations/create_active_storage_tables.active_storage.rb',
+                             'db/migrate/create_active_storage_tables.active_storage.rb'
         end
 
-        private
-
-        def generated_time_stamp
-          sleep 1.5
-          Time.now.utc.strftime('%Y%m%d%H%M%S')
+        def self.next_migration_number(dirname)
+          next_migration_number = current_migration_number(dirname) + 1
+          ActiveRecord::Migration.next_migration_number(next_migration_number)
         end
       end
     end
