@@ -25,7 +25,9 @@ namespace :activejob do
       end
     end
 
-    desc 'Logging task info'
+    private
+
+    desc 'Logging activejob web task info'
     task :rake_log, [:message] => :environment do |_task, message|
       Rails.logger.info(message)
       puts(message)
