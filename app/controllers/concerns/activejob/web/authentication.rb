@@ -28,7 +28,7 @@ module Activejob
       def validate_current_user_helper
         return if helpers.respond_to?(current_user_helper)
 
-        redirect_to root_path, alert: "Please provide the 'current_user_method' in the ActiveJob::Web configuration or add the helper method 'activejob_web_current_user' to the ApplicationHelper."
+        redirect_to root_path, alert: "Please configure the 'current_user_method' in the ActiveJob::Web configuration, or add the helper method 'activejob_web_user' to the ApplicationHelper."
       end
 
       def set_activejob_web_current_user

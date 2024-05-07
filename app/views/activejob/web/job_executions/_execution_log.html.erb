@@ -29,8 +29,7 @@
       <% log_file_path = "log/#{job_execution.id}_#{job_execution.job_id}.log" %>
       <% if File.exist?(log_file_path) %>
         <div class="mb-3 row">
-          <div class="col-sm-3"><strong class="text-dark">Logs:</strong></div>
-          <div class="col-sm-9 terminal"><%= File.read(log_file_path) %></div>
+          <div class="col-sm-12 terminal"><%= File.read(log_file_path) %></div>
         </div>
       <% else %>
         <div class="col-sm-12">

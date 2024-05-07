@@ -12,10 +12,9 @@ module Activejob
         attr_accessor :rescued_exception
         attr_accessor :activejob_web_logger
 
-        before_perform :set_job_execution
-        before_perform :set_logger
-        around_perform :set_timeout
-        after_perform :update_job_executions
+        before_perform :set_job_execution, :set_logger, only: :perform
+        around_perform :set_timeout, only: :perform
+        after_perform :update_job_executions, only: :perform
 
         def update_job_executions
           Activejob::Web::JobExecution.update_job_execution_status(self)
@@ -50,9 +49,9 @@ module Activejob
 
       def set_timeout(&)
         Timeout.timeout(job_execution.job.max_run_time, &)
-      rescue Timeout::Error => e
-        self.rescued_exception = { message: "Timeout::Error - #{e.message}" }
-        activejob_web_logger.info "Timeout::Error - #{e.message}"
+      rescue StandardError => e
+        self.rescued_exception = { message: "Error in Activejob Web JobExecution - #{e.message}" }
+        activejob_web_logger.info "Error in Activejob Web Job Execution - #{e.message}"
         update_job_executions
       end
     end
