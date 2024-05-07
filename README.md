@@ -20,6 +20,77 @@ And then execute:
 $ bundle install
 ```
 
+## Setup
+you need to run the generator:
+```bash
+$ rails generate activejob:web:setup
+```
+
+The generator adds these core files, among others:
+
+- `activejob_web.rb`: Initializer file in the `config/initializers` directory.
+- Migrations in the `db/migrate` directory:
+
+    - `create_jobs.rb`
+    - `create_activejob_web_job_executions.rb`
+    - `create_join_table_job_executors.rb`
+    - `create_job_approval_requests.rb`
+    - `create_join_table_job_approvers.rb`
+    - `create_active_storage_tables.active_storage.rb`
+
+Then run:
+```bash
+$ rake db:migrate
+```
+
+## Create Activejob Web Jobs
+ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job to create the jobs
+
+```ruby
+  job = Activejob::Web::Job.new(
+  title: "Sample Title",
+  description: "Sample Description",
+  input_arguments: [
+      ...
+    {
+      "name": "sample name",
+      "type": "String",
+      "required": true,
+      "allowed_characters": "<Regexp>",
+      "max_length": "10"
+    },
+    {
+      "name": "file",
+      "type": "File",
+      "required": true
+    } 
+      ...
+  ],
+  max_run_time: 60,
+  minimum_approvals_required: 2,
+  priority: 1,
+  job_name: '<JOB_NAME>' # SampleJob
+)
+
+job.save
+
+#==== specified the file path and used File.open method to get the file, then attached the file
+file_path = "/../sample.png"
+file = File.open(file_path, 'rb')
+job.template_file.attach(io: file, filename: 'sample.png')
+```
+
+Or
+
+Run the following command in the terminal:
+
+```bash
+# [:title :description :max_run_time :minimum_approvals_required :priority :job_name]
+# Input Arguments should be in the format '[{"key":"value","key":"value"}, { ... }]' Sample: '[{"name":"app_id","type":"Integer","required":true}]'
+$ rake activejob:web:create_job['sample title','sample description',60,0,1,'SampleJob'] input_arguments='sample arguments'
+```
+
+
 ## Configuring Activejob Web Approvers and Executors
 
 By default, Activejob Web uses the `User` class as the model for job admins, approvers and executors. If you need to customize these classes, you can do so in the initializer file located at `config/initializers/activejob_web.rb`.
@@ -80,43 +151,6 @@ end
 ```
 
 Make sure that your application configured the `current_user` method.
-
-## Creating Activejob Web Jobs
-ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job to create the jobs
-
-```ruby
-  job = Activejob::Web::Job.new(
-  title: "Sample Title",
-  description: "Sample Description",
-  input_arguments: [
-      ...
-    {
-      "name": "sample name",
-      "type": "String",
-      "required": true,
-      "allowed_characters": "<Regexp>",
-      "max_length": "10"
-    },
-    {
-      "name": "file",
-      "type": "File",
-      "required": true
-    } 
-      ...
-  ],
-  max_run_time: 60,
-  minimum_approvals_required: 2,
-  priority: 1,
-  job_name: '<JOB_NAME>' # SampleJob
-)
-
-job.save
-
-#==== specified the file path and used File.open method to get the file, then attached the file
-file_path = "/../sample.png"
-file = File.open(file_path, 'rb')
-job.template_file.attach(io: file, filename: 'sample.png')
-```
 
 ## Active Job Configuration
 Include `ActiveJob::Web::JobConcern` in the Active Job you want to execute from the browser. Assign the error message to `@rescued_exception` to keep track of job failures.
