@@ -3,28 +3,26 @@
         font-family: monospace;
         background-color: #000;
         color: #fff;
-        padding: 20px;
         white-space: pre-wrap;
         font-size: 10px;
     }
 </style>
-<div class="mb-3 row">
+<div class="mb-3 row terminal p-3">
   <% if job_execution.execution_started_at.present? %>
     <% if Activejob::Web.aws_credentials_present? %>
       <% log_events, previous_token, next_token = fetch_log_events(job_execution, page_token) %>
       <% if log_events.present? %>
-        <div class="col-sm-12 terminal p-3"><%= log_events.join("\n") %></div>
-        <div class="col-sm-12 mt-2 d-flex justify-content-between">
-          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
-          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: next_token, is_next: true), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
-        </div>
+        <div class="col-sm-12 terminal"><%= log_events.join("\n") %></div>
+        <div class="col-sm-12 terminal">2024-05-06 16:16:25 +0000 30/06/2022 11:27:28 | Manual |  | Update |  | 123123123</div>
       <% else %>
         <div class="col-sm-12">
           <h6>No logs found!</h6>
-          <div class="col-sm-12 mt-2 d-flex justify-content-between">
-            <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? && (is_next == true) %>
-            <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
-          </div>
+        </div>
+      <% end %>
+      <% if previous_token.present? || next_token.present? %>
+        <div class="col-sm-12 mt-2 d-flex justify-content-between">
+          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
+          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
         </div>
       <% end %>
     <% else %>
