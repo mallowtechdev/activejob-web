@@ -4,12 +4,12 @@ namespace :activejob do
   namespace :web do
     desc 'Create Activejob Web Job'
     task :create_job,
-         %i[title description input_arguments max_run_time minimum_approvals_required priority job_name] => :environment do |_task, args|
+         %i[title description max_run_time minimum_approvals_required priority job_name] => :environment do |_task, args|
       Rake::Task['activejob:web:rake_log'].execute('Started creating Activejob Web Job task.')
-
+      input_arguments = ENV.fetch('input_arguments')
       job_attributes = { title: ENV.fetch('title', args[:title]),
                          description: ENV.fetch('description', args[:description]),
-                         input_arguments: ENV.fetch('input_arguments', args[:input_arguments]),
+                         input_arguments: input_arguments.present? ? JSON.parse(input_arguments) : nil,
                          max_run_time: ENV.fetch('max_run_time', args[:max_run_time]),
                          minimum_approvals_required: ENV.fetch('minimum_approvals_required',
                                                                args[:minimum_approvals_required]),
@@ -34,3 +34,5 @@ namespace :activejob do
     end
   end
 end
+
+# rake activejob:web:create_job['Booking Details with CloudWatch',"Pusing booking details to cloudwatch",nil,60,0,1,"WebBookingDetailsJob"] input_arguments='[{"name":"booking_id","type":"Integer","required":true}]'
