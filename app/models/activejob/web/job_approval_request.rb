@@ -12,7 +12,7 @@ module Activejob
       belongs_to :approver
       belongs_to :job_execution
 
-      # == Associations ==================================================================================================
+      # == Scopes ==================================================================================================
       scope :approved_requests, -> { where(response: %w[approved]) }
       scope :rejected_requests, -> { where(response: %w[rejected]) }
       scope :pending_requests, lambda { |admin, approver_id|

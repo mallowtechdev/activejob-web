@@ -6,7 +6,6 @@ module Activejob
       self.primary_key = 'id'
 
       # == Associations ==================================================================================================
-
       has_and_belongs_to_many :approvers,
                               class_name: 'Activejob::Web::Approver',
                               join_table: 'activejob_web_job_approvers'
@@ -20,7 +19,7 @@ module Activejob
       # == Validations ===================================================================================================
       validates :title, presence: true, length: { maximum: 255 }
       validates :description, presence: true, length: { maximum: 1000 }
-      validate :validate_approvers_executors
+      validate :validate_approvers_executors, unless: :new_record?
 
       # == Callbacks =====================================================================================================
       after_initialize :set_default_queue

@@ -3,8 +3,6 @@ module Activejob
     module UsersConcern
       extend ActiveSupport::Concern
 
-      # USER_MODELS = %w[Admin Common Approver Executor].freeze
-
       def parsed_class_name
         self.class.name.to_s.split('::').last
       end

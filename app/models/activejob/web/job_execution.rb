@@ -18,7 +18,9 @@ module Activejob
       validates :requestor_comments, presence: true
       validates :executor, presence: true
 
+      # == Scopes =========================================================================================================
       scope :requested, -> { where(status: 'requested') }
+
       # == Callbacks =========================================================================================================
       after_initialize :set_default_status
       after_create :send_job_approval_request

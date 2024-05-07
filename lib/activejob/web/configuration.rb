@@ -33,7 +33,7 @@ module Activejob
 
       def common_model_setup
         self.is_common_model = approvers_model == executors_model
-        self.common_model = approvers_model if self.is_common_model
+        self.common_model = approvers_model if is_common_model
 
         validate!
       end
@@ -44,25 +44,15 @@ module Activejob
       end
 
       def validate_config!
-        VALID_CONFIG_KEYS.keys.each do |key|
+        VALID_CONFIG_KEYS.each_key do |key|
           case key
           when :approvers_model, :executors_model, :admins_model
             raise "TypeError: #{key} Name should be a String" unless send(key).is_a?(String)
-
-            # model_exists?(send(key))
           when :aws_credentials
             raise "TypeError: #{key} should be a Hash" unless send(key).is_a?(Hash)
           end
         end
       end
-
-      # def model_exists?(model_name)
-      #   puts "Model Name: #{model_name}"
-      #   puts "Object.const_defined?(model_name): #{Object.const_defined?(model_name)}"
-      #   puts "Object.const_get(model_name).is_a?(Class): #{Object.const_get(model_name).is_a?(Class)}"
-      #   raise "#{model_name} model does not exist." unless
-      #     Object.const_defined?(model_name) && Object.const_get(model_name).is_a?(Class)
-      # end
 
       def options
         opts = {}
@@ -94,15 +84,13 @@ module Activejob
       end
 
       def valid_aws_credentials?
-        begin
-          credentials = Aws::Credentials.new(aws_credentials[:access_key_id], aws_credentials[:secret_access_key])
-          cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials:)
-          cloudwatch_logs.describe_log_streams(log_group_name: aws_credentials[:cloudwatch_log_group])
-        rescue  Aws::CloudWatchLogs::Errors::UnrecognizedClientException
-          raise 'UnrecognizedClientException - Invalid AWS Credentials'
-        rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
-          raise 'ResourceNotFoundException - Invalid CloudWatch Log Group Name'
-        end
+        credentials = Aws::Credentials.new(aws_credentials[:access_key_id], aws_credentials[:secret_access_key])
+        cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials:)
+        cloudwatch_logs.describe_log_streams(log_group_name: aws_credentials[:cloudwatch_log_group])
+      rescue  Aws::CloudWatchLogs::Errors::UnrecognizedClientException
+        raise 'UnrecognizedClientException - Invalid AWS Credentials'
+      rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
+        raise 'ResourceNotFoundException - Invalid CloudWatch Log Group Name'
       end
 
       private
