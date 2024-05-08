@@ -24,8 +24,8 @@ module Activejob
                              'db/migrate/create_job_approval_requests.rb'
           migration_template 'migrations/create_active_storage_tables.active_storage.html.erb',
                              'db/migrate/create_active_storage_tables.active_storage.rb'
-          migration_template 'migrations/create_execution_histories.html.erb',
-                             'db/migrate/create_execution_histories.rb'
+          migration_template 'migrations/create_job_execution_histories.html.erb',
+                             'db/migrate/create_job_execution_histories.rb'
         end
 
         def self.next_migration_number(dirname)

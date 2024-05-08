@@ -8,7 +8,7 @@
     }
 </style>
 <div class="mb-3 row terminal p-3">
-  <% if job_execution.execution_started_at.present? %>
+  <% if details['execution_started_at'].present? %>
     <% if Activejob::Web.aws_credentials_present? %>
       <% log_events, previous_token, next_token = fetch_log_events(job_execution, page_token) %>
       <% if log_events.present? %>

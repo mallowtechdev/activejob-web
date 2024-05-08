@@ -12,7 +12,11 @@
         </div>
       </div>
       <div class="card-body p-3">
-        <%= render partial: 'execution_log', locals: { job: @job, job_execution: @job_execution, page_token: params['page_token'] } %>
+        <%= render partial: 'execution_log', locals: {
+          details: @job_execution_history.details,
+          log_stream_name: @job_execution_history.log_stream_name,
+          page_token: params['page_token']
+        } %>
       </div>
     </div>
   </div>

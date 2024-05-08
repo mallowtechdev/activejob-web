@@ -10,6 +10,7 @@ Rails.application.routes.draw do
             post :reinitiate
             get :execute
             get :logs
+            get :history
           end
         end
         member do

@@ -1,7 +1,7 @@
-class CreateExecutionHistories < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+class CreateJobExecutionHistories < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
-    create_table :activejob_web_execution_histories do |t|
-      t.integer :job_id
+    create_table :activejob_web_job_execution_histories do |t|
+      t.uuid :job_id
       t.integer :job_execution_id
       t.uuid :log_stream_name, default: -> { 'gen_random_uuid()' }, null: false
       t.json :details
