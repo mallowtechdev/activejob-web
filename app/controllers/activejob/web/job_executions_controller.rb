@@ -89,7 +89,7 @@ module Activejob
       end
 
       def set_job_execution_history
-        @job_execution_history = @job_execution.job_execution_histories.first
+        @job_execution_history = @job_execution.job_execution_histories.find_by(id: params['history_id'])
       end
 
       def user_authorized?

@@ -52,13 +52,13 @@
           <div class="col-md-8 mt-1">
             <div class="d-flex" style="float: right">
               <% if @job_execution.approved? %>
-                <%= link_to 'Run Job Execution', execute_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, onclick: "return confirm('Are you sure you want to run this job execution?');", class: 'btn btn-outline-success', style: 'margin-right: 5px' %>
+                <%= button_to 'Run Job Execution', execute_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, onclick: "return confirm('Are you sure you want to run this job execution?');", class: 'btn btn-outline-success', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancel_execution %>
-                <%= link_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-outline-danger mr-2', style: 'margin-right: 5px' %>
+                <%= button_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-outline-danger mr-2', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancelled? %>
-                <%= link_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-outline-primary mr-2'  %>
+                <%= button_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-outline-primary mr-2'  %>
               <% end %>
               <% if @execution_history_count > 1 %>
                 <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-outline-info'  %>

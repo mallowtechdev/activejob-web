@@ -20,8 +20,8 @@
       <% end %>
       <% if previous_token.present? || next_token.present? %>
         <div class="col-sm-12 mt-2 d-flex justify-content-between">
-          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, str_name: log_stream_name, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
-          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, str_name: log_stream_name, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
+          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, history_id: execution_history.id, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
+          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, history_id: execution_history.id, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
         </div>
       <% end %>
     <% else %>
