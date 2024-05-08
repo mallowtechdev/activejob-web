@@ -55,8 +55,12 @@ module Activejob
       end
 
       def set_all_users
-        @all_approvers = Activejob::Web::Approver.all.select(:id, :email)
-        @all_executors = Activejob::Web::Executor.all.select(:id, :email)
+        @all_approvers = Activejob::Web::Approver.select(:id, :email)
+        @all_executors = if Activejob::Web.is_common_model
+                           @all_approvers
+                         else
+                           Activejob::Web::Executor.select(:id, :email)
+                         end
       end
 
       def job_params
