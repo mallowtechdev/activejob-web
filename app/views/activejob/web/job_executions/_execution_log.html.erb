@@ -10,7 +10,7 @@
 <div class="mb-3 row terminal p-3">
   <% if details['execution_started_at'].present? %>
     <% if Activejob::Web.aws_credentials_present? %>
-      <% log_events, previous_token, next_token = fetch_log_events(job_execution, page_token) %>
+      <% log_events, previous_token, next_token = fetch_log_events(execution_history, page_token) %>
       <% if log_events.present? %>
         <div class="col-sm-12 terminal"><%= log_events.join("\n") %></div>
       <% else %>
@@ -20,12 +20,12 @@
       <% end %>
       <% if previous_token.present? || next_token.present? %>
         <div class="col-sm-12 mt-2 d-flex justify-content-between">
-          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
-          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
+          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, str_name: log_stream_name, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
+          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, str_name: log_stream_name, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
         </div>
       <% end %>
     <% else %>
-      <% log_file_path = "log/#{job_execution.id}_#{job_execution.job_id}.log" %>
+      <% log_file_path = "log/#{log_stream_name}.log" %>
       <% if File.exist?(log_file_path) %>
         <div class="mb-3 row">
           <div class="col-sm-12 terminal"><%= File.read(log_file_path) %></div>

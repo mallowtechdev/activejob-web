@@ -41,6 +41,8 @@ module Activejob
           job_status = execution_rejected? ? 'rejected' : 'requested'
           job_execution.update_columns(status: job_status)
         end
+
+        job_execution.update_execution_history
       end
 
       def execution_rejected?

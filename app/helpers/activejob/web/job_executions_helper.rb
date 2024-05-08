@@ -19,8 +19,8 @@ module Activejob
         ]
       end
 
-      def fetch_log_events(job_execution, page_token)
-        response = job_execution.log_events(page_token)
+      def fetch_log_events(execution_history, page_token)
+        response = execution_history.log_events(page_token)
         return [[], nil, nil] unless response.present?
 
         [response.events.map(&:message), response.next_backward_token, response.next_forward_token]

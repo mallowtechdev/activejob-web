@@ -7,9 +7,11 @@
             <h3 class="mb-3">Job Execution Details</h3>
           </div>
           <div class="col-md-8 mt-1">
-            <% if details['execution_started_at'].present? %>
-              <%= link_to 'Logs',logs_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-outline-info'  %>
-            <% end %>
+            <div class="d-flex" style="float: right">
+              <% if details['execution_started_at'].present? %>
+                <%= link_to 'Logs',logs_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-outline-info'  %>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>

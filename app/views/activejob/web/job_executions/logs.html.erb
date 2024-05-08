@@ -13,6 +13,8 @@
       </div>
       <div class="card-body p-3">
         <%= render partial: 'execution_log', locals: {
+          job_execution: @job_execution,
+          execution_history: @job_execution_history,
           details: @job_execution_history.details,
           log_stream_name: @job_execution_history.log_stream_name,
           page_token: params['page_token']

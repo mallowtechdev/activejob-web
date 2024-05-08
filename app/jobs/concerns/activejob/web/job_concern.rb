@@ -8,11 +8,11 @@ module Activejob
       included do
         queue_as :default
 
-        attr_accessor :job_execution
+        attr_accessor :job_execution_history
         attr_accessor :rescued_exception
         attr_accessor :activejob_web_logger
 
-        before_perform :set_job_execution, :set_logger, only: :perform
+        before_perform :set_job_execution_history, :set_logger, only: :perform
         around_perform :set_timeout, only: :perform
         after_perform :update_job_executions, only: :perform
 
@@ -23,32 +23,32 @@ module Activejob
 
       private
 
-      def set_job_execution
-        self.job_execution = Activejob::Web::JobExecution.find_by(active_job_id: job_id)
+      def set_job_execution_history
+        self.job_execution_history = Activejob::Web::JobExecution.find_by(active_job_id: job_id).current_execution_history
       end
 
       def set_logger
         self.rescued_exception = {}
-        self.activejob_web_logger = job_logger(job_execution)
+        self.activejob_web_logger = job_logger(job_execution_history.log_stream_name)
         activejob_web_logger.info '===================== JOB START ======================'
       end
 
-      def job_logger(job_execution)
+      def job_logger(log_stream_name)
         if Activejob::Web.aws_credentials_present?
           CloudWatchLogger.new({
                                  access_key_id: Activejob::Web.aws_credentials[:access_key_id],
                                  secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
                                },
                                Activejob::Web.aws_credentials[:cloudwatch_log_group],
-                               "#{job_execution.id}_#{job_execution.job_id}",
+                               log_stream_name,
                                { http_open_timeout: 10, http_read_timeout: 10 })
         else
-          ActiveSupport::Logger.new(Rails.root.join("log/#{job_execution.id}_#{job_execution.job_id}.log"))
+          ActiveSupport::Logger.new(Rails.root.join("log/#{log_stream_name}.log"))
         end
       end
 
       def set_timeout(&)
-        Timeout.timeout(job_execution.job.max_run_time, &)
+        Timeout.timeout(job_execution_history.job.max_run_time, &)
       rescue StandardError => e
         self.rescued_exception = { message: "Error in Activejob Web JobExecution - #{e.message}" }
         activejob_web_logger.info "Error in Activejob Web Job Execution - #{e.message}"

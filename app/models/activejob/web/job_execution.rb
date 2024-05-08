@@ -24,6 +24,7 @@ module Activejob
 
       # == Callbacks =========================================================================================================
       after_initialize :set_default_status
+      after_create :create_execution_history
       after_create :send_job_approval_request
 
       # == Associations =========================================================================================================
@@ -31,8 +32,22 @@ module Activejob
       belongs_to :executor, foreign_key: 'requestor_id'
       has_one_attached :input_file
       has_many :job_approval_requests
+      has_many :job_execution_histories
 
       # == Methods =========================================================================================================
+      def create_execution_history
+        Activejob::Web::JobExecutionHistory.create(
+          job_execution_id: id,
+          job_id:,
+          arguments:,
+          details: JSON.parse(to_json)
+        )
+      end
+
+      def update_execution_history
+        current_execution_history&.update(details: JSON.parse(to_json))
+      end
+
       def send_job_approval_request
         job.approvers.each do |approver|
           Activejob::Web::JobApprovalRequest.create(job_execution_id: id, approver_id: approver.id)
@@ -41,6 +56,11 @@ module Activejob
 
       def remove_approval_requests
         send_job_approval_request if job_approval_requests.destroy_all && !cancelled?
+      end
+
+      def gen_reqs_and_histories
+        create_execution_history
+        remove_approval_requests
       end
 
       def cancel_execution
@@ -68,6 +88,7 @@ module Activejob
 
         update_columns(status: 'executed')
         initiate_job_execution
+        update_execution_history
       end
 
       def self.update_job_execution_status(response)
@@ -77,18 +98,12 @@ module Activejob
                                      execution_started_at: response.enqueued_at,
                                      run_at: response.scheduled_at,
                                      reason_for_failure: response.rescued_exception[:message])
+
+        job_execution.update_execution_history
       end
 
-      def log_events(page_token = nil)
-        aws_credentials = Aws::Credentials.new(Activejob::Web.aws_credentials[:access_key_id], Activejob::Web.aws_credentials[:secret_access_key])
-        cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials: aws_credentials)
-        log_group_name = Activejob::Web.aws_credentials[:cloudwatch_log_group]
-        stream_name = "#{id}_#{job_id}"
-        request_data = { log_group_name:, log_stream_name: stream_name, limit: 10_000, start_from_head: false }
-        request_data.merge!({ next_token: page_token }) if page_token.present?
-        cloudwatch_logs.get_log_events(request_data)
-      rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
-        []
+      def current_execution_history
+        job_execution_histories.first
       end
 
       private
