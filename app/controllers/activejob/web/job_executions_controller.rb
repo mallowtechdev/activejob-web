@@ -5,8 +5,8 @@ module Activejob
     class JobExecutionsController < ApplicationController
       before_action :set_job
       before_action :user_authorized?
-      before_action :set_job_execution, only: %i[show edit update cancel reinitiate execute logs history]
-      before_action :set_job_execution_history, only: :logs
+      before_action :set_job_execution, except: %i[index create]
+      before_action :set_job_execution_history, only: %i[logs live_logs]
 
       def index
         @job_executions = @job.job_executions.where(admin? ? nil : { requestor_id: @activejob_web_current_user.id })
@@ -14,8 +14,7 @@ module Activejob
       end
 
       def show
-        @job_execution = @job.job_executions.find(params[:id])
-        @execution_history_count = @job_execution.job_execution_histories.count
+        @job_execution_histories = @job_execution.job_execution_histories
         @job_approval_requests = Activejob::Web::JobApprovalRequest.includes(:approver).where(job_execution_id: @job_execution.id)
       end
 
@@ -73,6 +72,35 @@ module Activejob
       end
 
       def logs; end
+
+      def live_logs
+        request_data = { start_from_head: true }
+        event_timestamp = params[:event_timestamp]
+        event_ingestion = params[:event_ingestion]
+        request_data.merge!({ start_time: event_timestamp }) if event_timestamp.present?
+
+        event_response = @job_execution_history.log_events(nil, request_data)
+
+        log_events = event_response.events if event_response.present?
+        last_event = log_events.present? ? log_events.last : nil
+
+        filtered_logs = if log_events.present? && event_ingestion.present?
+                          log_events.select { |log_event| log_event.ingestion_time > event_ingestion.to_i }
+                        elsif log_events.present?
+                          log_events
+                        else
+                          []
+                        end
+
+        response = {
+          messages: filtered_logs&.map(&:message),
+          event_timestamp: last_event.present? ? last_event.timestamp : event_timestamp,
+          event_ingestion: last_event.present? ? last_event.ingestion_time : event_ingestion,
+        }
+        response.merge!({terminated: true}) if last_event.present? && last_event.message.include?("JOB ENDED") && filtered_logs.blank?
+
+        render json: response
+      end
 
       private
 

@@ -15,6 +15,7 @@ module Activejob
         before_perform :set_job_execution_history, :set_logger, only: :perform
         around_perform :set_timeout, only: :perform
         after_perform :update_job_executions, only: :perform
+        after_perform :print_end_log, only: :perform
 
         def update_job_executions
           Activejob::Web::JobExecution.update_job_execution_status(self)
@@ -30,7 +31,7 @@ module Activejob
       def set_logger
         self.rescued_exception = {}
         self.activejob_web_logger = job_logger(job_execution_history.log_stream_name)
-        activejob_web_logger.info '===================== JOB START ======================'
+        activejob_web_logger.info "=================================== JOB STARTED ==================================="
       end
 
       def job_logger(log_stream_name)
@@ -53,6 +54,10 @@ module Activejob
         self.rescued_exception = { message: "Error in Activejob Web JobExecution - #{e.message}" }
         activejob_web_logger.info "Error in Activejob Web Job Execution - #{e.message}"
         update_job_executions
+      end
+
+      def print_end_log
+        activejob_web_logger.info "=================================== JOB ENDED ==================================="
       end
     end
   end

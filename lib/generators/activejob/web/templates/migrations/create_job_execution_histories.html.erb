@@ -6,6 +6,7 @@ class CreateJobExecutionHistories < ActiveRecord::Migration[<%= ActiveRecord::Mi
       t.uuid :log_stream_name, default: -> { 'gen_random_uuid()' }, null: false
       t.json :details
       t.json :arguments
+      t.boolean :is_current
 
       t.timestamps
     end

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
             get :execute
             get :logs
             get :history
+            get :live_logs
           end
         end
         member do
