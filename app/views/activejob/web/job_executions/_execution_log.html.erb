@@ -13,7 +13,7 @@
     <% if Activejob::Web.aws_credentials_present? %>
       <% log_events, previous_token, next_token = fetch_log_events(execution_history, page_token) %>
       <% if log_events.present? %>
-        <div class="col-sm-12 terminal"><%= log_events.join("\n") %></div>
+        <div class="col-sm-12 terminal" id="live-logs-terminal" style="max-height: 300px; overflow-y: auto;"><%= log_events.join("\n") %></div>
       <% else %>
         <div class="col-sm-12">
           <h6>No logs found!</h6>
@@ -43,3 +43,9 @@
     </div>
   <% end %>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#live-logs-terminal').scrollTop($('#live-logs-terminal')[0].scrollHeight);
+    });
+</script>

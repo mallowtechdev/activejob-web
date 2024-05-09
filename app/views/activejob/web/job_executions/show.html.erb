@@ -86,7 +86,7 @@
         <% if @job_execution.executed? %>
           <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
-            <div class="col-sm-9 terminal p-3" id="live-logs-terminal"><div id="live-logs-hint">The job execution is currently in progress, and log events are streaming from <%= @job_execution.current_execution_history.log_stream_name %> ...</div></div>
+            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto;"><div id="live-logs-hint">The job execution is currently in progress, and log events are streaming from <%= @job_execution.current_execution_history.log_stream_name %> ...</div></div>
           </div>
         <% end %>
         <hr>
@@ -193,6 +193,7 @@
                         $('#live-logs-hint').remove();
                         $.each(response.messages, function(index, value) {
                             $('#live-logs-terminal').append('<div>' + value + '</div>');
+                            $("#scrollableDiv").scrollTop($("#scrollableDiv")[0].scrollHeight);
                         });
                     }
                     setTimeout(function() {
