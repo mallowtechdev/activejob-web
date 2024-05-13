@@ -182,7 +182,7 @@
                         $('#live-logs-hint').remove();
                         $.each(response.messages, function(index, value) {
                             $('#live-logs-terminal').append('<div>' + value + '</div>');
-                            $("#scrollableDiv").scrollTop($("#scrollableDiv")[0].scrollHeight);
+                            $("#live-logs-terminal").scrollTop($("#live-logs-terminal")[0].scrollHeight);
                         });
                     }
                     setTimeout(function() {

@@ -43,7 +43,7 @@
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Reason for Failure:</strong></div>
-          <div class="col-sm-9"><%= details['reason_for_failure'] || '-' %></div>
+          <div class="col-sm-9 <%= 'terminal' if details['reason_for_failure'].present? %> p-3"><%= details['reason_for_failure'] || '-' %></div>
         </div>
 
         <div class="mb-3 row">
