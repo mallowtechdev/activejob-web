@@ -1,14 +1,17 @@
 <%= form_for [@job, @job_execution] ,url: url do |form| %>
-  <div class="row p-3 <%= 'mt-3' if action_title == 'Edit' %>">
+  <% edit_action = action_title == 'Edit' %>
+  <div class="row p-3 <%= 'mt-3' if edit_action %>">
     <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
       <div class="card h-100">
         <div class="card-header p-2">
           <div class="row">
             <div class="col-md-8 d-flex align-items-center">
-              <h5 class="mb-0"><%= action_title %> Job Execution <%= ": #{@job_execution.requestor_comments}" if action_title == 'Edit' %></h5>
+              <h5 class="mb-0"><%= action_title %> Job Execution <%= ": #{@job_execution.requestor_comments}" if edit_action %></h5>
             </div>
             <div class="col-md-4 text-end">
-              <%= link_to 'Back', activejob_web_job_job_executions_path(@job), class: 'btn btn-sm btn-outline-secondary' %>
+              <%= link_to 'Back',
+                          edit_action ? activejob_web_job_job_executions_path(@job) : activejob_web_job_path(@job),
+                          class: 'btn btn-sm btn-outline-secondary' %>
               <%= form.submit 'Submit', class: 'btn btn-sm btn-outline-success' %>
             </div>
           </div>

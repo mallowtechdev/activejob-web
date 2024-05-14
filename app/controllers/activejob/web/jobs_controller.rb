@@ -15,7 +15,7 @@ module Activejob
           @jobs = @activejob_web_current_user.jobs
         end
         @pending_approvals = Activejob::Web::JobApprovalRequest
-                             .includes(:job_execution)
+                             .includes(job_execution: %i[job executor])
                              .pending_requests(admin?, @activejob_web_current_user.id)
       end
 

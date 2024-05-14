@@ -9,7 +9,8 @@ module Activejob
       before_action :set_job_execution_history, only: %i[logs live_logs]
 
       def index
-        @job_executions = @job.job_executions.where(admin? ? nil : { requestor_id: @activejob_web_current_user.id })
+        @job_executions = @job.job_executions.includes(:job_approval_requests)
+                              .where(admin? ? nil : { requestor_id: @activejob_web_current_user.id })
         @job_execution = Activejob::Web::JobExecution.new(job_id: @job.id)
       end
 
@@ -68,7 +69,7 @@ module Activejob
       end
 
       def history
-        @job_execution_histories = @job_execution.job_execution_histories.includes(:input_file_attachment)
+        @job_execution_histories = @job_execution.job_execution_histories.includes(input_file_attachment: [:blob])
       end
 
       def logs; end

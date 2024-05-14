@@ -12,10 +12,11 @@ module Activejob
       end
 
       def approval_request_details(job_execution)
+        requests = job_execution.job_approval_requests
         [
-          job_execution.job_approval_requests.count,
-          job_execution.job_approval_requests.approved_requests.count,
-          job_execution.job_approval_requests.rejected_requests.count
+          requests.count,
+          requests.select(&:approved?).count,
+          requests.select(&:rejected?).count
         ]
       end
 
