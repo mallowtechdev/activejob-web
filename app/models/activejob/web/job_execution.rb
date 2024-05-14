@@ -37,13 +37,15 @@ module Activejob
       # == Methods =========================================================================================================
       def create_execution_history
         job_execution_histories.update_all(is_current: false)
-        Activejob::Web::JobExecutionHistory.create(
+        history = Activejob::Web::JobExecutionHistory.create(
           job_execution_id: id,
           job_id:,
           arguments:,
           details: JSON.parse(to_json),
           is_current: true
         )
+
+        history.input_file.attach(input_file.blob) if input_file.attached?
       end
 
       def update_execution_history

@@ -2,14 +2,14 @@
   <div class="row mt-3 p-3">
     <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
       <div class="card h-100">
-        <div class="card-header pb-0 p-3">
+        <div class="card-header p-2">
           <div class="row">
             <div class="col-md-8 d-flex align-items-center">
-              <h3 class="mb-3"><%= @job.title %></h3>
+              <h5 class="mb-0"><%= @job.title %></h5>
             </div>
             <div class="col-md-4 text-end mt-1">
-              <%= link_to 'Back', activejob_web_job_path(@job), class: 'btn btn-outline-secondary' %>
-              <%= form.submit 'Submit', class: 'btn btn-outline-success' %>
+              <%= link_to 'Back', activejob_web_job_path(@job), class: 'btn btn-sm btn-outline-secondary' %>
+              <%= form.submit 'Submit', class: 'btn btn-sm btn-outline-success' %>
             </div>
           </div>
         </div>
@@ -58,14 +58,14 @@
           <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Approvers:</strong></div>
             <div class="col-sm-5">
-              <%= form.collection_select(:approver_ids, @all_approvers, :id, :email, {}, { multiple: true, class: 'form-select', size: '5' }) %>
+              <%= form.collection_select(:approver_ids, @all_approvers, :id, :email, {}, { multiple: true, class: 'form-select', size: '10' }) %>
             </div>
           </div>
 
           <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Executors:</strong></div>
             <div class="col-sm-5">
-              <%= form.collection_select(:executor_ids, @all_executors, :id, :email, {}, { multiple: true, class: 'form-select', size: '5' }) %>
+              <%= form.collection_select(:executor_ids, @all_executors, :id, :email, {}, { multiple: true, class: 'form-select', size: '10' }) %>
             </div>
           </div>
         </div>

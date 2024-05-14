@@ -5,8 +5,8 @@
         <div class="card-body">
           <div class="row align-items-center">
             <div class="col-6">
-              <h5 class="text-muted fw-normal mt-0 text-truncate" title="Jobs">Jobs</h5>
-              <h3 class="my-2 py-1"><%= job_count(@activejob_web_current_user) %></h3>
+              <h6 class="text-muted fw-normal mt-0 text-truncate" title="Jobs">Jobs</h6>
+              <h4 class="my-2 py-1"><%= job_count(@activejob_web_current_user) %></h4>
             </div>
           </div>
         </div>
@@ -18,8 +18,8 @@
         <div class="card-body">
           <div class="row align-items-center">
             <div class="col-6">
-              <h5 class="text-muted fw-normal mt-0 text-truncate" title="Job Executions">Job Executions</h5>
-              <h3 class="my-2 py-1"><%= job_execution_count(@activejob_web_current_user) %></h3>
+              <h6 class="text-muted fw-normal mt-0 text-truncate" title="Job Executions">Job Executions</h6>
+              <h4 class="my-2 py-1"><%= job_execution_count(@activejob_web_current_user) %></h4>
             </div>
           </div>
         </div>
@@ -31,8 +31,8 @@
         <div class="card-body">
           <div class="row align-items-center">
             <div class="col-12">
-              <h5 class="text-muted fw-normal mt-0" title="Job Approval Requests">Job Approval Requests</h5>
-              <h3 class="my-2 py-1"><%= job_approval_count(@activejob_web_current_user) %></h3>
+              <h6 class="text-muted fw-normal mt-0" title="Job Approval Requests">Job Approval Requests</h6>
+              <h4 class="my-2 py-1"><%= job_approval_count(@activejob_web_current_user) %></h4>
             </div>
           </div>
         </div>
@@ -41,19 +41,19 @@
   </div>
 
   <% if admin? || approver? %>
-    <div class="row mt-3 p-3">
+    <div class="row p-3">
       <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
         <div class="card h-100">
-          <div class="card-header pb-0 p-3">
+          <div class="card-header p-3">
             <div class="row">
               <div class="col-md-8 d-flex align-items-center">
-                <h3 class="mb-3">Pending Job Approval Requests</h3>
+                <h5 class="mb-0">Pending Job Approval Requests</h5>
               </div>
             </div>
           </div>
           <div class="card-body">
             <% if @pending_approvals.present? %>
-              <table class="table">
+              <table class="table table-sm">
                 <tr>
                   <th scope="col">Title</th>
                   <th scope="col">Requestor Email</th>
@@ -67,16 +67,16 @@
                     <td><%= approval_request.job_execution.executor&.email || '-' %></td>
                     <td><%= approval_request.job_execution.requestor_comments || '-' %></td>
                     <td>
-                  <span class="badge text-bg-<%= status_badge(approval_request.response) %>">waiting for approval</span>
+                      <span class="badge text-bg-<%= status_badge(approval_request.response) %>">waiting for approval</span>
                     </td>
                     <td>
-                      <%= link_to 'Show', activejob_web_job_job_approval_request_path(approval_request.job_execution.job, approval_request), class: 'btn btn-outline-primary' %>
+                      <%= link_to 'Show', activejob_web_job_job_approval_request_path(approval_request.job_execution.job, approval_request), class: 'btn btn-sm btn-outline-primary' %>
                     </td>
                   </tr>
                 <% end %>
               </table>
             <% else %>
-              <h6>No Pending Approval Requests Found!</h6>
+              <p>No Pending Approval Requests Found!</p>
             <% end %>
           </div>
         </div>

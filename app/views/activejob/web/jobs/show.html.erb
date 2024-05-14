@@ -1,21 +1,21 @@
 <div class="row mt-3 p-3">
   <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
     <div class="card h-100">
-      <div class="card-header pb-0 p-3">
+      <div class="card-header p-2">
         <div class="row">
           <div class="col-md-4 d-flex align-items-center">
-            <h3 class="mb-3"><%= @job.title %></h3>
+            <h5 class="mb-0"><%= @job.title %></h5>
           </div>
           <div class="col-md-8 text-end mt-1">
-            <%= link_to 'Back', activejob_web_jobs_path, class: 'btn btn-outline-secondary' %>
+            <%= link_to 'Back', activejob_web_jobs_path, class: 'btn btn-sm btn-outline-secondary' %>
             <% if admin? %>
-              <%= link_to 'Edit Job', edit_activejob_web_job_path(@job), class: 'btn btn-outline-primary' %>
+              <%= link_to 'Edit Job', edit_activejob_web_job_path(@job), class: 'btn btn-sm btn-outline-primary' %>
             <% end %>
             <% if admin? || executor? %>
-              <%= link_to 'Job Executions', activejob_web_job_job_executions_path(@job, @job_executions), class: 'btn btn-outline-primary' %>
+              <%= link_to 'Job Executions', activejob_web_job_job_executions_path(@job, @job_executions), class: 'btn btn-sm btn-outline-primary' %>
             <% end %>
             <% if admin? || approver? %>
-              <%= link_to 'Job Approval Requests', activejob_web_job_job_approval_requests_path(@job), class: 'btn btn-outline-primary' %>
+              <%= link_to 'Job Approval Requests', activejob_web_job_job_approval_requests_path(@job), class: 'btn btn-sm btn-outline-primary' %>
             <% end %>
           </div>
         </div>
@@ -93,7 +93,7 @@
             <div class="card">
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-centered table-nowrap table-hover mb-0">
+                  <table class="table table-centered table-nowrap mb-0 table-sm">
                     <thead>
                     <tr>
                       <th>Name</th>

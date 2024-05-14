@@ -68,7 +68,7 @@ module Activejob
       end
 
       def history
-        @job_execution_histories = @job_execution.job_execution_histories
+        @job_execution_histories = @job_execution.job_execution_histories.includes(:input_file_attachment)
       end
 
       def logs; end

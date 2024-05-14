@@ -1,18 +1,18 @@
 <div class="row mt-3 p-3">
   <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
     <div class="card h-100">
-      <div class="card-header pb-0 p-3">
+      <div class="card-header p-2">
         <div class="row">
           <div class="col-md-8 d-flex align-items-center">
-            <h3 class="mb-3">Job Approval Request(s) Details</h3>
+            <h5 class="mb-0">Job Approval Request(s) Details</h5>
           </div>
           <div class="col-md-4 text-end mt-1">
-            <%= link_to 'Back', activejob_web_job_job_executions_path(@job), class: 'btn btn-outline-secondary' %>
+            <%= link_to 'Back', activejob_web_job_job_executions_path(@job), class: 'btn btn-sm btn-outline-secondary' %>
           </div>
         </div>
       </div>
       <div class="card-body p-3">
-        <table class="table">
+        <table class="table table-sm">
           <% if @job_approval_requests.present? %>
             <thead>
             <tr>
@@ -33,7 +33,7 @@
             <% end %>
             </tbody>
           <% else %>
-            <h6> No Approval Requests Found!</h6>
+            <p> No Approval Requests Found!</p>
           <% end %>
         </table>
       </div>
@@ -41,27 +41,27 @@
   </div>
 </div>
 
-<div class="row mt-3 p-3">
+<div class="row p-3">
   <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
     <div class="card h-100">
-      <div class="card-header pb-0 p-3">
+      <div class="card-header p-2">
         <div class="row">
           <div class="col-md-4 d-flex align-items-center">
-            <h3 class="mb-3">Job Execution Details</h3>
+            <h5 class="mb-0">Job Execution Details</h5>
           </div>
           <div class="col-md-8 mt-1">
             <div class="d-flex" style="float: right">
               <% if @job_execution.approved? %>
-                <%= link_to 'Run Job Execution', execute_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, onclick: "return confirm('Are you sure you want to run this job execution?');", class: 'btn btn-outline-success', style: 'margin-right: 5px' %>
+                <%= link_to 'Run Job Execution', execute_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, onclick: "return confirm('Are you sure you want to run this job execution?');", class: 'btn btn-sm btn-outline-success', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancel_execution %>
-                <%= link_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-outline-danger mr-2', style: 'margin-right: 5px' %>
+                <%= link_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-sm btn-outline-danger mr-2', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancelled? %>
-                <%= link_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-outline-primary mr-2'  %>
+                <%= link_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-sm btn-outline-primary mr-2'  %>
               <% end %>
               <% if @job_execution_histories.count > 1 %>
-                <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-outline-info'  %>
+                <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-sm btn-outline-info'  %>
               <% end %>
             </div>
           </div>
@@ -116,7 +116,7 @@
               <div class="card">
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table table-centered table-nowrap table-hover mb-0">
+                    <table class="table table-centered table-nowrap table-hover mb-0 table-sm">
                       <thead>
                       <tr>
                         <th>Key</th>

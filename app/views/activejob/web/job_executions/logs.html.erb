@@ -1,13 +1,13 @@
 <div class="row mt-3 p-3">
   <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
     <div class="card h-100">
-      <div class="card-header pb-0 p-3">
+      <div class="card-header p-2">
         <div class="row">
           <div class="col-md-8 d-flex align-items-center">
-            <h3 class="mb-3">Job Execution Logs : <%= @job_execution_history.log_stream_name %></h3>
+            <h5 class="mb-0">Job Execution Logs : <%= @job_execution_history.log_stream_name %></h5>
           </div>
-          <div class="col-md-4 text-end mt-1">
-            <%= link_to 'Back', history_activejob_web_job_job_execution_path(@job, @job_execution), class: 'btn btn-outline-secondary' %>
+          <div class="col-md-4 text-end">
+            <%= link_to 'Back', history_activejob_web_job_job_execution_path(@job, @job_execution), class: 'btn btn-sm btn-outline-secondary' %>
           </div>
         </div>
       </div>

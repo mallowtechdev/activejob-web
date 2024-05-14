@@ -1,15 +1,15 @@
-<div class="row mt-3 p-3">
-  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+<div class="row mt-2">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0">
     <div class="card h-100">
-      <div class="card-header pb-0 p-3">
+      <div class="card-header p-2">
         <div class="row">
           <div class="col-md-8 d-flex align-items-center">
-            <h6 class="mb-3"><%= history.log_stream_name %></h6>
+            <h6 class="mb-0"><%= history.log_stream_name %></h6>
           </div>
-          <div class="col-md-4 mt-1">
+          <div class="col-md-4">
             <div class="d-flex" style="float: right">
               <% if details['execution_started_at'].present? %>
-                <%= link_to 'Logs',logs_activejob_web_job_job_execution_path(@job, @job_execution, history_id: history.id), method: :get, class: 'btn btn-outline-info'  %>
+                <%= link_to 'Logs',logs_activejob_web_job_job_execution_path(@job, @job_execution, history_id: history.id), method: :get, class: 'btn btn-sm btn-outline-info'  %>
               <% end %>
             </div>
           </div>
@@ -53,7 +53,7 @@
               <div class="card">
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table table-centered table-nowrap table-hover mb-0">
+                    <table class="table table-centered table-nowrap table-hover mb-0 table-sm">
                       <thead>
                       <tr>
                         <th>Key</th>
@@ -61,16 +61,16 @@
                       </tr>
                       </thead>
                       <tbody>
-                      <%# if @job_execution.input_file.attached? %>
-                      <!--                        <tr>-->
-                      <!--                          <td>-->
-                      <!--                            <p class="font-14 my-1 fw-normal">File</p>-->
-                      <!--                          </td>-->
-                      <!--                          <td>-->
-                      <!--                            <a href="<%#= @job_execution.input_file.url %>" class="font-14 my-1 fw-normal" target="_blank"><%#= @job_execution.input_file.blob.filename %></a>-->
-                      <!--                          </td>-->
-                      <!--                        </tr>-->
-                      <%# end %>
+                      <% if history.input_file.attached? %>
+                        <tr>
+                          <td>
+                            <p class="font-14 my-1 fw-normal">File</p>
+                          </td>
+                          <td>
+                            <a href="<%= history.input_file.url %>" class="font-14 my-1 fw-normal" target="_blank"><%= history.input_file.blob.filename %></a>
+                          </td>
+                        </tr>
+                      <% end %>
                       <% arguments.each do |argument| %>
                         <tr>
                           <td>
