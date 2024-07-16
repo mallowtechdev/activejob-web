@@ -33,12 +33,12 @@
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Run At:</strong></div>
-          <div class="col-sm-9"><%= details['run_at'] || '-' %></div>
+          <div class="col-sm-9"><%= details['run_at'].present? ? Time.iso8601(details['run_at']) : '-' %></div>
         </div>
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Execution Started At:</strong></div>
-          <div class="col-sm-9"><%= details['execution_started_at'] || '-' %></div>
+          <div class="col-sm-9"><%= details['run_at'].present? ? Time.iso8601(details['execution_started_at']) : '-' %></div>
         </div>
 
         <div class="mb-3 row">
