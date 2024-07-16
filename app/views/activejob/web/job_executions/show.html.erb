@@ -75,6 +75,14 @@
             <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
             <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto;"><div id="live-logs-hint">The job execution is currently in progress, and log events are streaming from <%= @job_execution.current_execution_history.log_stream_name %> ...</div></div>
           </div>
+        <% elsif @job_execution.executed? %>
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
+            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto; white-space: unset;">
+              <% @local_log_path = "log/activejob_web/job_executions/#{@job_execution.current_execution_history.log_stream_name}.log" %>
+              <div id="live-logs-hint" class="mb">The job execution is currently in progress, and log events are streaming from <%= @local_log_path %> ...</div>
+            </div>
+          </div>
         <% end %>
         <hr>
         <div class="mb-3 row">
@@ -159,7 +167,9 @@
 <script>
     $(document).ready(function() {
         <% if @job_execution.live_log? %>
-        fetchLiveLogs()
+          fetchLiveLogs()
+        <% elsif @job_execution.executed? %>
+          fetchLocalLogs('<%= @local_log_path %>')
         <% end %>
     });
 
@@ -184,12 +194,43 @@
                         });
                     }
                     setTimeout(function() {
-                        makeAjaxCall(response.event_timestamp, response.event_ingestion);
+                        fetchLiveLogs(response.event_timestamp, response.event_ingestion);
                     }, 1000);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('AJAX error:', error);
+                console.error('fetchLiveLogs error:', error);
+            }
+        });
+    }
+
+    function fetchLocalLogs(file_path, last_index) {
+        $.ajax({
+            url: '<%= local_logs_activejob_web_job_job_execution_path(@job, @job_execution) %>',
+            method: 'GET',
+            data: {
+                history_id: '<%= @job_execution.current_execution_history.id %>',
+                file_path: file_path,
+                last_index: last_index
+            },
+            success: function(response) {
+                if (response.messages[0]){
+                    $('#live-logs-hint').remove();
+                    $.each(response.messages, function(index, value) {
+                        $('#live-logs-terminal').append('<div>' + value + '</div>');
+                        $("#live-logs-terminal").scrollTop($("#live-logs-terminal")[0].scrollHeight);
+                    });
+                }
+                if (response.terminated === true) {
+                    return;
+                } else {
+                    setTimeout(function () {
+                        fetchLocalLogs(file_path, response.last_index);
+                    }, 1000);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('fetchLocalLogs error:', error);
             }
         });
     }

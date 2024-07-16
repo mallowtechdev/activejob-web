@@ -6,7 +6,7 @@ module Activejob
       before_action :set_job
       before_action :user_authorized?
       before_action :set_job_execution, except: %i[index create]
-      before_action :set_job_execution_history, only: %i[logs live_logs]
+      before_action :set_job_execution_history, only: %i[logs live_logs local_logs]
 
       def index
         @job_executions = @job.job_executions.includes(:job_approval_requests)
@@ -99,6 +99,34 @@ module Activejob
           event_ingestion: last_event.present? ? last_event.ingestion_time : event_ingestion,
         }
         response.merge!({ terminated: true }) if last_event.present? && last_event.message.include?("JOB ENDED") && filtered_logs.blank?
+
+        render json: response
+      end
+
+      def local_logs
+        begin
+          response = {}
+          messages = []
+
+          file_path = params[:file_path]
+          last_index = params[:last_index].to_i || 0
+          File.open(file_path, 'r') do |file|
+            file.each_with_index do |line, index|
+              next if index < (last_index + 1)
+
+              messages << line
+              last_index = index
+            end
+          end
+
+          response.merge!(terminated: true) if messages.present? && messages.last.include?("JOB ENDED")
+          response.merge!(messages:, last_index:)
+        rescue Errno::ENOENT
+          response.merge!(messages: [])
+          puts 'Local Log file not found - Error while reading local logs and returning empty response'
+        rescue StandardError => e
+          puts "Error while fetching local logs - Error: #{e.message}"
+        end
 
         render json: response
       end

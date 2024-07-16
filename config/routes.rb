@@ -12,6 +12,7 @@ Rails.application.routes.draw do
             get :logs
             get :history
             get :live_logs
+            get :local_logs
           end
         end
         member do
