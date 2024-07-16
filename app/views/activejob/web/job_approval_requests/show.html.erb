@@ -24,80 +24,87 @@
             </div>
           <% end %>
           <div class="mb-3 row">
-            <div class="col-sm-3"><strong class="text-dark">Requestor Name:</strong></div>
-            <div class="col-sm-9"><%= @job_execution.executor&.name || '-' %></div>
-          </div>
-
-          <div class="mb-3 row">
-            <div class="col-sm-3"><strong class="text-dark">Requestor Email:</strong></div>
-            <div class="col-sm-9"><%= @job_execution.executor&.email || '-' %></div>
-          </div>
-
-          <div class="mb-3 row">
-            <div class="col-sm-3"><strong class="text-dark">Requestor Comments:</strong></div>
-            <div class="col-sm-9"><%= @job_execution.requestor_comments %></div>
-          </div>
-
-          <div class="mb-3 row">
-            <div class="col-sm-3"><strong class="text-dark">Auto Execute on Approval:</strong></div>
-            <div class="col-sm-9"><%= @job_execution.auto_execute_on_approval %></div>
-          </div>
-
-          <div class="mb-3 row">
-            <div class="col-sm-3"><strong class="text-dark">Arguments:</strong></div>
-            <div class="col-sm-9">
-              <% if @job_execution.arguments.present? %>
-                <div class="card">
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-centered table-nowrap table-hover mb-0 table-sm">
-                        <thead>
-                        <tr>
-                          <th>Key</th>
-                          <th>Value</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <% if @job_execution.input_file.attached? %>
-                          <tr>
-                            <td>
-                              <p class="font-14 my-1 fw-normal">File</p>
-                            </td>
-                            <td>
-                              <a href="<%= @job_execution.input_file.url %>" class="font-14 my-1 fw-normal" target="_blank"><%= @job_execution.input_file.blob.filename %></a>
-                            </td>
-                          </tr>
-                        <% end %>
-                        <% @job_execution.arguments.each do |argument| %>
-                          <tr>
-                            <td>
-                              <p class="font-14 my-1 fw-normal"><%= argument.first.split('_').map(&:capitalize).join(' ') %></p>
-                            </td>
-                            <td>
-                              <p class="font-14 my-1 fw-normal"><%= argument.second.presence || '-' %></p>
-                            </td>
-                          </tr>
-                        <% end %>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              <% else %>
-                -
-              <% end %>
-            </div>
-          </div>
-          <br>
-          <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Action:</strong></div>
             <div class="col-sm-6">
               <%= form.select :response, job_approval_response_keys, {}, class: 'form-select' %>
             </div>
           </div>
+
           <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Approver Comments:</strong></div>
             <div class="col-sm-6"><%= form.text_area :approver_comments, placeholder: "Approver Comments", class: 'form-control' %></div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <div class="mb-3 row">
+                  <div class="col-sm-3"><strong class="text-dark">Requestor Name:</strong></div>
+                  <div class="col-sm-9"><%= @job_execution.executor&.name || '-' %></div>
+                </div>
+
+                <div class="mb-3 row">
+                  <div class="col-sm-3"><strong class="text-dark">Requestor Email:</strong></div>
+                  <div class="col-sm-9"><%= @job_execution.executor&.email || '-' %></div>
+                </div>
+
+                <div class="mb-3 row">
+                  <div class="col-sm-3"><strong class="text-dark">Requestor Comments:</strong></div>
+                  <div class="col-sm-9"><%= @job_execution.requestor_comments %></div>
+                </div>
+
+                <div class="mb-3 row">
+                  <div class="col-sm-3"><strong class="text-dark">Auto Execute on Approval:</strong></div>
+                  <div class="col-sm-9"><%= @job_execution.auto_execute_on_approval %></div>
+                </div>
+
+                <div class="mb-3 row">
+                  <div class="col-sm-3"><strong class="text-dark">Arguments:</strong></div>
+                  <div class="col-sm-9">
+                    <% if @job_execution.arguments.present? %>
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-centered table-nowrap table-hover mb-0 table-sm">
+                              <thead>
+                              <tr>
+                                <th>Key</th>
+                                <th>Value</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <% if @job_execution.input_file.attached? %>
+                                <tr>
+                                  <td>
+                                    <p class="font-14 my-1 fw-normal">File</p>
+                                  </td>
+                                  <td>
+                                    <a href="<%= @job_execution.input_file.url %>" class="font-14 my-1 fw-normal" target="_blank"><%= @job_execution.input_file.blob.filename %></a>
+                                  </td>
+                                </tr>
+                              <% end %>
+                              <% @job_execution.arguments.each do |argument| %>
+                                <tr>
+                                  <td>
+                                    <p class="font-14 my-1 fw-normal"><%= argument.first.split('_').map(&:capitalize).join(' ') %></p>
+                                  </td>
+                                  <td>
+                                    <p class="font-14 my-1 fw-normal"><%= argument.second.presence || '-' %></p>
+                                  </td>
+                                </tr>
+                              <% end %>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    <% else %>
+                      -
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

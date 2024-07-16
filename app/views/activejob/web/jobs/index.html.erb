@@ -55,10 +55,15 @@
             <% if @pending_approvals.present? %>
               <table class="table table-sm">
                 <tr>
+
                   <th scope="col">Title</th>
                   <th scope="col">Requestor Email</th>
                   <th scope="col">Requestor Comment</th>
                   <th scope="col">Status</th>
+                  <% if admin? %>
+                    <th scope="col">Approver Name </th>
+                    <th scope="col">Approver Email </th>
+                  <% end %>
                   <th scope="col">Actions</th>
                 </tr>
                 <% @pending_approvals.each do |approval_request| %>
@@ -69,6 +74,10 @@
                     <td>
                       <span class="badge text-bg-<%= status_badge(approval_request.response) %>">waiting for approval</span>
                     </td>
+                    <% if admin? %>
+                      <td><%= approval_request.approver&.name || '-' %></td>
+                      <td><%= approval_request.approver.email %></td>
+                    <% end %>
                     <td>
                       <%= link_to 'Show', activejob_web_job_job_approval_request_path(approval_request.job_execution.job, approval_request), class: 'btn btn-sm btn-outline-primary' %>
                     </td>
