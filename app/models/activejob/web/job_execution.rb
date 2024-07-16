@@ -58,13 +58,22 @@ module Activejob
         end
       end
 
-      def remove_approval_requests
+      def remove_create_approvals
         send_job_approval_request if job_approval_requests.destroy_all && !cancelled?
       end
 
-      def gen_reqs_and_histories
-        create_execution_history
-        remove_approval_requests
+      def gen_reqs_and_histories(reinitiate: false)
+        if cancelled? || reinitiate
+          update_execution_history
+        else
+          create_execution_history
+        end
+
+        remove_create_approvals
+        true
+      rescue StandardError => e
+        Rails.logger.info "Error in JobExecution gen_reqs_and_histories: ID: #{id} Error: #{e.message}"
+        false
       end
 
       def cancel_execution
@@ -128,8 +137,10 @@ module Activejob
 
       def initiate_job_execution
         values = arguments.values
-        active_job = job.job_name.constantize.set(wait: 5.seconds).perform_later(*values)
+        active_job = "Activejob::Web::#{job.job_name}".constantize.set(wait: 5.seconds).perform_later(*values)
         update_columns(active_job_id: active_job.job_id)
+      rescue StandardError => e
+        update_columns(status: 'failed', reason_for_failure: e.message)
       end
 
       def validate_arguments

@@ -55,10 +55,10 @@
                 <%= link_to 'Run Job Execution', execute_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, onclick: "return confirm('Are you sure you want to run this job execution?');", class: 'btn btn-sm btn-outline-success', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancel_execution %>
-                <%= link_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-sm btn-outline-danger mr-2', style: 'margin-right: 5px' %>
+                <%= button_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-sm btn-outline-danger', style: 'margin-right: 5px' %>
               <% end %>
               <% if @job_execution.cancelled? %>
-                <%= link_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-sm btn-outline-primary mr-2'  %>
+                <%= button_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-sm btn-outline-primary', style: 'margin-right: 5px'  %>
               <% end %>
               <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-sm btn-outline-info'  %>
             </div>
@@ -78,7 +78,7 @@
         <% elsif @job_execution.executed? %>
           <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
-            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto; white-space: unset;">
+            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto; white-space: unset; max-width: 73%; margin-left: 13px;">
               <% @local_log_path = "log/activejob_web/job_executions/#{@job_execution.current_execution_history.log_stream_name}.log" %>
               <div id="live-logs-hint" class="mb">The job execution is currently in progress, and log events are streaming from <%= @local_log_path %> ...</div>
             </div>
@@ -112,7 +112,7 @@
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Reason for Failure:</strong></div>
-          <div class="col-sm-9"><%= @job_execution.reason_for_failure || '-' %></div>
+          <div class="col-sm-9 <%= 'terminal' if @job_execution.reason_for_failure.present? %> p-3" style="max-width: 73%; margin-left: 13px;"><%= @job_execution.reason_for_failure || '-' %></div>
         </div>
 
         <div class="mb-3 row">

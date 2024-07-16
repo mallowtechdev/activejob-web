@@ -4,12 +4,12 @@
       <div class="card-header p-2">
         <div class="row">
           <div class="col-md-8 d-flex align-items-center">
-            <h6 class="mb-0"><%= history.log_stream_name %></h6>
+            <h6 class="mb-0"><%= history.log_stream_name %> <%= "(current)" if history.current_history? %></h6>
           </div>
           <div class="col-md-4">
             <div class="d-flex" style="float: right">
               <% if details['execution_started_at'].present? %>
-                <%= link_to 'Logs',logs_activejob_web_job_job_execution_path(@job, @job_execution, history_id: history.id), method: :get, class: 'btn btn-sm btn-outline-info'  %>
+                <%= link_to 'Logs', logs_activejob_web_job_job_execution_path(@job, @job_execution, history_id: history.id), method: :get, class: 'btn btn-sm btn-outline-info'  %>
               <% end %>
             </div>
           </div>
@@ -43,7 +43,7 @@
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Reason for Failure:</strong></div>
-          <div class="col-sm-9 <%= 'terminal' if details['reason_for_failure'].present? %> p-3"><%= details['reason_for_failure'] || '-' %></div>
+          <div class="col-sm-9 <%= 'terminal' if details['reason_for_failure'].present? %> p-3" style="max-width: 73%; margin-left: 13px;"><%= details['reason_for_failure'] || '-' %></div>
         </div>
 
         <div class="mb-3 row">

@@ -51,7 +51,7 @@ module Activejob
       end
 
       def reinitiate
-        if @job_execution.cancelled? && update_with_source_params({ status: 'requested' })
+        if @job_execution.cancelled? && update_with_source_params({ status: 'reinitiate' })
           flash[:notice] = 'Job execution was successfully reinitiated.'
         else
           flash[:alert] = 'Failed to reinitiate job execution.'
@@ -154,9 +154,11 @@ module Activejob
       end
 
       def update_with_source_params(source_params)
+        source_status = source_params[:status]
+        source_params[:status] = source_status == 'reinitiate' ? 'requested' : source_status
         source_params.merge!({ execution_started_at: nil, run_at: nil, reason_for_failure: nil })
 
-        @job_execution.update(source_params) && @job_execution.gen_reqs_and_histories
+        @job_execution.update(source_params) && @job_execution.gen_reqs_and_histories(reinitiate: source_status == 'reinitiate')
       end
     end
   end

@@ -6,6 +6,10 @@ module Activejob
 
       has_one_attached :input_file
 
+      def current_history?
+        is_current
+      end
+
       def log_events(page_token = nil, opt = {})
         aws_credentials = Aws::Credentials.new(Activejob::Web.aws_credentials[:access_key_id], Activejob::Web.aws_credentials[:secret_access_key])
         cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials: aws_credentials)
