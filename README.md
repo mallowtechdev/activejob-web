@@ -52,12 +52,17 @@ ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job t
   description: "Sample Description",
   input_arguments: [
       ...
-    {
-      "name": "sample name",
-      "type": "String",
+    { 
+      "name": "sample string",
+      "type": "string",
       "required": true,
-      "allowed_characters": "<Regexp>",
       "max_length": "10"
+    },
+    {
+      "name": "sample email",
+      "type": "email",
+      "required": true,
+      "allowed_characters": ["^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"]
     },
     {
       "name": "file",
@@ -72,7 +77,7 @@ ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job t
   job_name: '<JOB_NAME>' # SampleJob
 )
 
-job.save
+job.save!
 
 #==== specified the file path and used File.open method to get the file, then attached the file
 file_path = "/../sample.png"

@@ -60,9 +60,7 @@
               <% if @job_execution.cancelled? %>
                 <%= link_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-sm btn-outline-primary mr-2'  %>
               <% end %>
-              <% if @job_execution_histories.count > 1 %>
-                <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-sm btn-outline-info'  %>
-              <% end %>
+              <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-sm btn-outline-info'  %>
             </div>
           </div>
         </div>

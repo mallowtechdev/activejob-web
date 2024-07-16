@@ -19,6 +19,8 @@ module Activejob
       # == Validations ===================================================================================================
       validates :title, presence: true, length: { maximum: 255 }
       validates :description, presence: true, length: { maximum: 1000 }
+      validates :job_name, presence: true
+      validate :validate_arguments, if: -> { new_record? && input_arguments.present? }
       validate :validate_approvers_executors, unless: :new_record?
 
       # == Callbacks =====================================================================================================
@@ -32,6 +34,20 @@ module Activejob
         self.max_run_time ||= 60
         self.minimum_approvals_required ||= 0
         self.priority ||= 1
+      end
+
+      def validate_arguments
+        file_arguments = input_arguments.select { |arg| arg['type'] == "File" }
+        errors.add(:base, "Duplicate 'File' types found.") if file_arguments.count > 1
+
+        input_arguments.each do |arg|
+          next unless arg.key?("allowed_characters")
+
+          next if arg["allowed_characters"].count == 2
+
+          errors.add(:base, "Invalid 'allowed_characters' input. Format must be ['<regex>', 'regex command']")
+          break
+        end
       end
 
       def validate_approvers_executors
