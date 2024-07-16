@@ -70,7 +70,7 @@
           <div class="col-sm-3"><strong class="text-dark">Total Executions:</strong></div>
           <div class="col-sm-9"><%= @job_execution_histories.count %></div>
         </div>
-        <% if @job_execution.executed? %>
+        <% if @job_execution.live_log? %>
           <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
             <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto;"><div id="live-logs-hint">The job execution is currently in progress, and log events are streaming from <%= @job_execution.current_execution_history.log_stream_name %> ...</div></div>
@@ -158,12 +158,12 @@
 </div>
 <script>
     $(document).ready(function() {
-        <% if @job_execution.executed? %>
-        makeAjaxCall()
+        <% if @job_execution.live_log? %>
+        fetchLiveLogs()
         <% end %>
     });
 
-    function makeAjaxCall(timestamp, ingestion) {
+    function fetchLiveLogs(timestamp, ingestion) {
         $.ajax({
             url: '<%= live_logs_activejob_web_job_job_execution_path(@job, @job_execution) %>',
             method: 'GET',

@@ -98,7 +98,7 @@ module Activejob
           event_timestamp: last_event.present? ? last_event.timestamp : event_timestamp,
           event_ingestion: last_event.present? ? last_event.ingestion_time : event_ingestion,
         }
-        response.merge!({terminated: true}) if last_event.present? && last_event.message.include?("JOB ENDED") && filtered_logs.blank?
+        response.merge!({ terminated: true }) if last_event.present? && last_event.message.include?("JOB ENDED") && filtered_logs.blank?
 
         render json: response
       end

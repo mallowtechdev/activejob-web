@@ -87,6 +87,10 @@ module Activejob
         status == 'executed'
       end
 
+      def live_log?
+        executed? && Activejob::Web.aws_credentials_present?
+      end
+
       def execute
         return unless approved?
 

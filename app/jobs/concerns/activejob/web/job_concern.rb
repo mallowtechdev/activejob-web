@@ -44,7 +44,8 @@ module Activejob
                                log_stream_name,
                                { http_open_timeout: 10, http_read_timeout: 10 })
         else
-          ActiveSupport::Logger.new(Rails.root.join("log/#{log_stream_name}.log"))
+          FileUtils.mkdir_p('log/activejob_web/job_executions')
+          ActiveSupport::Logger.new(Rails.root.join("log/activejob_web/job_executions/#{log_stream_name}.log"))
         end
       end
 

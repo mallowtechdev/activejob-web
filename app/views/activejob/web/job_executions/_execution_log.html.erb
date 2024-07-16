@@ -16,7 +16,7 @@
         </div>
       <% end %>
     <% else %>
-      <% log_file_path = "log/#{log_stream_name}.log" %>
+      <% log_file_path = "log/activejob_web/job_executions/#{log_stream_name}.log" %>
       <% if File.exist?(log_file_path) %>
         <div class="mb-3 row">
           <div class="col-sm-12 terminal"><%= File.read(log_file_path) %></div>
