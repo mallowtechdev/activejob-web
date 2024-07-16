@@ -158,7 +158,20 @@ end
 Make sure that your application configured the `current_user` method.
 
 ## Active Job Configuration
-Include `ActiveJob::Web::JobConcern` in the Active Job you want to execute from the browser. Assign the error message to `@rescued_exception` to keep track of job failures.
+Create Active Jobs intended for execution from the browser. Place these jobs in the `jobs/activejob/web` directory and organize them under a specific namespace. These jobs are meant to be executed exclusively through Active Job's web interface.
+
+```ruby
+# app/jobs/job_one.rb
+module Activejob
+  module Web
+    class JobOne < ActiveJob::Base
+      # code..
+    end
+  end
+end
+```
+
+Include `ActiveJob::Web::JobConcern` in the Active Job. Assign the error message to `@rescued_exception` to keep track of job failures.
 
 ```ruby
 # app/jobs/job_one.rb
