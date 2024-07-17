@@ -32,11 +32,13 @@ module Activejob
       end
 
       def set_activejob_web_current_user
+        return user_invalid_redirect if fetch_host_user.blank?
+
         @activejob_web_current_user = convert_user_model(fetch_host_user)
       end
 
       def fetch_host_user
-        helpers.send(current_user_helper) || user_invalid_redirect
+        helpers.send(current_user_helper)
       end
 
       def convert_user_model(user)
