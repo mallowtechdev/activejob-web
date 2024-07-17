@@ -43,9 +43,9 @@ module Activejob
         input_arguments.each do |arg|
           next unless arg.key?("allowed_characters")
 
-          next if arg["allowed_characters"].count == 2
+          next if arg["allowed_characters"].count == 2 && arg["allowed_characters"].key?("regex") && arg["allowed_characters"].key?("description")
 
-          errors.add(:base, "Invalid 'allowed_characters' input. Format must be ['<regex>', 'regex command']")
+          errors.add(:base, "Invalid 'allowed_characters' input. Format must be { 'regex' => <regex>, 'description' => <description> }")
           break
         end
       end

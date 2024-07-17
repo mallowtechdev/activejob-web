@@ -62,7 +62,7 @@ ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job t
       "name": "sample email",
       "type": "email",
       "required": true,
-      "allowed_characters": ["^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", "Email Regex"]
+      "allowed_characters": { "regex" => /\A\d+\z/, "description" => "String Regex" }
     },
     {
       "name": "file",

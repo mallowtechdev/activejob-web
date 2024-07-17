@@ -71,7 +71,7 @@
                     <% when "DateTime" %>
                       <%= datetime_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
                     <% when "String" %>
-                      <%= text_field_tag "arguments[#{argument_name}]", argument_value(argument_name), maxlength: argument["max_length"], required: argument["required"], class: 'form-control' %>
+                      <%= text_field_tag "arguments[#{argument_name}]", argument_value(argument_name), maxlength: argument["max_length"].presence || 255, required: argument["required"], class: 'form-control' %>
                     <% when "Integer" %>
                       <%= number_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
                     <% end %>

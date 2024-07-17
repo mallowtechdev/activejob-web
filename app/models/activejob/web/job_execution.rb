@@ -147,9 +147,9 @@ module Activejob
         job_arguments = job.input_arguments
         arguments.each do |key, value|
           job_arg_regex = get_regex_for_key(key, job_arguments)
-          next if job_arg_regex.nil? || value.match?(Regexp.new(job_arg_regex.first))
+          next if job_arg_regex.nil? || value.to_s.match?(Regexp.new(job_arg_regex['regex']))
 
-          errors.add(:base, "Input argument #{key} does not match regex '#{job_arg_regex.last}'")
+          errors.add(:base, "Input argument #{key} does not match regex '#{job_arg_regex['description']}'")
         end
       end
 

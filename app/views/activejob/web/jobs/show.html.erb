@@ -118,10 +118,10 @@
                           <% if arguments.except('name', 'type', 'required').present? %>
                             <% arguments.except('name', 'type', 'required').each do |key| %>
                               <p class="mb-0">
-                                <% if key[0] == 'allowed_characters' %>
-                                  <%= "Regex: #{key[1].last}" %>
+                                <% if key.first == 'allowed_characters' %>
+                                  <%= "Regex: #{key.last['description']}" %>
                                 <% else %>
-                                  <%= "#{key[0]}: #{key[1]}" %>
+                                  <%= "#{key.first}: #{key.last}" %>
                                 <% end %>
                               </p>
                             <% end %>
