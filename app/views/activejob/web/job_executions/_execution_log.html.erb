@@ -19,7 +19,13 @@
       <% log_file_path = "log/activejob_web/job_executions/#{log_stream_name}.log" %>
       <% if File.exist?(log_file_path) %>
         <div class="mb-3 row">
-          <div class="col-sm-12 terminal"><%= File.read(log_file_path) %></div>
+          <div class="col-sm-12 terminal">
+            <% File.open(log_file_path, 'r') do |file| %>
+              <% file.each_with_index do |line, index| %>
+                <div><span class="line-number"><%= index + 1 %></span><%= line %></div>
+              <% end %>
+            <% end %>
+          </div>
         </div>
       <% else %>
         <div class="col-sm-12">

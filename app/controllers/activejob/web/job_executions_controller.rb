@@ -112,7 +112,7 @@ module Activejob
           last_index = params[:last_index].to_i || 0
           File.open(file_path, 'r') do |file|
             file.each_with_index do |line, index|
-              next if index < (last_index + 1)
+              next if last_index != 0 && index <= last_index
 
               messages << line
               last_index = index

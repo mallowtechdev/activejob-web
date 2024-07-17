@@ -78,7 +78,7 @@
         <% elsif @job_execution.executed? %>
           <div class="mb-3 row">
             <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
-            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto; white-space: unset; max-width: 73%; margin-left: 13px;">
+            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto; max-width: 73%; margin-left: 13px;">
               <% @local_log_path = "log/activejob_web/job_executions/#{@job_execution.current_execution_history.log_stream_name}.log" %>
               <div id="live-logs-hint" class="mb">The job execution is currently in progress, and log events are streaming from <%= @local_log_path %> ...</div>
             </div>
@@ -216,8 +216,10 @@
             success: function(response) {
                 if (response.messages[0]){
                     $('#live-logs-hint').remove();
+                    let childDivCount = $('#live-logs-terminal > div').length;
                     $.each(response.messages, function(index, value) {
-                        $('#live-logs-terminal').append('<div>' + value + '</div>');
+                        childDivCount = childDivCount + 1;
+                        $('#live-logs-terminal').append("<div><span class='line-number'>" + childDivCount + "</span>" + value + "</div>");
                         $("#live-logs-terminal").scrollTop($("#live-logs-terminal")[0].scrollHeight);
                     });
                 }
