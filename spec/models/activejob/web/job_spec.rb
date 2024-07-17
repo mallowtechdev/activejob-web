@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::Job, type: :model do
-  let(:job) { FactoryBot.create(:job) }
-  let(:new_job) { FactoryBot.build(:job) }
+  let(:job) { create(:job) }
+  let(:new_job) { build(:job) }
 
   describe 'validations' do
     it 'is valid with valid attributes' do
@@ -58,12 +58,21 @@ RSpec.describe Activejob::Web::Job, type: :model do
   end
 
   describe 'associations' do
+    let(:approver) { create(:approver) }
+    let(:approver_one) { create(:approver_one) }
+    let(:executor) { create(:executor) }
+
+    before do
+      job.approver_ids = [approver.id, approver_one.id]
+      job.executor_ids = [executor.id]
+    end
+
     it 'has many approvers' do
-      expect(job.approvers.count).to eq(0)
+      expect(job.approvers.count).to eq(2)
     end
 
     it 'has many executors' do
-      expect(job.executors.count).to eq(0)
+      expect(job.executors.count).to eq(1)
     end
 
     it 'has many job_executions' do
@@ -78,7 +87,6 @@ RSpec.describe Activejob::Web::Job, type: :model do
   describe 'callbacks' do
     let(:job_two) { FactoryBot.build(:job_two) }
     it 'sets default values for queue, max_run_time, minimum_approvals_required, and priority' do
-      puts "JobTYwe: #{job_two.inspect}"
       expect(job_two.queue).to eq('default')
       expect(job_two.max_run_time).to eq(60)
       expect(job_two.minimum_approvals_required).to eq(0)
