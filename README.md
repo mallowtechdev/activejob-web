@@ -96,7 +96,7 @@ $ rake activejob:web:create_job['sample title','sample description',60,0,1,'Samp
 ```
 
 
-## Configuring Activejob Web Approvers and Executors
+## Configuring Activejob Web Admins, Approvers and Executors
 
 By default, Activejob Web uses the `User` class as the model for job admins, approvers and executors. If you need to customize these classes, you can do so in the initializer file located at `config/initializers/activejob_web.rb`.
 
@@ -112,6 +112,17 @@ Activejob::Web.configure do |config|
 end
 ```
 where, `admins_model`, `approvers_model` and `executors_model` were defined as `mattr_accessors` in Activejob Web gem.
+
+The ActiveRecord model for admins_model must implement the `admin?` method. If this method is not present, all users will be treated as Admins in the admins_model.
+
+```ruby
+# app/models/user.rb
+  ...
+  def admin?
+    # code ...
+  end
+  ...
+```
 
 ## Configuration for Authentication
 The ActivejobWeb Gem integrates with the authentication system used in your Rails application. To set up authentication,
@@ -182,7 +193,7 @@ class JobOne < ActiveJob::Base
   def perform
     # code...
   rescue StandardError => e
-    Rails.logger.info "Error: #{e.message}"
+    activejob_web_logger.info "Error: #{e.message}"
     @rescued_exception = { message: e.message }
   end
 end

@@ -35,4 +35,4 @@ namespace :activejob do
   end
 end
 
-# rake activejob:web:create_job['Booking Details with CloudWatch',"Pusing booking details to cloudwatch",nil,60,0,1,"WebBookingDetailsJob"] input_arguments='[{"name":"booking_id","type":"Integer","required":true}]'
+# rake activejob:web:create_job['Sample Job',"Sample Job Description",60,0,1,"SampleJob"] input_arguments='[{"name":"Name","type":"String","required":true}]'
