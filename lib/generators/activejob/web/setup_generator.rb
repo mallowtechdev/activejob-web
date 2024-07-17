@@ -22,8 +22,8 @@ module Activejob
                              'db/migrate/create_activejob_web_job_executions.rb'
           migration_template 'migrations/create_job_approval_requests.html.erb',
                              'db/migrate/create_job_approval_requests.rb'
-          migration_template 'migrations/create_active_storage_tables.active_storage.html.erb',
-                             'db/migrate/create_active_storage_tables.active_storage.rb'
+          migration_template 'migrations/create_active_job_web_active_storage_tables.active_storage.html.erb',
+                             'db/migrate/create_active_job_web_active_storage_tables.active_storage.rb'
           migration_template 'migrations/create_job_execution_histories.html.erb',
                              'db/migrate/create_job_execution_histories.rb'
         end
