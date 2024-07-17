@@ -10,7 +10,7 @@ class CreateJobs < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_v
       t.integer :max_run_time
       t.integer :minimum_approvals_required
       t.integer :priority
-      t.integer :queue
+      t.string :queue
       t.string :job_name
 
       t.timestamps
