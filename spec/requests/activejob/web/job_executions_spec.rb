@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-RSpec.describe ActivejobWeb::JobExecutionsController, type: :request do
+RSpec.describe Activejob::Web::JobExecutionsController, type: :request do
   let(:job) { create(:job) } # Assuming you have a Job model
   let!(:user) { create(:user) }
   let(:execution) { create(:job_execution, job:, requestor_id: user.id) }

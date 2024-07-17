@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'ActivejobWeb::JobApprovalRequests', type: :request do
+RSpec.describe 'Activejob::Web::JobApprovalRequests', type: :request do
   let(:job) { create(:job) }
   let(:user) { create(:user) }
   let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: user.id) }

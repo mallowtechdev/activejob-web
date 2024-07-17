@@ -12,6 +12,6 @@ require 'rails_helper'
 #     end
 #   end
 # end
-RSpec.describe ActivejobWeb::JobExecutionsHelper, type: :helper do
+RSpec.describe Activejob::Web::JobExecutionsHelper, type: :helper do
   pending "add some examples to (or delete) #{__FILE__}"
 end

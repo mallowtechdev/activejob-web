@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ActivejobWeb::JobsController, type: :request do
+RSpec.describe Activejob::Web::JobsController, type: :request do
   let(:valid_attributes) { { title: 'Activejob', description: 'Web Gem' } }
   let(:job) { create(:job) }
   let!(:user) { create(:user) }
