@@ -2,7 +2,7 @@
 
 module Activejob
   module Web
-    class ApplicationController < ActionController::Base
+    class ApplicationController < ApplicationController
       layout 'activejob/web/layouts/application'
 
       include ActiveStorage::SetCurrent

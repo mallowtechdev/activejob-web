@@ -1,6 +1,6 @@
 module Activejob
   module Web
-    class ApplicationRecord < ActiveRecord::Base
+    class ApplicationRecord < ApplicationRecord
       self.abstract_class = true
 
       default_scope { order(created_at: :desc) }
