@@ -36,7 +36,7 @@ The generator adds these core files, among others:
     - `create_join_table_job_executors.rb`
     - `create_job_approval_requests.rb`
     - `create_join_table_job_approvers.rb`
-    - `create_active_storage_tables.active_storage.rb`
+    - `create_active_job_web_active_storage_tables.active_storage.rb`
 
 Then run:
 ```bash
@@ -62,7 +62,7 @@ ActiveJob Web jobs should be created from the backend. Use ActiveJob::Web::Job t
       "name": "sample email",
       "type": "email",
       "required": true,
-      "allowed_characters": ["^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"]
+      "allowed_characters": ["^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", "Email Regex"]
     },
     {
       "name": "file",
