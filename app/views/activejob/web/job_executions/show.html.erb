@@ -102,12 +102,12 @@
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Run At:</strong></div>
-          <div class="col-sm-9"><%= @job_execution.run_at || '-' %></div>
+          <div class="col-sm-9"><%= @job_execution.run_at.present? ? Time.parse(@job_execution.run_at.to_s).utc : '-' %></div>
         </div>
 
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Execution Started At:</strong></div>
-          <div class="col-sm-9"><%= @job_execution.execution_started_at || '-' %></div>
+          <div class="col-sm-9"><%= @job_execution.execution_started_at.present? ? Time.parse(@job_execution.execution_started_at.to_s).utc : '-' %></div>
         </div>
 
         <div class="mb-3 row">
