@@ -6,10 +6,10 @@ FactoryBot.define do
     description { 'Web Gem' }
     job_name { 'TestJob' }
     input_arguments do
-      [{ name: 'sample name',
-         type: 'String',
+      [{ name: 'sample_number',
+         type: 'Integer',
          required: true,
-         allowed_characters: %w[<Regexp> test] }]
+         allowed_characters: { 'regex' => /\A[-+]?\d+(\.\d+)?\z/, 'description' => 'String Regex' } }]
     end
     queue { 'default' }
     max_run_time { 60 }

@@ -3,15 +3,13 @@
 # spec/factories/job_executions.rb
 FactoryBot.define do
   factory :job_execution, class: Activejob::Web::JobExecution do
-    requestor_id { 1 } # Adjust as needed
-    job_id { SecureRandom.uuid } # Generates a random UUID
     requestor_comments { 'Requestor comments' }
-    arguments { { key: 'value' } } # Example JSON structure, adjust as needed
-    status { 0 } # Example status, adjust as needed
-    reason_for_failure { 'Reason for failure' }
+    arguments { { sample_number: '123' } }
+    status { 0 }
+    reason_for_failure { nil }
     auto_execute_on_approval { false }
-    run_at { Time.current }
-    execution_started_at { Time.current }
+    run_at { nil }
+    execution_started_at { nil }
   end
 
   factory :valid_job_execution, class: Activejob::Web::JobExecution do

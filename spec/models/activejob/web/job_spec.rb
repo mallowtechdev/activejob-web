@@ -36,19 +36,27 @@ RSpec.describe Activejob::Web::Job, type: :model do
       expect(new_job.errors[:base]).to include("Duplicate 'File' types found.")
     end
 
+    it 'is valid with correct allowed_characters format' do
+      new_job.input_arguments = [{ name: 'sample name',
+                                   type: 'String',
+                                   required: true,
+                                   allowed_characters: { 'regex' => /\A\d+\z/, 'description' => 'String Regex' } }]
+      expect(new_job).to be_valid
+    end
+
     it 'is not valid with incorrect allowed_characters format' do
       new_job.input_arguments = [{ name: 'sample name',
                                    type: 'String',
                                    required: true,
-                                   allowed_characters: %w[<Regexp>] }]
+                                   allowed_characters: { 'description' => 'regex command' } }]
       expect(new_job).to_not be_valid
-      expect(new_job.errors[:base]).to include("Invalid 'allowed_characters' input. Format must be ['<regex>', 'regex command']")
+      expect(new_job.errors[:base]).to include("Invalid 'allowed_characters' input. Format must be { 'regex' => <regex>, 'description' => <description> }")
     end
 
     it 'is not valid with insufficient approvers' do
       job.minimum_approvals_required = 2
       expect(job).to_not be_valid
-      expect(job.errors[:base]).to include("Minimum Approver required is 2. Please select 2 more approver(s).")
+      expect(job.errors[:base]).to include('Minimum Approver required is 2. Please select 2 more approver(s).')
     end
 
     it 'is valid with 0 approvers' do
@@ -85,7 +93,7 @@ RSpec.describe Activejob::Web::Job, type: :model do
   end
 
   describe 'callbacks' do
-    let(:job_two) { FactoryBot.build(:job_two) }
+    let(:job_two) { build(:job_two) }
     it 'sets default values for queue, max_run_time, minimum_approvals_required, and priority' do
       expect(job_two.queue).to eq('default')
       expect(job_two.max_run_time).to eq(60)
