@@ -11,4 +11,14 @@ FactoryBot.define do
     run_at { nil }
     execution_started_at { nil }
   end
+
+  factory :job_execution_two, class: Activejob::Web::JobExecution do
+    requestor_comments { 'Requestor comments Two' }
+    arguments { { sample_number: '123' } }
+    status { 0 }
+    reason_for_failure { nil }
+    auto_execute_on_approval { false }
+    run_at { nil }
+    execution_started_at { nil }
+  end
 end

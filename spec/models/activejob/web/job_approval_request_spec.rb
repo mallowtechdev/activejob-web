@@ -3,20 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::JobApprovalRequest, type: :model do
-  let(:job) { create(:job, minimum_approvals_required: 2) }
   let(:approver) { create(:approver) }
   let(:approver_one) { create(:approver_one) }
   let(:executor) { create(:executor) }
-
-  before do
-    job.approver_ids = [approver.id, approver_one.id]
-    job.executor_ids = [executor.id]
-    job.save
-  end
+  let(:job) { create(:job, minimum_approvals_required: 2, approvers: [approver, approver_one], executors: [executor]) }
 
   let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: executor.id) }
-  let(:first_job_approval_request) { job_execution.job_approval_requests.first }
-  let(:second_job_approval_request) { job_execution.job_approval_requests.second }
+  let!(:first_job_approval_request) { job_execution.job_approval_requests.first }
+  let!(:second_job_approval_request) { job_execution.job_approval_requests.second }
 
   describe 'validations' do
     it 'is valid' do
@@ -90,14 +84,10 @@ RSpec.describe Activejob::Web::JobApprovalRequest, type: :model do
     end
 
     it '.pending_requests for admins' do
-      first_job_approval_request
-      second_job_approval_request
       expect(Activejob::Web::JobApprovalRequest.pending_requests(true, nil).count).to eq(2)
     end
 
     it '.pending_requests for approvers' do
-      first_job_approval_request
-      second_job_approval_request
       expect(Activejob::Web::JobApprovalRequest.pending_requests(false, approver.id).count).to eq(1)
     end
   end

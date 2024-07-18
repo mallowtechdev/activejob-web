@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Activejob::Web::Job, type: :model do
   let(:job) { create(:job) }
-  let(:new_job) { build(:job) }
+  let(:build_job) { build(:build_job) }
 
   describe 'validations' do
     it 'is valid with valid attributes' do
@@ -30,27 +30,27 @@ RSpec.describe Activejob::Web::Job, type: :model do
     end
 
     it 'is not valid with duplicate file arguments' do
-      new_job.input_arguments << { 'name' => 'sample file', 'type' => 'File' }
-      new_job.input_arguments << { 'name' => 'another sample file', 'type' => 'File' }
-      expect(new_job).to_not be_valid
-      expect(new_job.errors[:base]).to include("Duplicate 'File' types found.")
+      build_job.input_arguments << { 'name' => 'sample file', 'type' => 'File' }
+      build_job.input_arguments << { 'name' => 'another sample file', 'type' => 'File' }
+      expect(build_job).to_not be_valid
+      expect(build_job.errors[:base]).to include("Duplicate 'File' types found.")
     end
 
     it 'is valid with correct allowed_characters format' do
-      new_job.input_arguments = [{ name: 'sample name',
+      build_job.input_arguments = [{ name: 'sample name',
                                    type: 'String',
                                    required: true,
                                    allowed_characters: { 'regex' => /\A\d+\z/, 'description' => 'String Regex' } }]
-      expect(new_job).to be_valid
+      expect(build_job).to be_valid
     end
 
     it 'is not valid with incorrect allowed_characters format' do
-      new_job.input_arguments = [{ name: 'sample name',
+      build_job.input_arguments = [{ name: 'sample name',
                                    type: 'String',
                                    required: true,
                                    allowed_characters: { 'description' => 'regex command' } }]
-      expect(new_job).to_not be_valid
-      expect(new_job.errors[:base]).to include("Invalid 'allowed_characters' input. Format must be { 'regex' => <regex>, 'description' => <description> }")
+      expect(build_job).to_not be_valid
+      expect(build_job.errors[:base]).to include("Invalid 'allowed_characters' input. Format must be { 'regex' => <regex>, 'description' => <description> }")
     end
 
     it 'is not valid with insufficient approvers' do
@@ -71,8 +71,9 @@ RSpec.describe Activejob::Web::Job, type: :model do
     let(:executor) { create(:executor) }
 
     before do
-      job.approver_ids = [approver.id, approver_one.id]
-      job.executor_ids = [executor.id]
+      job.minimum_approvals_required = 2
+      job.approvers = [approver, approver_one]
+      job.executors = [executor]
     end
 
     it 'has many approvers' do
@@ -93,12 +94,12 @@ RSpec.describe Activejob::Web::Job, type: :model do
   end
 
   describe 'callbacks' do
-    let(:job_two) { build(:job_two) }
+    let(:default_value_job) { build(:default_value_job) }
     it 'sets default values for queue, max_run_time, minimum_approvals_required, and priority' do
-      expect(job_two.queue).to eq('default')
-      expect(job_two.max_run_time).to eq(60)
-      expect(job_two.minimum_approvals_required).to eq(0)
-      expect(job_two.priority).to eq(1)
+      expect(default_value_job.queue).to eq('default')
+      expect(default_value_job.max_run_time).to eq(60)
+      expect(default_value_job.minimum_approvals_required).to eq(0)
+      expect(default_value_job.priority).to eq(1)
     end
   end
 end

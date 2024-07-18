@@ -3,19 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::JobExecution, type: :model do
-  let(:job) { create(:job, minimum_approvals_required: 2) }
-  let(:job_two) { create(:job, minimum_approvals_required: 2) }
   let(:approver) { create(:approver) }
   let(:approver_one) { create(:approver_one) }
   let(:executor) { create(:executor) }
 
-  before do
-    job.approver_ids = [approver.id, approver_one.id]
-    job.executor_ids = [executor.id]
-    job.save
-  end
+  let(:job) { create(:job, minimum_approvals_required: 2, approvers: [approver, approver_one], executors: [executor]) }
+  let(:job_two) { create(:job_two, minimum_approvals_required: 2) }
 
   let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: executor.id) }
+
   describe 'validations' do
     it 'is valid' do
       expect(job_execution).to be_valid
@@ -145,10 +141,8 @@ RSpec.describe Activejob::Web::JobExecution, type: :model do
   end
 
   describe 'class methods' do
-
     it 'update_job_execution_status' do
       expect(Activejob::Web::JobExecution).to respond_to(:update_job_execution_status)
     end
-
   end
 end

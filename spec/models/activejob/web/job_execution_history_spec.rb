@@ -1,12 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::JobExecutionHistory, type: :model do
-  let(:job) { create(:job) }
   let(:executor) { create(:executor) }
-  before do
-    job.executor_ids = [executor.id]
-    job.save
-  end
+  let(:job) { create(:job, executors: [executor]) }
 
   let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: executor.id) }
   let(:job_execution_history) { job_execution.job_execution_histories.first }
