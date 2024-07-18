@@ -20,9 +20,9 @@ RSpec.describe Activejob::Web::Admin, type: :model do
     let!(:job_two) { create(:job_two) }
 
     let(:approver) { create(:approver) }
-    let(:job_with_approver) { create(:job, minimum_approvals_required: 1, approvers: [approver]) }
-
     let(:executor) { create(:executor) }
+    let(:job_with_approver) { create(:job, minimum_approvals_required: 1, approvers: [approver], executors: [executor]) }
+
     let(:job_execution) { create(:job_execution, job_id: job_with_approver.id, requestor_id: executor.id) }
     let(:job_execution_two) { create(:job_execution_two, job_id: job_with_approver.id, requestor_id: executor.id) }
 
@@ -42,7 +42,7 @@ RSpec.describe Activejob::Web::Admin, type: :model do
       expect(executor.jobs.count).to eq(0)
     end
 
-    it 'should be all jobs for admin' do
+    it 'should be all job_approval_requests for admin' do
       job_execution
       job_execution_two
       expect(admin.job_approval_requests.count).to eq(2)
