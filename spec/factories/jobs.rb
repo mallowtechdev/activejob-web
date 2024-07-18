@@ -33,6 +33,24 @@ FactoryBot.define do
     priority { 0 }
   end
 
+  factory :job_with_attachment, class: Activejob::Web::Job do
+    title { 'Activejob Attachment' }
+    description { 'Web Gem Attachment' }
+    job_name { 'TestJob' }
+    input_arguments do
+      [{ name: 'sample_file',
+         type: 'File' }]
+    end
+    queue { 'default' }
+    max_run_time { 60 }
+    minimum_approvals_required { 0 }
+    priority { 0 }
+
+    after(:build) do |job_with_attachment|
+      job_with_attachment.template_file.attach(io: File.open(Rails.root.join('..', '..').expand_path.join('spec', 'fixtures', 'files', 'lorem_ipsum.jpg')), filename: 'lorem_ipsum.jpg', content_type: 'image/jpeg')
+    end
+  end
+
   factory :build_job, class: Activejob::Web::Job do
     title { 'Activejob Build Test' }
     description { 'Web Gem Build Test' }

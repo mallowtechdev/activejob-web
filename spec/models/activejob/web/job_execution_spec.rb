@@ -145,4 +145,14 @@ RSpec.describe Activejob::Web::JobExecution, type: :model do
       expect(Activejob::Web::JobExecution).to respond_to(:update_job_execution_status)
     end
   end
+
+  describe 'attachments' do
+    let(:job_execution_with_attachment) { build(:job_execution_with_attachment) }
+    it 'should be valid template_file' do
+      attachment = job_execution_with_attachment.input_file.attachment
+      expect(attachment).to be_present
+      expect(attachment.filename.to_s).to eq('lorem_ipsum.jpg')
+      expect(attachment.content_type.to_s).to eq('image/jpeg')
+    end
+  end
 end

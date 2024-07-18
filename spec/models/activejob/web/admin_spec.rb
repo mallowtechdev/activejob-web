@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Activejob::Web::Admin, type: :model do
   let(:admin) { create(:admin) }
 
-  describe 'Configuration' do
+  describe 'Configurations' do
     it 'class name should be match' do
       expect(admin.class.name).to eq(Activejob::Web::Admin.name)
     end

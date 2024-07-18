@@ -102,4 +102,14 @@ RSpec.describe Activejob::Web::Job, type: :model do
       expect(default_value_job.priority).to eq(1)
     end
   end
+
+  describe 'attachments' do
+    let(:job_with_attachment) { build(:job_with_attachment) }
+    it 'should be valid template_file' do
+      attachment = job_with_attachment.template_file.attachment
+      expect(attachment).to be_present
+      expect(attachment.filename.to_s).to eq('lorem_ipsum.jpg')
+      expect(attachment.content_type.to_s).to eq('image/jpeg')
+    end
+  end
 end

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Activejob::Web::Executor, type: :model do
   let(:executor) { create(:executor) }
 
-  describe 'Configuration' do
+  describe 'Configurations' do
     it 'class name should be match' do
       expect(executor.class.name).to eq(Activejob::Web::Executor.name)
     end

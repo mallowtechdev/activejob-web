@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Activejob::Web::Approver, type: :model do
   let(:approver) { create(:approver) }
 
-  describe 'Configuration' do
+  describe 'Configurations' do
     it 'class name should be match' do
       expect(approver.class.name).to eq(Activejob::Web::Approver.name)
     end
