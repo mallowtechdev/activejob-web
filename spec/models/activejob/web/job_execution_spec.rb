@@ -138,6 +138,39 @@ RSpec.describe Activejob::Web::JobExecution, type: :model do
     it 'should return false for live_log?' do
       expect(job_execution.live_log?).to be_falsey
     end
+
+    it 'should change to executed state' do
+      job_execution.update(status: 'approved')
+      allow(job_execution).to receive(:initiate_job_execution).and_return(true)
+      allow(job_execution).to receive(:update_execution_history).and_return(true)
+      job_execution.execute
+      expect(job_execution.status).to eq('executed')
+    end
+
+    it 'should rescue error with invalid job' do
+      job_execution.update(status: 'approved')
+      allow(job_execution).to receive(:update_execution_history).and_return(true)
+      job_execution.execute
+      expect(job_execution.status).to eq('failed')
+      expect(job_execution.reason_for_failure).to be_present
+    end
+
+    it 'should schedule with valid job' do
+      job.update(job_name: 'JobOne')
+      job_execution.update(status: 'approved')
+      allow(job_execution).to receive(:update_execution_history).and_return(true)
+      job_execution.execute
+      expect(job_execution.active_job_id).to be_present
+      expect(job_execution.reason_for_failure).to eq(nil)
+    end
+
+    it 'should update history after executed' do
+      job.update(job_name: 'JobOne')
+      job_execution.update(status: 'approved')
+      expect(job_execution.current_execution_history.details['status']).to eq('requested')
+      job_execution.execute
+      expect(job_execution.current_execution_history.details['status']).to eq('executed')
+    end
   end
 
   describe 'class methods' do

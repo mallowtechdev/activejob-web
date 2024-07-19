@@ -137,7 +137,7 @@ module Activejob
 
       def initiate_job_execution
         values = arguments.values
-        active_job = "Activejob::Web::#{job.job_name}".constantize.set(priority: priority, wait: 5.seconds).perform_later(*values)
+        active_job = "Activejob::Web::#{job.job_name}".constantize.set(priority: job.priority, wait: 5.seconds).perform_later(*values)
         update_columns(active_job_id: active_job.job_id)
       rescue StandardError => e
         update_columns(status: 'failed', reason_for_failure: e.message)
