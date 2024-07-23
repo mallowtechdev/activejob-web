@@ -26,7 +26,7 @@ module Activejob
         if update_with_source_params(job_execution_params.merge({ status: 'requested' }))
           redirect_to activejob_web_job_job_execution_path(@job), notice: 'Job execution was successfully updated.'
         else
-          render :show
+          render :edit
         end
       end
 

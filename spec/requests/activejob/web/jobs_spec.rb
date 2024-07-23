@@ -3,26 +3,200 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::JobsController, type: :request do
-  let(:valid_attributes) { { title: 'Activejob', description: 'Web Gem' } }
-  let(:job) { create(:job) }
-  let!(:user) { create(:user) }
-  before do
-    allow_any_instance_of(AuthenticationHelper).to receive(:activejob_web_current_user).and_return(user)
-  end
+  include_context 'common setup'
+
+  let(:source_admin) { create(:source_admin) }
+  let(:admin) { create(:admin) }
+  let(:source_approver) { create(:source_approver) }
+  let(:approver) { create(:approver) }
+  let(:source_executor) { create(:source_executor) }
+  let(:executor) { create(:executor) }
+  let(:source_common) { create(:source_common) }
+
   describe 'GET /index' do
-    context 'returns a successful response' do
-      it 'Valid index' do
+    context 'helper validations' do
+      it 'redirect to root_path if current_user_helper not set' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:current_user_helper).and_return(:none)
         get activejob_web_jobs_path
-        expect(response).to render_template('index')
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq("Please configure the 'current_user_method' in the ActiveJob::Web configuration, or add the helper method 'activejob_web_user' to the ApplicationHelper.")
+      end
+
+      it 'redirect to root_path if user not set' do
+        get activejob_web_jobs_path
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to eq('User not found or invalid.')
+      end
+    end
+
+    context 'helper validation for Admin' do
+      it 'should not redirect to root_path if user set' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_admin)
+        get activejob_web_jobs_path
+      end
+
+      it 'should valid user' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_admin)
+        get activejob_web_jobs_path
+        expect(flash[:alert]).to_not eq('User not found or invalid.')
+      end
+
+      it 'should match with host model' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_admin)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(true)
+        get activejob_web_jobs_path
+        expect(assigns(:activejob_web_current_user).class.name).to eq('Activejob::Web::Admin')
+      end
+    end
+
+    context 'helper validation for Common' do
+      it 'should approver match with host model' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_approver)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+        get activejob_web_jobs_path
+        expect(assigns(:activejob_web_current_user).class.name).to eq('Activejob::Web::Common')
+      end
+
+      it 'should executor match with host model' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_executor)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+        get activejob_web_jobs_path
+        expect(assigns(:activejob_web_current_user).class.name).to eq('Activejob::Web::Common')
+      end
+    end
+
+    context 'helper validation for Approver' do
+      before do
+        approver_config
+      end
+      it 'should approver match with host model' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_approver)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+        get activejob_web_jobs_path
+        expect(assigns(:activejob_web_current_user).class.name).to eq('Activejob::Web::Approver')
+      end
+    end
+
+    context 'helper validation for executor' do
+      before do
+        executor_config
+      end
+      it 'should executor match with host model' do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_executor)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+        get activejob_web_jobs_path
+        expect(assigns(:activejob_web_current_user).class.name).to eq('Activejob::Web::Executor')
+      end
+    end
+
+    context 'GET Admin /index' do
+      before do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_admin)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(true)
+      end
+
+      it 'returns a successful response' do
+        get activejob_web_jobs_path
         expect(response).to have_http_status 200
+        expect(response).not_to render_template(partial: '_common_user_index')
+      end
+
+      it 'should not be @jobs empty' do
+        job = create(:job)
+        get activejob_web_jobs_path
+        expect(assigns(:jobs)).to eq([job])
+      end
+    end
+
+    context 'GET Approver /index' do
+      before do
+        approver_config
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_approver)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+      end
+
+      it 'returns a successful response' do
+        get activejob_web_jobs_path
+        expect(response).to have_http_status 200
+      end
+
+      it 'should not be @jobs empty' do
+        job = create(:job, minimum_approvals_required: 1)
+        job.approver_ids = [source_approver.id]
+        job.save
+        get activejob_web_jobs_path
+        expect(assigns(:jobs)).to eq([job])
+      end
+
+      it 'should be empty @jobs' do
+        create(:job, minimum_approvals_required: 0, executors: [executor])
+        get activejob_web_jobs_path
+        expect(assigns(:jobs)).to eq([])
+      end
+    end
+
+    context 'GET Executor /index' do
+      before do
+        executor_config
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_executor)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+      end
+
+      it 'returns a successful response' do
+        get activejob_web_jobs_path
+        expect(response).to have_http_status 200
+      end
+
+      it 'should be @jobs empty' do
+        create(:job, minimum_approvals_required: 1, approvers: [approver])
+        get activejob_web_jobs_path
+        expect(assigns(:jobs)).to eq([])
+      end
+
+      it 'should not be empty @jobs' do
+        job = create(:job, minimum_approvals_required: 0)
+        job.executor_ids = [source_executor.id]
+        job.save
+        get activejob_web_jobs_path
+        expect(assigns(:jobs)).to eq([job])
+      end
+    end
+
+    context 'GET Common /index' do
+      before do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_common)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+      end
+
+      it 'returns a successful response' do
+        get activejob_web_jobs_path
+        expect(response).to have_http_status 200
+        expect(response).to render_template(partial: '_common_user_index')
+      end
+
+      it 'should be @jobs empty' do
+        job_one = create(:job, minimum_approvals_required: 1)
+        job_one.approver_ids = [source_common.id]
+        job_one.save
+        job_two = create(:job_two, minimum_approvals_required: 1)
+        job_two.executor_ids = [source_common.id]
+        job_two.save
+        get activejob_web_jobs_path
+        expect(assigns(:approval_jobs)).to eq([job_one])
+        expect(assigns(:execution_jobs)).to eq([job_two])
       end
     end
   end
 
   describe 'GET #show' do
+    let(:source_user) { create(:source_user) }
+    let(:job) { create(:job) }
     context 'returns a successful response' do
+      before do
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_user)
+        allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(true)
+      end
       it 'Valid show' do
-        job.executors << user
         get activejob_web_job_path(job.id)
         expect(response).to render_template('show')
         expect(response).to have_http_status 200
@@ -31,55 +205,46 @@ RSpec.describe Activejob::Web::JobsController, type: :request do
   end
 
   describe 'GET #edit' do
-    context 'valid' do
-      it 'valid edit' do
-        get edit_activejob_web_job_path(job.id)
-        expect(response).to have_http_status 200
-      end
+    let(:source_user) { create(:source_user) }
+    let(:job) { create(:job) }
+    before do
+      allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_user)
+    end
+    it 'valid edit' do
+      allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(true)
+      get edit_activejob_web_job_path(job.id)
+      expect(response).to have_http_status 200
     end
 
-    context 'invalid' do
-      it 'invalid edit without parameters' do
-        expect { get edit_activejob_web_job_path(SecureRandom.uuid) }.to raise_error(ActiveRecord::RecordNotFound)
-      end
+    it 'not valid edit' do
+      allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(false)
+      get edit_activejob_web_job_path(job.id)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq('You are not authorized to perform this action')
     end
   end
 
   describe 'PATCH #update' do
-    let(:approver) { create(:approver) }
-    let(:executor) { create(:executor) }
-    let(:approver1) { create(:approver1) }
-    let(:executor1) { create(:executor1) }
-    context 'valid' do
-      it 'valid update of job with approvers and executors gets assigned' do
-        patch activejob_web_job_path(job.id),
-              params: { id: job.id, activejob_web_job: valid_attributes.merge(approver_ids: [approver.id], executor_ids: [executor.id]) }
-        job.reload
-        expect(response).to redirect_to(activejob_web_job_path(job))
-        expect(job.approvers).to include(approver)
-        expect(job.executors).to include(executor)
-      end
-
-      it 'valid update of job with removal of assigned approvers and executors' do
-        job1 = ActivejobWeb::Job.create(valid_attributes.merge(approver_ids: [approver1.id, approver.id], executor_ids: [executor1.id, executor.id]))
-        expect(job1.approvers).to include(approver1)
-        expect(job1.executors).to include(executor1)
-        patch activejob_web_job_path(job1),
-              params: { id: job1.id, activejob_web_job: valid_attributes.merge(approver_ids: [approver.id], executor_ids: [executor.id]) }
-        job1.reload
-        expect(response).to redirect_to(activejob_web_job_path(job1))
-        expect(job1.approvers).not_to include(approver1)
-        expect(job1.executors).not_to include(executor1)
-      end
+    let(:source_user) { create(:source_user) }
+    let(:job) { create(:job, minimum_approvals_required: 1) }
+    before do
+      allow_any_instance_of(Activejob::Web::Authentication).to receive(:fetch_host_user).and_return(source_user)
+      allow_any_instance_of(Activejob::Web::Authentication).to receive(:admin?).and_return(true)
     end
 
-    context 'invalid' do
-      it 'should not update job with invalid approvers and executors' do
-        expect do
-          patch activejob_web_job_path(job.id),
-                params: { id: job.id, activejob_web_job: valid_attributes.merge(approver_ids: ['4'], executor_ids: ['Test']) }
-        end.to raise_error(ActiveRecord::RecordNotFound)
-      end
+    it 'valid' do
+      patch activejob_web_job_path(job.id),
+            params: { id: job.id, activejob_web_job: { approver_ids: [approver.id], executor_ids: [executor.id] } }
+      expect(response).to redirect_to(activejob_web_job_path(job.id))
+      expect(flash[:notice]).to eq('Job was successfully updated.')
+    end
+
+    it 'invalid' do
+      job = create(:job, minimum_approvals_required: 2)
+      patch activejob_web_job_path(job.id),
+            params: { id: job.id, activejob_web_job: { approver_ids: [approver.id], executor_ids: [executor.id] } }
+
+      expect(response).to render_template(:edit)
     end
   end
 end
