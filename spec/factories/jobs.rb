@@ -7,7 +7,7 @@ FactoryBot.define do
     job_name { 'TestJob' }
     input_arguments do
       [{ name: 'sample_number',
-         type: 'Integer',
+         type: 'String',
          required: true,
          allowed_characters: { 'regex' => /\A[-+]?\d+(\.\d+)?\z/, 'description' => 'String Regex' } }]
     end
@@ -23,7 +23,7 @@ FactoryBot.define do
     job_name { 'TestJob' }
     input_arguments do
       [{ name: 'sample_number',
-         type: 'Integer',
+         type: 'String',
          required: true,
          allowed_characters: { 'regex' => /\A[-+]?\d+(\.\d+)?\z/, 'description' => 'String Regex' } }]
     end
@@ -57,7 +57,7 @@ FactoryBot.define do
     job_name { 'TestJob' }
     input_arguments do
       [{ name: 'sample_number',
-         type: 'Integer',
+         type: 'String',
          required: true,
          allowed_characters: { 'regex' => /\A[-+]?\d+(\.\d+)?\z/, 'description' => 'String Regex' } }]
     end

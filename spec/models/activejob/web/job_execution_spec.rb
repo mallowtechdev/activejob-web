@@ -107,8 +107,49 @@ RSpec.describe Activejob::Web::JobExecution, type: :model do
       expect(job_execution).to respond_to(:gen_reqs_and_histories)
     end
 
-    it 'execute' do
-      expect(job_execution).to respond_to(:execute)
+    describe '#execute' do
+      context 'when job execution is approved' do
+        before do
+          job_execution.update(status: 'approved')
+        end
+
+        it 'updates the status to executed' do
+          allow(job_execution).to receive(:initiate_job_execution)
+          allow(job_execution).to receive(:update_execution_history)
+
+          job_execution.execute
+          expect(job_execution.status).to eq('executed')
+        end
+
+        it 'updates execution history' do
+          expect(job_execution).to receive(:initiate_job_execution)
+
+          job_execution.execute
+          expect(job_execution.current_execution_history.details['status']).to eq('executed')
+        end
+
+        it 'rescues error and updates execution' do
+          job_execution.execute
+          expect(job_execution.status).to eq('failed')
+          expect(job_execution.current_execution_history.details['status']).to eq('failed')
+        end
+      end
+
+      context 'when job execution is not approved' do
+        before do
+          job_execution.update(status: 'requested')
+        end
+
+        it 'does not change the status and does not initiate job execution or update history' do
+          expect(job_execution).not_to receive(:initiate_job_execution)
+          expect(job_execution).not_to receive(:update_execution_history)
+
+          job_execution.execute
+
+          expect(job_execution.status).not_to eq('executed')
+          expect(job_execution.status).not_to eq('failed')
+        end
+      end
     end
 
     it 'current_execution_history' do
