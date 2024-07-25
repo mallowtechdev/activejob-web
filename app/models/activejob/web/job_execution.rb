@@ -145,6 +145,8 @@ module Activejob
 
       def validate_arguments
         job_arguments = job.input_arguments
+        return unless arguments.present?
+
         arguments.each do |key, value|
           job_arg_regex = get_regex_for_key(key, job_arguments)
           next if job_arg_regex.nil? || value.to_s.match?(Regexp.new(job_arg_regex['regex']))

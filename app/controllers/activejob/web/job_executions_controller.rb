@@ -134,7 +134,7 @@ module Activejob
       private
 
       def job_execution_params
-        params.require(:activejob_web_job_execution).permit(:requestor_id, :requestor_comments, :status, :job_id, :auto_execute_on_approval, :arguments, :input_file)
+        params.require(:activejob_web_job_execution).permit(:requestor_id, :requestor_comments, :status, :job_id, :auto_execute_on_approval, :input_file)
       end
 
       def set_job
@@ -142,11 +142,11 @@ module Activejob
       end
 
       def set_job_execution
-        @job_execution = @job.job_executions.find(params[:id])
+        @job_execution = @job.job_executions.find_by!(id: params[:id], requestor_id: @activejob_web_current_user.id)
       end
 
       def set_job_execution_history
-        @job_execution_history = @job_execution.job_execution_histories.find_by(id: params['history_id'])
+        @job_execution_history = @job_execution.job_execution_histories.find(id: params['history_id'])
       end
 
       def user_authorized?

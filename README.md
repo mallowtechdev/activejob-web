@@ -113,7 +113,7 @@ end
 ```
 where, `admins_model`, `approvers_model` and `executors_model` were defined as `mattr_accessors` in Activejob Web gem.
 
-The ActiveRecord model for admins_model must implement the `admin?` method. If this method is not present, all users will be treated as Admins in the admins_model.
+The ActiveRecord model for admins_model must implement the `admin?` method. If this method is not present, all users will be treated as Admins from the admins_model.
 
 ```ruby
 # app/models/user.rb
@@ -172,7 +172,7 @@ Make sure that your application configured the `current_user` method.
 Create Active Jobs intended for execution from the browser. Place these jobs in the `jobs/activejob/web` directory and organize them under a specific namespace. These jobs are meant to be executed exclusively through Active Job's web interface.
 
 ```ruby
-# app/jobs/job_one.rb
+# app/jobs/activejob/web/job_one.rb
 module Activejob
   module Web
     class JobOne < ActiveJob::Base
@@ -185,16 +185,19 @@ end
 Include `ActiveJob::Web::JobConcern` in the Active Job. Assign the error message to `@rescued_exception` to keep track of job failures.
 
 ```ruby
-# app/jobs/job_one.rb
+# app/jobs/activejob/web/job_one.rb
+module Activejob
+  module Web
+    class JobOne < ActiveJob::Base
+      include Activejob::Web::JobConcern
 
-class JobOne < ActiveJob::Base
-  include Activejob::Web::JobConcern
-
-  def perform
-    # code...
-  rescue StandardError => e
-    activejob_web_logger.info "Error: #{e.message}"
-    @rescued_exception = { message: e.message }
+      def perform
+        # code...
+      rescue StandardError => e
+        activejob_web_logger.info "Error: #{e.message}"
+        @rescued_exception = { message: e.message }
+      end
+    end
   end
 end
 ```
