@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.name        = 'activejob-web'
   spec.version     = Activejob::Web::VERSION
   spec.platform    = Gem::Platform::RUBY
-  spec.authors     = %w[Prakash Surender]
-  spec.email       = %w[prakash@mallow-tech.com surender@mallow-tech.com]
+  spec.authors     = %w[Prakash Surender Dinesh]
+  spec.email       = %w[prakash@mallow-tech.com surender@mallow-tech.com dinesh@mallow-tech.com]
   spec.homepage    = 'https://github.com/mallowtechdev/activejob-web'
   spec.summary     = 'Web-based dashboard for managing and monitoring background jobs'
   spec.description = 'Activejob-web simplifies the background job management in rails'
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir['{app,config,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+    Dir['{app,config,lib}/**/*', 'MIT-LICENSE', 'README.md']
   end
   spec.require_paths = ['lib']
 
