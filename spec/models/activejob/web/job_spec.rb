@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::Job, type: :model do
+  include_context 'common setup'
+
   let(:job) { create(:job) }
   let(:build_job) { build(:build_job) }
 

@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::Admin, type: :model do
+  include_context 'common setup'
+
   let(:admin) { create(:admin) }
 
   describe 'Configurations' do

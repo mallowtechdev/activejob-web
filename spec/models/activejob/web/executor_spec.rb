@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::Executor, type: :model do
+  include_context 'common setup'
+
   let(:executor) { create(:executor) }
 
   describe 'Configurations' do

@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::JobApprovalRequest, type: :model do
+  include_context 'common setup'
+
   let(:approver) { create(:approver) }
   let(:approver_one) { create(:approver_one) }
   let(:executor) { create(:executor) }

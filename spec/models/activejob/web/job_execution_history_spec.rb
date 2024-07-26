@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Activejob::Web::JobExecutionHistory, type: :model do
+  include_context 'common setup'
+
   let(:executor) { create(:executor) }
   let(:job) { create(:job, executors: [executor]) }
 
