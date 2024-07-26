@@ -6,11 +6,11 @@ module Activejob
       include Activejob::Web::UsersConcern
 
       has_and_belongs_to_many :approver_jobs,
-                              class_name: Activejob::Web::Job,
+                              class_name: 'Activejob::Web::Job',
                               join_table: 'activejob_web_job_approvers',
                               foreign_key: :approver_id
       has_and_belongs_to_many :executor_jobs,
-                              class_name: Activejob::Web::Job,
+                              class_name: 'Activejob::Web::Job',
                               join_table: 'activejob_web_job_executors',
                               foreign_key: :executor_id
 

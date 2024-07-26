@@ -7,10 +7,10 @@ module Activejob
 
       # == Associations ==================================================================================================
       has_and_belongs_to_many :approvers,
-                              class_name: Activejob::Web::Approver,
+                              class_name: 'Activejob::Web::Approver',
                               join_table: 'activejob_web_job_approvers'
       has_and_belongs_to_many :executors,
-                              class_name: Activejob::Web::Executor,
+                              class_name: 'Activejob::Web::Executor',
                               join_table: 'activejob_web_job_executors'
 
       has_many :job_executions
@@ -39,6 +39,8 @@ module Activejob
       def validate_arguments
         file_arguments = input_arguments.select { |arg| arg['type'] == 'File' }
         errors.add(:base, "Duplicate 'File' types found.") if file_arguments.count > 1
+
+        validate_all_characters
       end
 
       def validate_all_characters

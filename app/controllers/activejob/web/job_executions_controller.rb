@@ -90,7 +90,7 @@ module Activejob
       def local_logs
         response = { messages: [], last_index: 0 }
         begin
-          process_file(file_path: params[:file_path], last_index: params[:last_index].to_i, response: response)
+          process_log_file(file_path: params[:file_path], last_index: params[:last_index].to_i, response: response)
         rescue Errno::ENOENT
           response[:messages] = []
           Rails.logger.info 'Local Log file not found - Error while reading local logs and returning empty response'
@@ -103,7 +103,7 @@ module Activejob
 
       private
 
-      def process_file(file_path:, last_index:, response:)
+      def process_log_file(file_path:, last_index:, response:)
         File.open(file_path, 'r') do |file|
           file.each_with_index do |line, index|
             next if last_index.positive? && index <= last_index
@@ -146,20 +146,20 @@ module Activejob
 
         @job_execution.update(source_params) && @job_execution.gen_reqs_and_histories(reinitiate: source_status == 'reinitiate')
       end
-    end
 
-    def filter_logs(log_events)
-      return log_events unless params[:event_ingestion].present?
+      def filter_log_events(log_events)
+        return log_events unless params[:event_ingestion].present?
 
-      log_events.select { |log_event| log_event.ingestion_time > params[:event_ingestion].to_i }
-    end
+        log_events.select { |log_event| log_event.ingestion_time > params[:event_ingestion].to_i }
+      end
 
-    def build_response(filtered_logs, last_event)
-      {
-        messages: filtered_logs&.map(&:message).presence || [],
-        event_timestamp: last_event&.timestamp || params[:event_timestamp],
-        event_ingestion: last_event&.ingestion_time || params[:event_ingestion]
-      }
+      def build_response(filtered_logs, last_event)
+        {
+          messages: filtered_logs&.map(&:message).presence || [],
+          event_timestamp: last_event&.timestamp || params[:event_timestamp],
+          event_ingestion: last_event&.ingestion_time || params[:event_ingestion]
+        }
+      end
     end
   end
 end

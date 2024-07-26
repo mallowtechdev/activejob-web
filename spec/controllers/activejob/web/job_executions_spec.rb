@@ -366,7 +366,8 @@ RSpec.describe Activejob::Web::JobExecutionsController, type: :controller do
         get :local_logs, params: { job_id: job.id, id: job_execution.id, history_id:, file_path: 'invalid_file_path.log', last_index: 0 }
 
         expected_response = {
-          messages: []
+          messages: [],
+          last_index: 0
         }.as_json
 
         expect(JSON.parse(response.body)).to eq(expected_response)
@@ -378,7 +379,11 @@ RSpec.describe Activejob::Web::JobExecutionsController, type: :controller do
         allow(File).to receive(:open).and_raise(StandardError, 'Test error')
         get :local_logs, params: { job_id: job.id, id: job_execution.id, history_id:, file_path:, last_index: 0 }
 
-        expected_response = {}.as_json
+        expected_response = {
+          messages: [],
+          last_index: 0
+        }.as_json
+
         expect(JSON.parse(response.body)).to eq(expected_response)
       end
     end
