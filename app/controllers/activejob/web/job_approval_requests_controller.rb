@@ -44,7 +44,9 @@ module Activejob
       end
 
       def user_authorized?
-        redirect_to root_path, alert: 'You are not authorized to perform this action' unless admin? || @job.approver_ids.include?(@activejob_web_current_user.id)
+        return true if admin? || @job.approver_ids.include?(@activejob_web_current_user.id)
+
+        redirect_to root_path, alert: 'You are not authorized to perform this action'
       end
     end
   end

@@ -34,5 +34,3 @@ namespace :activejob do
     end
   end
 end
-
-# rake activejob:web:create_job['Sample Job',"Sample Job Description",60,0,1,"SampleJob"] input_arguments='[{"name":"Name","type":"String","required":true}]'

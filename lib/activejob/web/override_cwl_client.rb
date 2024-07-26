@@ -1,8 +1,7 @@
 module CloudWatchLogger
   module Client
     module InstanceMethods
-
-      def massage_message(incoming_message, severity, processid)
+      def massage_message(incoming_message, _severity, _processid)
         outgoing_message = ''
         outgoing_message << case incoming_message
                             when Hash

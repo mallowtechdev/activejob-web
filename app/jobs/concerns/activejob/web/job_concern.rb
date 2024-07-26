@@ -31,26 +31,34 @@ module Activejob
       def set_logger
         self.rescued_exception = {}
         self.activejob_web_logger = job_logger(job_execution_history.log_stream_name)
-        activejob_web_logger.info "=================================== JOB STARTED ==================================="
+        activejob_web_logger.info '=================================== JOB STARTED ==================================='
       end
 
       def job_logger(log_stream_name)
         if Activejob::Web.aws_credentials_present?
-          CloudWatchLogger.new({
-                                 access_key_id: Activejob::Web.aws_credentials[:access_key_id],
-                                 secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
-                               },
-                               Activejob::Web.aws_credentials[:cloudwatch_log_group],
-                               log_stream_name,
-                               { http_open_timeout: 10, http_read_timeout: 10 })
+          cloud_watch_logger(log_stream_name)
         else
-          FileUtils.mkdir_p('log/activejob_web/job_executions')
-          ActiveSupport::Logger.new(Rails.root.join("log/activejob_web/job_executions/#{log_stream_name}.log"))
+          local_logger(log_stream_name)
         end
       end
 
-      def set_timeout(&)
-        Timeout.timeout(job_execution_history.job.max_run_time, &)
+      def cloud_watch_logger(log_stream_name)
+        CloudWatchLogger.new({
+                               access_key_id: Activejob::Web.aws_credentials[:access_key_id],
+                               secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
+                             },
+                             Activejob::Web.aws_credentials[:cloudwatch_log_group],
+                             log_stream_name,
+                             { http_open_timeout: 10, http_read_timeout: 10 })
+      end
+
+      def local_logger(log_stream_name)
+        FileUtils.mkdir_p('log/activejob_web/job_executions')
+        ActiveSupport::Logger.new(Rails.root.join("log/activejob_web/job_executions/#{log_stream_name}.log"))
+      end
+
+      def set_timeout(&block)
+        Timeout.timeout(job_execution_history.job.max_run_time, &block)
       rescue StandardError => e
         self.rescued_exception = { message: "Error in Activejob Web JobExecution - #{e.message}" }
         activejob_web_logger.info "Error in Activejob Web Job Execution - #{e.message}"
@@ -58,7 +66,7 @@ module Activejob
       end
 
       def print_end_log
-        activejob_web_logger.info "=================================== JOB ENDED ==================================="
+        activejob_web_logger.info '=================================== JOB ENDED ==================================='
       end
     end
   end

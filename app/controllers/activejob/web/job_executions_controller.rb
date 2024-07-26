@@ -75,54 +75,24 @@ module Activejob
       def logs; end
 
       def live_logs
-        request_data = { start_from_head: true }
-        event_timestamp = params[:event_timestamp]
-        event_ingestion = params[:event_ingestion]
-        request_data.merge!({ start_time: event_timestamp }) if event_timestamp.present?
-
+        request_data = { start_from_head: true, start_time: params[:event_timestamp] }.compact
         event_response = @job_execution_history.log_events(nil, request_data)
+        log_events = event_response.present? ? event_response.events : []
+        last_event = log_events&.last
+        filtered_logs = filter_log_events(log_events)
 
-        log_events = event_response.events if event_response.present?
-        last_event = log_events.present? ? log_events.last : nil
-
-        filtered_logs = if log_events.present? && event_ingestion.present?
-                          log_events.select { |log_event| log_event.ingestion_time > event_ingestion.to_i }
-                        elsif log_events.present?
-                          log_events
-                        else
-                          []
-                        end
-
-        response = {
-          messages: filtered_logs&.map(&:message),
-          event_timestamp: last_event.present? ? last_event.timestamp : event_timestamp,
-          event_ingestion: last_event.present? ? last_event.ingestion_time : event_ingestion,
-        }
-        response.merge!({ terminated: true }) if last_event.present? && last_event.message.include?("JOB ENDED") && filtered_logs.blank?
+        response = build_response(filtered_logs, last_event)
+        response.merge!({ terminated: true }) if last_event.present? && last_event.message.include?('JOB ENDED') && filtered_logs.blank?
 
         render json: response
       end
 
       def local_logs
+        response = { messages: [], last_index: 0 }
         begin
-          response = {}
-          messages = []
-
-          file_path = params[:file_path]
-          last_index = params[:last_index].to_i || 0
-          File.open(file_path, 'r') do |file|
-            file.each_with_index do |line, index|
-              next if last_index != 0 && index <= last_index
-
-              messages << line
-              last_index = index
-            end
-          end
-
-          response.merge!(terminated: true) if messages.present? && messages.last.include?("JOB ENDED")
-          response.merge!(messages:, last_index:)
+          process_file(file_path: params[:file_path], last_index: params[:last_index].to_i, response: response)
         rescue Errno::ENOENT
-          response.merge!(messages: [])
+          response[:messages] = []
           Rails.logger.info 'Local Log file not found - Error while reading local logs and returning empty response'
         rescue StandardError => e
           Rails.logger.info "Error while fetching local logs - Error: #{e.message}"
@@ -133,8 +103,22 @@ module Activejob
 
       private
 
+      def process_file(file_path:, last_index:, response:)
+        File.open(file_path, 'r') do |file|
+          file.each_with_index do |line, index|
+            next if last_index.positive? && index <= last_index
+
+            response[:messages] << line
+            response[:last_index] = index
+          end
+        end
+
+        response[:terminated] = true if response[:messages].last&.include?('JOB ENDED')
+      end
+
       def job_execution_params
-        params.require(:activejob_web_job_execution).permit(:requestor_id, :requestor_comments, :status, :job_id, :auto_execute_on_approval, :input_file)
+        params.require(:activejob_web_job_execution)
+              .permit(:requestor_id, :requestor_comments, :status, :job_id, :auto_execute_on_approval, :input_file)
       end
 
       def set_job
@@ -150,7 +134,9 @@ module Activejob
       end
 
       def user_authorized?
-        redirect_to root_path, alert: 'You are not authorized to perform this action' unless admin? || @job.executor_ids.include?(@activejob_web_current_user.id)
+        return true if admin? || @job.executor_ids.include?(@activejob_web_current_user.id)
+
+        redirect_to root_path, alert: 'You are not authorized to perform this action'
       end
 
       def update_with_source_params(source_params)
@@ -160,6 +146,20 @@ module Activejob
 
         @job_execution.update(source_params) && @job_execution.gen_reqs_and_histories(reinitiate: source_status == 'reinitiate')
       end
+    end
+
+    def filter_logs(log_events)
+      return log_events unless params[:event_ingestion].present?
+
+      log_events.select { |log_event| log_event.ingestion_time > params[:event_ingestion].to_i }
+    end
+
+    def build_response(filtered_logs, last_event)
+      {
+        messages: filtered_logs&.map(&:message).presence || [],
+        event_timestamp: last_event&.timestamp || params[:event_timestamp],
+        event_ingestion: last_event&.ingestion_time || params[:event_ingestion]
+      }
     end
   end
 end

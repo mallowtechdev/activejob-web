@@ -92,6 +92,7 @@ Run the following command in the terminal:
 ```bash
 # [:title :description :max_run_time :minimum_approvals_required :priority :job_name]
 # Input Arguments should be in the format '[{"key":"value","key":"value"}, { ... }]' Sample: '[{"name":"app_id","type":"Integer","required":true}]'
+# ex: rake activejob:web:create_job['Sample Job',"Sample Job Description",60,0,1,"SampleJob"] input_arguments='[{"name":"Name","type":"String","required":true}]'
 $ rake activejob:web:create_job['sample title','sample description',60,0,1,'SampleJob'] input_arguments='sample arguments'
 ```
 

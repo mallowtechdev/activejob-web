@@ -16,7 +16,7 @@ module Activejob
       scope :approved_requests, -> { where(response: %w[approved]) }
       scope :rejected_requests, -> { where(response: %w[rejected]) }
       scope :pending_requests, lambda { |admin, approver_id|
-        where(admin ? { response: nil } : { approver_id:, response: nil })
+        where(admin ? { response: nil } : { approver_id: approver_id, response: nil })
       }
 
       # == Callbacks ==================================================================================================

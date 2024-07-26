@@ -39,8 +39,8 @@ module Activejob
         job_execution_histories.update_all(is_current: false)
         history = Activejob::Web::JobExecutionHistory.create(
           job_execution_id: id,
-          job_id:,
-          arguments:,
+          job_id: job_id,
+          arguments: arguments,
           details: JSON.parse(to_json),
           is_current: true
         )

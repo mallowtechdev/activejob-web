@@ -85,7 +85,7 @@ module Activejob
 
       def valid_aws_credentials?
         credentials = Aws::Credentials.new(aws_credentials[:access_key_id], aws_credentials[:secret_access_key])
-        cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials:)
+        cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials: credentials)
         cloudwatch_logs.describe_log_streams(log_group_name: aws_credentials[:cloudwatch_log_group])
       rescue  Aws::CloudWatchLogs::Errors::UnrecognizedClientException
         raise 'UnrecognizedClientException - Invalid AWS Credentials'

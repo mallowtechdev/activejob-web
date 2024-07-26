@@ -1,5 +1,9 @@
 AllCops:
+  TargetRubyVersion: 2.6.0
   NewCops: enable
+  Exclude:
+    - 'test/**/*'
+    - 'spec/**/*'
 
 Layout/LineLength:
   Max: 150
@@ -11,22 +15,19 @@ Style/NumericLiterals:
   Exclude:
     - 'test/dummy/db/schema.rb'
 
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'lib/activejob/web/override_cwl_client.rb'
+
 Metrics/BlockLength:
   Exclude:
-    - 'test/dummy/db/schema.rb'
-    - 'spec/requests/activejob_web/jobs_spec.rb'
-    - 'spec/requests/activejob_web/job_executions_spec.rb'
-    - 'spec/requests/activejob_web/job_approval_requests_spec.rb'
-    - 'test/dummy/db/seeds.rb'
-    - 'config/routes.rb'
+    - 'lib/tasks/activejob/web_tasks.rake'
 
 Metrics/MethodLength:
   Exclude:
-    - 'db/migrate/20231024051840_create_jobs.rb'
-    - 'test/dummy/db/migrate/20231118052244_create_users.rb'
-    - 'db/migrate/20231030145254_create_active_storage_tables.active_storage.rb'
-    - 'db/migrate/20231106105039_create_activejob_web_job_executions.rb'
+    - 'lib/generators/activejob/web/setup_generator.rb'
 
-Metrics/AbcSize:
+Metrics/ClassLength:
   Exclude:
-    - 'db/migrate/20231030145254_create_active_storage_tables.active_storage.rb'
+    - 'app/controllers/activejob/web/job_executions_controller.rb'
+    - 'app/models/activejob/web/job_execution.rb'
