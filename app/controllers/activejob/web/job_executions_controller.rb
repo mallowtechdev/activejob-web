@@ -123,9 +123,9 @@ module Activejob
           response.merge!(messages:, last_index:)
         rescue Errno::ENOENT
           response.merge!(messages: [])
-          puts 'Local Log file not found - Error while reading local logs and returning empty response'
+          Rails.logger.info 'Local Log file not found - Error while reading local logs and returning empty response'
         rescue StandardError => e
-          puts "Error while fetching local logs - Error: #{e.message}"
+          Rails.logger.info "Error while fetching local logs - Error: #{e.message}"
         end
 
         render json: response
@@ -146,7 +146,7 @@ module Activejob
       end
 
       def set_job_execution_history
-        @job_execution_history = @job_execution.job_execution_histories.find(id: params['history_id'])
+        @job_execution_history = @job_execution.job_execution_histories.find(params['history_id'])
       end
 
       def user_authorized?

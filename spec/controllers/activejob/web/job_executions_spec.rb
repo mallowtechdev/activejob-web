@@ -65,23 +65,22 @@ RSpec.describe Activejob::Web::JobExecutionsController, type: :controller do
 
   describe 'GET #show' do
     context 'when the user is an executor' do
+      let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: source_executor.id) }
       it 'renders the show template' do
-        job_execution = create(:job_execution, job_id: job.id, requestor_id: source_executor.id)
         get :show, params: { job_id: job.id, id: job_execution.id }
         expect(response).to render_template(:show)
       end
 
       it 'assigns histories and requests' do
-        job_execution = create(:job_execution, job_id: job.id, requestor_id: source_executor.id)
         get :show, params: { job_id: job.id, id: job_execution.id }
         expect(assigns(:job_execution_histories).count).to eq(1)
         expect(assigns(:job_approval_requests).count).to eq(1)
       end
 
       it 'raises an error if the record is not found' do
-        job_execution = create(:job_execution, job_id: job.id, requestor_id: executor.id)
+        execution = create(:job_execution, job_id: job.id, requestor_id: executor.id)
         expect do
-          get :show, params: { job_id: job.id, id: job_execution.id }
+          get :show, params: { job_id: job.id, id: execution.id }
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -271,6 +270,116 @@ RSpec.describe Activejob::Web::JobExecutionsController, type: :controller do
         patch :execute, params: { job_id: job.id, id: job_execution.id }
         expect(response).to redirect_to(activejob_web_job_job_execution_path(job, job_execution))
         expect(flash[:alert]).to eq('Failed to execute job execution.')
+      end
+    end
+  end
+
+  describe 'GET #history' do
+    context 'when the user is an executor' do
+      let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: source_executor.id) }
+      it 'renders the history template' do
+        get :history, params: { job_id: job.id, id: job_execution.id }
+        expect(response).to render_template(:history)
+      end
+
+      it 'assigns histories' do
+        get :history, params: { job_id: job.id, id: job_execution.id }
+        expect(assigns(:job_execution_histories).count).to eq(1)
+      end
+
+      it 'raises an error if the record is not found' do
+        execution = create(:job_execution, job_id: job.id, requestor_id: executor.id)
+        expect do
+          get :show, params: { job_id: job.id, id: execution.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  describe 'GET #logs' do
+    context 'when the user is an executor' do
+      let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: source_executor.id) }
+      it 'renders the logs template' do
+        history_id = job_execution.job_execution_histories.first.id
+        get :logs, params: { job_id: job.id, id: job_execution.id, history_id: }
+        expect(response).to render_template(:logs)
+      end
+
+      it 'assigns histories' do
+        get :history, params: { job_id: job.id, id: job_execution.id }
+        expect(assigns(:job_execution_histories).count).to eq(1)
+      end
+
+      it 'raises an error if the record is not found' do
+        execution = create(:job_execution, job_id: job.id, requestor_id: executor.id)
+        expect do
+          get :show, params: { job_id: job.id, id: execution.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
+  describe 'GET #live_logs' do
+    context 'when the user is an executor' do
+      let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: source_executor.id) }
+      it 'returns the logs response format' do
+        allow_any_instance_of(Activejob::Web::JobExecutionHistory).to receive(:log_events).and_return([])
+        history_id = job_execution.job_execution_histories.first.id
+        get :live_logs, params: { job_id: job.id, id: job_execution.id, history_id: }
+
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+        expect(JSON.parse(response.body)).to eq({"event_ingestion"=>nil, "event_timestamp"=>nil, "messages"=>[]})
+      end
+    end
+  end
+
+  describe 'GET #local_logs' do
+    let(:job_execution) { create(:job_execution, job_id: job.id, requestor_id: source_executor.id) }
+    let(:file_path) { 'spec/fixtures/test_log_file.log' }
+    let(:log_content) { "Line 1\nLine 2\nJOB ENDED\n" }
+    let(:history_id) { job_execution.job_execution_histories.first.id }
+
+    before do
+      File.write(file_path, log_content)
+    end
+
+    after do
+      FileUtils.rm_f(file_path)
+    end
+
+    context 'when file exists and logs are read successfully' do
+      it 'returns the log messages and last index' do
+        get :local_logs, params: { job_id: job.id, id: job_execution.id, history_id:, file_path:, last_index: 0 }
+
+        expected_response = {
+          messages: ["Line 1\n", "Line 2\n", "JOB ENDED\n"],
+          last_index: 2,
+          terminated: true
+        }.as_json
+
+        expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
+
+    context 'when file does not exist' do
+      it 'returns an empty response with a message indicating the file was not found' do
+        get :local_logs, params: { job_id: job.id, id: job_execution.id, history_id:, file_path: 'invalid_file_path.log', last_index: 0 }
+
+        expected_response = {
+          messages: []
+        }.as_json
+
+        expect(JSON.parse(response.body)).to eq(expected_response)
+      end
+    end
+
+    context 'when an error occurs during file processing' do
+      it 'logs the error and returns an empty response' do
+        allow(File).to receive(:open).and_raise(StandardError, 'Test error')
+        get :local_logs, params: { job_id: job.id, id: job_execution.id, history_id:, file_path:, last_index: 0 }
+
+        expected_response = {}.as_json
+        expect(JSON.parse(response.body)).to eq(expected_response)
       end
     end
   end
