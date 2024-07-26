@@ -26,6 +26,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rubocop', require: false
 end
+
 gem 'rails-controller-testing', '~> 1.0', '>= 1.0.5'
 
 # For streaming logs to cloudwatch

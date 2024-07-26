@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.6.0'
+  spec.required_ruby_version = '>= 2.7.0'
   spec.add_dependency 'cloudwatchlogger'
   spec.add_dependency 'rails', '>= 6.1.0'
 end
