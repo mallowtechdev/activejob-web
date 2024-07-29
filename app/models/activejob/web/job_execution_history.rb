@@ -9,7 +9,6 @@ module Activejob
       has_one_attached :input_file
 
       validates :details, presence: true
-      validates :arguments, presence: true
       validates :job, presence: true
       validates :job_execution, presence: true
 

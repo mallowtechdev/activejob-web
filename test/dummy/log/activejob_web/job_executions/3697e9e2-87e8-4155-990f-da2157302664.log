@@ -1,0 +1,10 @@
+# Logfile created on 2024-07-26 19:19:31 +0530 by logger.rb/v1.5.3
+=================================== JOB STARTED ===================================
+Performing JobTwo...
+Loop Count: 0
+Loop Count: 1
+Loop Count: 2
+Loop Count: 3
+Loop Count: 4
+Error in JobTwo: Error: CloudWatch: Raised Exception - Testing Error...
+=================================== JOB ENDED ===================================

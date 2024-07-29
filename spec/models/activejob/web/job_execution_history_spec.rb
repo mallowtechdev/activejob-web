@@ -31,12 +31,6 @@ RSpec.describe Activejob::Web::JobExecutionHistory, type: :model do
       expect(job_execution_history).to_not be_valid
       expect(job_execution_history.errors[:details]).to include("can't be blank")
     end
-
-    it 'is not valid without arguments' do
-      job_execution_history.arguments = nil
-      expect(job_execution_history).to_not be_valid
-      expect(job_execution_history.errors[:arguments]).to include("can't be blank")
-    end
   end
 
   describe 'histories' do

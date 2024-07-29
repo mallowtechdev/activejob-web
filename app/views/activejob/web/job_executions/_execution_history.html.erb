@@ -49,7 +49,7 @@
         <div class="mb-3 row">
           <div class="col-sm-3"><strong class="text-dark">Arguments:</strong></div>
           <div class="col-sm-9">
-            <% if arguments.present? %>
+            <% if arguments.present? || history.input_file.attached? %>
               <div class="card">
                 <div class="card-body">
                   <div class="table-responsive">
@@ -71,15 +71,17 @@
                           </td>
                         </tr>
                       <% end %>
-                      <% arguments.each do |argument| %>
-                        <tr>
-                          <td>
-                            <p class="font-14 my-1 fw-normal"><%= argument.first.split('_').map(&:capitalize).join(' ') %></p>
-                          </td>
-                          <td>
-                            <p class="font-14 my-1 fw-normal"><%= argument.second.presence || '-' %></p>
-                          </td>
-                        </tr>
+                      <% if arguments.present? %>
+                        <% arguments.each do |argument| %>
+                          <tr>
+                            <td>
+                              <p class="font-14 my-1 fw-normal"><%= argument.first.split('_').map(&:capitalize).join(' ') %></p>
+                            </td>
+                            <td>
+                              <p class="font-14 my-1 fw-normal"><%= argument.second.presence || '-' %></p>
+                            </td>
+                          </tr>
+                        <% end %>
                       <% end %>
                       </tbody>
                     </table>
