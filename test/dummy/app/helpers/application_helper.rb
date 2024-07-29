@@ -2,8 +2,6 @@
 
 module ApplicationHelper
   def current_user
-    # User.first
-    # User.second
-    User.third
+    User.first
   end
 end
