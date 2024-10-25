@@ -41,6 +41,25 @@ module Activejob
         end
       end
 
+      def load_more_users
+        user_type = params[:type]
+        page = params[:page].to_i
+        per_page = 10
+
+        if user_type == 'approver'
+          @all_approvers = Activejob::Web::Approver.select(:id, :email).offset((page - 1) * per_page).limit(per_page)
+          response_data = { approvers: @all_approvers.map(&:attributes) }
+        elsif user_type == 'executor'
+          @all_executors = if Activejob::Web.is_common_model
+                             Activejob::Web::Approver.select(:id, :email).offset((page - 1) * per_page).limit(per_page)
+                           else
+                             Activejob::Web::Executor.select(:id, :email).offset((page - 1) * per_page).limit(per_page)
+                           end
+          response_data = { executors: @all_executors.map(&:attributes) }
+        end
+        render json: response_data
+      end
+
       private
 
       def set_job
@@ -55,11 +74,11 @@ module Activejob
       end
 
       def set_all_users
-        @all_approvers = Activejob::Web::Approver.select(:id, :email)
+        @all_approvers = Activejob::Web::Approver.select(:id, :email).limit(10)
         @all_executors = if Activejob::Web.is_common_model
                            @all_approvers
                          else
-                           Activejob::Web::Executor.select(:id, :email)
+                           Activejob::Web::Executor.select(:id, :email).limit(10)
                          end
       end
 

@@ -29,7 +29,7 @@
             <div class="col-sm-2"><strong class="text-dark">Assigned Approvers:</strong></div>
             <div class="col-sm-5">
               <ul class="list-group">
-                <% if @approvers.present?%>
+                <% if @approvers.present? %>
                   <% @approvers.map do |approver| %>
                     <li class="list-group-item"><%= approver %></li>
                   <% end %>
@@ -44,7 +44,7 @@
             <div class="col-sm-2"><strong class="text-dark">Assigned Executors:</strong></div>
             <div class="col-sm-5">
               <ul class="list-group">
-                <% if @executors.present?%>
+                <% if @executors.present? %>
                   <% @executors.map do |executor| %>
                     <li class="list-group-item"><%= executor %></li>
                   <% end %>
@@ -58,14 +58,22 @@
           <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Approvers:</strong></div>
             <div class="col-sm-5">
-              <%= form.collection_select(:approver_ids, @all_approvers, :id, :email, {}, { multiple: true, class: 'form-select', size: '10' }) %>
+              <select id="approver-select" class="form-select" name="activejob_web_job[approver_ids][]" multiple size="10" style="height: 150px; overflow-y: auto;">
+                <% @all_approvers.each do |approver| %>
+                  <option value="<%= approver.id %>"><%= approver.email %></option>
+                <% end %>
+              </select>
             </div>
           </div>
 
           <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Executors:</strong></div>
             <div class="col-sm-5">
-              <%= form.collection_select(:executor_ids, @all_executors, :id, :email, {}, { multiple: true, class: 'form-select', size: '10' }) %>
+              <select id="executor-select" class="form-select" name="activejob_web_job[executor_ids][]" multiple size="10" style="height: 150px; overflow-y: auto;">
+                <% @all_executors.each do |executor| %>
+                  <option value="<%= executor.id %>"><%= executor.email %></option>
+                <% end %>
+              </select>
             </div>
           </div>
         </div>
@@ -73,3 +81,66 @@
     </div>
   </div>
 <% end %>
+
+<script>
+    $(document).ready(function () {
+        var jobId = `<%= @job.id %>`;
+        var approverSelect = $("#approver-select");
+        var executorSelect = $("#executor-select");
+
+        // Infinite scroll settings
+        var currentApproverPage = 1;
+        var currentExecutorPage = 1;
+        var loadingApprovers = false;
+        var loadingExecutors = false;
+
+        // Scroll event for approvers
+        approverSelect.on('scroll', function () {
+            if (!loadingApprovers && approverSelect[0].scrollTop + approverSelect.outerHeight() >= approverSelect[0].scrollHeight) {
+                loadingApprovers = true;
+                currentApproverPage++;
+                loadOptions('approver', currentApproverPage);
+            }
+        });
+
+        // Scroll event for executors
+        executorSelect.on('scroll', function () {
+            if (!loadingExecutors && executorSelect[0].scrollTop + executorSelect.outerHeight() >= executorSelect[0].scrollHeight) {
+                loadingExecutors = true;
+                currentExecutorPage++;
+                loadOptions('executor', currentExecutorPage);
+            }
+        });
+
+        function loadOptions(type, page) {
+            $.ajax({
+                url: `<%= activejob_web_job_load_more_users_path(@job.id)%>`,
+                method: 'GET',
+                dataType: 'JSON',
+                data: {type: type, page: page},
+                success: function (data) {
+                    if (type === 'approver') {
+                        console.log(data.approvers)
+                        if (data.approvers.length > 0) {
+                            data.approvers.forEach(function (approver) {
+                                approverSelect.append('<option value="' + approver.id + '">' + approver.email + '</option>');
+                            });
+                        }
+                        loadingApprovers = false;
+                    } else if (type === 'executor') {
+                        if (data.executors.length > 0) {
+                            data.executors.forEach(function (executor) {
+                                executorSelect.append('<option value="' + executor.id + '">' + executor.email + '</option>');
+                            });
+                        }
+                        loadingExecutors = false;
+                    }
+                },
+                error: function () {
+                    loadingApprovers = false;
+                    loadingExecutors = false;
+                }
+            });
+        }
+    });
+</script>

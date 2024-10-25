@@ -8,7 +8,7 @@ module Activejob
       UPDATE = %i[edit update].freeze
       DESTROY = %i[destroy].freeze
 
-      JOB_FULL_ACCESS = READ + CREATE + UPDATE
+      JOB_FULL_ACCESS = READ + CREATE + UPDATE + %i[load_more_users].freeze
       JOB_EXECUTION_FULL_ACCESS = READ + CREATE + UPDATE + %i[cancel reinitiate execute logs history live_logs local_logs].freeze
       JOB_APPROVAL_FULL_ACCESS = READ + CREATE + UPDATE
 
