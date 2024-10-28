@@ -15,8 +15,8 @@ module Activejob
           @jobs = @activejob_web_current_user.jobs
         end
         @pending_approvals = Activejob::Web::JobApprovalRequest
-                             .includes(:approver, job_execution: %i[job executor])
-                             .pending_requests(admin?, @activejob_web_current_user.id)
+                               .includes(:approver, job_execution: %i[job executor])
+                               .pending_requests(admin?, @activejob_web_current_user.id)
       end
 
       def show; end
@@ -43,20 +43,26 @@ module Activejob
 
       def load_more_users
         user_type = params[:type]
+        email = params[:email]
         page = params[:page].to_i
         per_page = 10
 
         if user_type == 'approver'
-          @all_approvers = Activejob::Web::Approver.select(:id, :email).offset((page - 1) * per_page).limit(per_page)
+          @all_approvers = Activejob::Web::Approver.select(:id, :email)
+          @all_approvers = @all_approvers.where("email LIKE ?", "%#{email}%") if email.present?
+          @all_approvers = @all_approvers.offset((page - 1) * per_page).limit(per_page)
           response_data = { approvers: @all_approvers.map(&:attributes) }
         elsif user_type == 'executor'
           @all_executors = if Activejob::Web.is_common_model
-                             Activejob::Web::Approver.select(:id, :email).offset((page - 1) * per_page).limit(per_page)
+                             Activejob::Web::Approver.select(:id, :email)
                            else
-                             Activejob::Web::Executor.select(:id, :email).offset((page - 1) * per_page).limit(per_page)
+                             Activejob::Web::Executor.select(:id, :email)
                            end
+          @all_executors = @all_executors.where("email LIKE ?", "%#{email}%") if email.present?
+          @all_executors = @all_executors.offset((page - 1) * per_page).limit(per_page)
           response_data = { executors: @all_executors.map(&:attributes) }
         end
+
         render json: response_data
       end
 

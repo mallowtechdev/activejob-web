@@ -56,6 +56,14 @@
           </div>
 
           <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Search Approver:</strong></div>
+            <div class="col-sm-5">
+              <input type="text" id="approver-search" class="form-control" placeholder="Enter approver email"/>
+              <button type="button" id="search-approver" class="btn btn-primary mt-2">Search Approver</button>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
             <div class="col-sm-2"><strong class="text-dark">Approvers:</strong></div>
             <div class="col-sm-5">
               <select id="approver-select" class="form-select" name="activejob_web_job[approver_ids][]" multiple size="10" style="height: 150px; overflow-y: auto;">
@@ -63,6 +71,14 @@
                   <option value="<%= approver.id %>"><%= approver.email %></option>
                 <% end %>
               </select>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Search Executor:</strong></div>
+            <div class="col-sm-5">
+              <input type="text" id="executor-search" class="form-control" placeholder="Enter executor email"/>
+              <button type="button" id="search-executor" class="btn btn-primary mt-2">Search Executor</button>
             </div>
           </div>
 
@@ -88,51 +104,62 @@
         var approverSelect = $("#approver-select");
         var executorSelect = $("#executor-select");
 
-        // Infinite scroll settings
+        // Variables for infinite scroll
         var currentApproverPage = 1;
         var currentExecutorPage = 1;
         var loadingApprovers = false;
         var loadingExecutors = false;
 
-        // Scroll event for approvers
+        // Search event listeners
+        $("#search-approver").on("click", function () {
+            var email = $("#approver-search").val().trim();
+            if (email) {
+                searchAndLoadUsers('approver', email);
+            }
+        });
+
+        $("#search-executor").on("click", function () {
+            var email = $("#executor-search").val().trim();
+            if (email) {
+                searchAndLoadUsers('executor', email);
+            }
+        });
+
+        // Infinite scroll event for approvers
         approverSelect.on('scroll', function () {
             if (!loadingApprovers && approverSelect[0].scrollTop + approverSelect.outerHeight() >= approverSelect[0].scrollHeight) {
                 loadingApprovers = true;
                 currentApproverPage++;
-                loadOptions('approver', currentApproverPage);
+                loadOptions('approver', currentApproverPage, $("#approver-search").val().trim());
             }
         });
 
-        // Scroll event for executors
+        // Infinite scroll event for executors
         executorSelect.on('scroll', function () {
             if (!loadingExecutors && executorSelect[0].scrollTop + executorSelect.outerHeight() >= executorSelect[0].scrollHeight) {
                 loadingExecutors = true;
                 currentExecutorPage++;
-                loadOptions('executor', currentExecutorPage);
+                loadOptions('executor', currentExecutorPage, $("#executor-search").val().trim());
             }
         });
 
-        function loadOptions(type, page) {
+        // Load options function (for infinite scroll)
+        function loadOptions(type, page, email) {
             $.ajax({
-                url: `<%= activejob_web_job_load_more_users_path(@job.id)%>`,
+                url: `<%= activejob_web_job_load_more_users_path(@job.id) %>`,
                 method: 'GET',
-                dataType: 'JSON',
-                data: {type: type, page: page},
+                dataType: 'json',
+                data: {type: type, page: page, email: email},
                 success: function (data) {
-                    if (type === 'approver') {
-                        console.log(data.approvers)
-                        if (data.approvers.length > 0) {
-                            data.approvers.forEach(function (approver) {
-                                approverSelect.append('<option value="' + approver.id + '">' + approver.email + '</option>');
-                            });
-                        }
+                    if (type === 'approver' && data.approvers) {
+                        data.approvers.forEach(function (approver) {
+                            approverSelect.append(new Option(approver.email, approver.id));
+                        });
                         loadingApprovers = false;
-                    } else if (type === 'executor') {
-                        if (data.executors.length > 0) {
-                            data.executors.forEach(function (executor) {
-                                executorSelect.append('<option value="' + executor.id + '">' + executor.email + '</option>');
-                            });
-                        }
+                    } else if (type === 'executor' && data.executors) {
+                        data.executors.forEach(function (executor) {
+                            executorSelect.append(new Option(executor.email, executor.id));
+                        });
                         loadingExecutors = false;
                     }
                 },
@@ -141,6 +168,20 @@
                     loadingExecutors = false;
                 }
             });
+        }
+
+        // Function to handle search and reset pagination
+        function searchAndLoadUsers(type, email) {
+            var selectElement = type === 'approver' ? approverSelect : executorSelect;
+            selectElement.empty(); // Clear previous results
+            if (type === 'approver') {
+                currentApproverPage = 1;
+                loadingApprovers = true;
+            } else {
+                currentExecutorPage = 1;
+                loadingExecutors = true;
+            }
+            loadOptions(type, 1, email); // Start loading from the first page with search term
         }
     });
 </script>
