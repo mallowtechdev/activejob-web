@@ -39,6 +39,7 @@ module Activejob
       end
 
       def validate!
+        puts "just_for_debugging"
         validate_config!
         valid_aws_credentials? if aws_credentials_present?
       end
