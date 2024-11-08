@@ -79,15 +79,23 @@ module Activejob
       end
 
       def aws_credentials_present?
-        aws_credentials.present? && aws_credentials[:access_key_id].present? &&
-          aws_credentials[:secret_access_key].present? && aws_credentials[:cloudwatch_log_group].present?
+        aws_credentials.present? && aws_credentials[:cloudwatch_log_group].present? &&
+          (aws_credentials[:access_key_id].present? && aws_credentials[:secret_access_key].present? || using_iam_role?)
+      end
+
+      def using_iam_role?
+        !aws_credentials[:access_key_id].present? || !aws_credentials[:secret_access_key].present?
       end
 
       def valid_aws_credentials?
-        credentials = Aws::Credentials.new(aws_credentials[:access_key_id], aws_credentials[:secret_access_key])
-        cloudwatch_logs = Aws::CloudWatchLogs::Client.new(credentials: credentials)
+        cloudwatch_logs = if using_iam_role?
+                            Aws::CloudWatchLogs::Client.new
+                          else
+                            credentials = Aws::Credentials.new(aws_credentials[:access_key_id], aws_credentials[:secret_access_key])
+                            Aws::CloudWatchLogs::Client.new(credentials: credentials)
+                          end
         cloudwatch_logs.describe_log_streams(log_group_name: aws_credentials[:cloudwatch_log_group])
-      rescue  Aws::CloudWatchLogs::Errors::UnrecognizedClientException
+      rescue Aws::CloudWatchLogs::Errors::UnrecognizedClientException
         raise 'UnrecognizedClientException - Invalid AWS Credentials'
       rescue Aws::CloudWatchLogs::Errors::ResourceNotFoundException
         raise 'ResourceNotFoundException - Invalid CloudWatch Log Group Name'
