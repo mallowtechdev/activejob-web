@@ -43,13 +43,26 @@ module Activejob
       end
 
       def cloud_watch_logger(log_stream_name)
-        CloudWatchLogger.new({
-                               access_key_id: Activejob::Web.aws_credentials[:access_key_id],
-                               secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
-                             },
-                             Activejob::Web.aws_credentials[:cloudwatch_log_group],
-                             log_stream_name,
-                             { http_open_timeout: 10, http_read_timeout: 10 })
+        credentials = if using_iam_role?
+                        {}
+                      else
+                        {
+                          access_key_id: Activejob::Web.aws_credentials[:access_key_id],
+                          secret_access_key: Activejob::Web.aws_credentials[:secret_access_key]
+                        }
+                      end
+
+        options = {
+          http_open_timeout: 10,
+          http_read_timeout: 10
+        }
+
+        CloudWatchLogger.new(
+          credentials,
+          Activejob::Web.aws_credentials[:cloudwatch_log_group],
+          log_stream_name,
+          options
+        )
       end
 
       def local_logger(log_stream_name)
