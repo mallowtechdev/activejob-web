@@ -43,7 +43,7 @@ module Activejob
       end
 
       def cloud_watch_logger(log_stream_name)
-        credentials = if using_iam_role?
+        credentials = if Activejob::Web.using_iam_role?
                         {}
                       else
                         {
