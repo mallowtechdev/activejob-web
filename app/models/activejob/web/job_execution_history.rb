@@ -17,7 +17,7 @@ module Activejob
       end
 
       def log_events(page_token = nil, opt = {})
-        cloudwatch_logs = if using_iam_role?
+        cloudwatch_logs = if Activejob::Web.using_iam_role?
                             Aws::CloudWatchLogs::Client.new
                           else
                             aws_credentials = Aws::Credentials.new(
