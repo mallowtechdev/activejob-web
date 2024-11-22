@@ -75,7 +75,7 @@ module Activejob
       def logs; end
 
       def live_logs
-        request_data = { start_from_head: true, start_time: params[:event_timestamp] }.compact
+        request_data = { start_from_head: true, start_time: params[:event_timestamp].to_i }.compact
         event_response = @job_execution_history.log_events(nil, request_data)
         log_events = event_response.present? ? event_response.events : []
         last_event = log_events&.last
