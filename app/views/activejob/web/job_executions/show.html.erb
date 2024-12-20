@@ -1,0 +1,242 @@
+<div class="row mt-3 p-3">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+    <div class="card h-100">
+      <div class="card-header p-2">
+        <div class="row">
+          <div class="col-md-8 d-flex align-items-center">
+            <h5 class="mb-0">Job Approval Request(s) Details</h5>
+          </div>
+          <div class="col-md-4 text-end mt-1">
+            <%= link_to 'Back', activejob_web_job_job_executions_path(@job), class: 'btn btn-sm btn-outline-secondary' %>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-3">
+        <table class="table table-sm">
+          <% if @job_approval_requests.present? %>
+            <thead>
+            <tr>
+              <th scope="col">Approver Name</th>
+              <th scope="col">Approver Email</th>
+              <th scope="col">Response</th>
+              <th scope="col">Comments</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @job_approval_requests.each do |approval_request| %>
+              <tr>
+                <td><%= approval_request.approver&.name || '-' %></td>
+                <td><%= approval_request.approver.email %></td>
+                <td><span class="badge text-bg-<%= status_badge(approval_request.response) %>"><%= approval_request.response || 'waiting for approval' %></span></td>
+                <td><%= approval_request.approver_comments || '-' %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          <% else %>
+            <p> No Approval Requests Found!</p>
+          <% end %>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row p-3">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+    <div class="card h-100">
+      <div class="card-header p-2">
+        <div class="row">
+          <div class="col-md-4 d-flex align-items-center">
+            <h5 class="mb-0">Job Execution Details</h5>
+          </div>
+          <div class="col-md-8 mt-1">
+            <div class="d-flex" style="float: right">
+              <% if @job_execution.approved? %>
+                <%= link_to 'Run Job Execution', execute_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, onclick: "return confirm('Are you sure you want to run this job execution?');", class: 'btn btn-sm btn-outline-success', style: 'margin-right: 5px' %>
+              <% end %>
+              <% if @job_execution.cancel_execution %>
+                <%= button_to 'Cancel Job Execution', cancel_activejob_web_job_job_execution_path(@job, @job_execution), method: :patch, onclick: "return confirm('Are you sure you want to cancel this job execution?');", class: 'btn btn-sm btn-outline-danger', style: 'margin-right: 5px' %>
+              <% end %>
+              <% if @job_execution.cancelled? %>
+                <%= button_to 'Reinitiate Job Execution',reinitiate_activejob_web_job_job_execution_path(@job, @job_execution), method: :post, onclick: "return confirm('Are you sure you want to reinitiate this job execution?');", class: 'btn btn-sm btn-outline-primary', style: 'margin-right: 5px'  %>
+              <% end %>
+              <%= link_to 'History', history_activejob_web_job_job_execution_path(@job, @job_execution), method: :get, class: 'btn btn-sm btn-outline-info'  %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-3">
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Total Executions:</strong></div>
+          <div class="col-sm-9"><%= @job_execution_histories.count %></div>
+        </div>
+        <% if @job_execution.live_log? %>
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
+            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto;"><div id="live-logs-hint">The job execution is currently in progress, and log events are streaming from <%= @job_execution.current_execution_history.log_stream_name %> ...</div></div>
+          </div>
+        <% elsif @job_execution.executed? %>
+          <div class="mb-3 row">
+            <div class="col-sm-3"><strong class="text-dark">Live Logs:</strong></div>
+            <div class="col-sm-9 terminal p-3" id="live-logs-terminal" style="max-height: 150px; overflow-y: auto; max-width: 73%; margin-left: 13px;">
+              <% @local_log_path = "log/activejob_web/job_executions/#{@job_execution.current_execution_history.log_stream_name}.log" %>
+              <div id="live-logs-hint" class="mb">The job execution is currently in progress, and log events are streaming from <%= @local_log_path %> ...</div>
+            </div>
+          </div>
+        <% end %>
+        <hr>
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Status:</strong></div>
+          <div class="col-sm-9"><span class="badge text-bg-<%= status_badge(@job_execution.status) %>"><%= @job_execution.status %></span></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Comments:</strong></div>
+          <div class="col-sm-9"><%= @job_execution.requestor_comments %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Auto Execute on Approval:</strong></div>
+          <div class="col-sm-9"><%= @job_execution.auto_execute_on_approval %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Run At:</strong></div>
+          <div class="col-sm-9"><%= @job_execution.run_at.present? ? Time.parse(@job_execution.run_at.to_s).utc : '-' %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Execution Started At:</strong></div>
+          <div class="col-sm-9"><%= @job_execution.execution_started_at.present? ? Time.parse(@job_execution.execution_started_at.to_s).utc : '-' %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Reason for Failure:</strong></div>
+          <div class="col-sm-9 <%= 'terminal' if @job_execution.reason_for_failure.present? %> p-3" style="max-width: 73%; margin-left: 13px;"><%= @job_execution.reason_for_failure || '-' %></div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-sm-3"><strong class="text-dark">Arguments:</strong></div>
+          <div class="col-sm-9">
+            <% if @job_execution.arguments.present? || @job_execution.input_file.attached? %>
+              <div class="card">
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-centered table-nowrap table-hover mb-0 table-sm">
+                      <thead>
+                      <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <% if @job_execution.input_file.attached? %>
+                        <tr>
+                          <td>
+                            <p class="font-14 my-1 fw-normal">File</p>
+                          </td>
+                          <td>
+                            <a href="<%= @job_execution.input_file.url %>" class="font-14 my-1 fw-normal" target="_blank"><%= @job_execution.input_file.blob.filename %></a>
+                          </td>
+                        </tr>
+                      <% end %>
+                      <% if @job_execution.arguments.present? %>
+                        <% @job_execution.arguments.each do |argument| %>
+                          <tr>
+                            <td>
+                              <p class="font-14 my-1 fw-normal"><%= argument.first.split('_').map(&:capitalize).join(' ') %></p>
+                            </td>
+                            <td>
+                              <p class="font-14 my-1 fw-normal"><%= argument.second.presence || '-' %></p>
+                            </td>
+                          </tr>
+                        <% end %>
+                      <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            <% else %>
+              -
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function() {
+        <% if @job_execution.live_log? %>
+          fetchLiveLogs()
+        <% elsif @job_execution.executed? %>
+          fetchLocalLogs('<%= @local_log_path %>')
+        <% end %>
+    });
+
+    function fetchLiveLogs(timestamp, ingestion) {
+        $.ajax({
+            url: '<%= live_logs_activejob_web_job_job_execution_path(@job, @job_execution) %>',
+            method: 'GET',
+            data: {
+                history_id: '<%= @job_execution.current_execution_history.id %>',
+                event_timestamp: timestamp,
+                event_ingestion: ingestion
+            },
+            success: function(response) {
+                if (response.terminated === true) {
+                    return;
+                } else {
+                    if (response.messages[0]){
+                        $('#live-logs-hint').remove();
+                        $.each(response.messages, function(index, value) {
+                            $('#live-logs-terminal').append('<div>' + value + '</div>');
+                            $("#live-logs-terminal").scrollTop($("#live-logs-terminal")[0].scrollHeight);
+                        });
+                    }
+                    setTimeout(function() {
+                        fetchLiveLogs(response.event_timestamp, response.event_ingestion);
+                    }, 1000);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('fetchLiveLogs error:', error);
+            }
+        });
+    }
+
+    function fetchLocalLogs(file_path, last_index) {
+        $.ajax({
+            url: '<%= local_logs_activejob_web_job_job_execution_path(@job, @job_execution) %>',
+            method: 'GET',
+            data: {
+                history_id: '<%= @job_execution.current_execution_history.id %>',
+                file_path: file_path,
+                last_index: last_index
+            },
+            success: function(response) {
+                if (response.messages[0]){
+                    $('#live-logs-hint').remove();
+                    let childDivCount = $('#live-logs-terminal > div').length;
+                    $.each(response.messages, function(index, value) {
+                        childDivCount = childDivCount + 1;
+                        $('#live-logs-terminal').append("<div><span class='line-number'>" + childDivCount + "</span>" + value + "</div>");
+                        $("#live-logs-terminal").scrollTop($("#live-logs-terminal")[0].scrollHeight);
+                    });
+                }
+                if (response.terminated === true) {
+                    return;
+                } else {
+                    setTimeout(function () {
+                        fetchLocalLogs(file_path, response.last_index);
+                    }, 1000);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('fetchLocalLogs error:', error);
+            }
+        });
+    }
+</script>
+

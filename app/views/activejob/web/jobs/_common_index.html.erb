@@ -1,0 +1,41 @@
+<div class="row p-3">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+    <div class="card h-100">
+      <div class="card-header p-3">
+        <div class="row">
+          <div class="col-md-8 d-flex align-items-center">
+            <h5 class="mb-0"><%= title %></h5>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if jobs.present? %>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Description</th>
+              <th scope="col">ID</th>
+              <th scope="col">Queue</th>
+              <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% jobs.each do |job| %>
+              <tr>
+                <td><%= job.title %></td>
+                <td><%= job.description %></td>
+                <td><%= job.id %></td>
+                <td><%= job.queue %></td>
+                <td><%= link_to 'Show', activejob_web_job_path(job), class: 'btn btn-sm btn-outline-primary' %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p> No jobs available!</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

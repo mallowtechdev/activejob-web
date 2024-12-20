@@ -1,0 +1,24 @@
+<div class="row mt-3 p-3">
+  <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+    <div class="card h-100">
+      <div class="card-header p-2">
+        <div class="row">
+          <div class="col-md-8 d-flex align-items-center">
+            <h5 class="mb-0">Job Execution Histories</h5>
+          </div>
+          <div class="col-md-4 mt-1">
+            <div class="d-flex" style="float: right">
+              <%= link_to 'Back', activejob_web_job_job_execution_path(@job, @job_execution), class: 'btn btn-sm btn-outline-secondary' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <% @job_execution_histories.each do |history|  %>
+          <%= render partial: 'execution_history', locals: { history:, details: history.details, arguments: history.arguments } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

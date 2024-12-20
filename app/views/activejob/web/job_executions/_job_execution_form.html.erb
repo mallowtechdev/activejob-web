@@ -1,0 +1,87 @@
+<%= form_for [@job, @job_execution] ,url: url do |form| %>
+  <% edit_action = action_title == 'Edit' %>
+  <div class="row p-3 <%= 'mt-3' if edit_action %>">
+    <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+      <div class="card h-100">
+        <div class="card-header p-2">
+          <div class="row">
+            <div class="col-md-8 d-flex align-items-center">
+              <h5 class="mb-0"><%= action_title %> Job Execution <%= ": #{@job_execution.requestor_comments}" if edit_action %></h5>
+            </div>
+            <div class="col-md-4 text-end">
+              <%= link_to 'Back',
+                          edit_action ? activejob_web_job_job_executions_path(@job) : activejob_web_job_path(@job),
+                          class: 'btn btn-sm btn-outline-secondary' %>
+              <%= form.submit 'Submit', class: 'btn btn-sm btn-outline-success' %>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-3">
+          <% if @job_execution.errors.any? %>
+            <div class="alert alert-danger" role="alert">
+              <ul>
+                <% @job_execution.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="mb-3 row">
+            <label for="status" class="col-sm-2 col-form-label">Status</label>
+            <div class="col-sm-6">
+              <%= form.select :status, [@job_execution.status], {}, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="requestor_comments" class="col-sm-2 col-form-label">Requestor Comments</label>
+            <div class="col-sm-6">
+              <%= form.text_area :requestor_comments, placeholder: "Requestor Comments", class: 'form-control' %>
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label for="auto_execute_on_approval" class="col-sm-2 col-form-label">Auto Execute on Approval</label>
+            <div class="col-sm-10 mt-2">
+              <%= form.check_box :auto_execute_on_approval %>
+            </div>
+          </div>
+
+          <% if admin? && (action_title != 'Edit') %>
+            <div class="mb-3 row">
+              <label for="executor" class="col-sm-2 col-form-label">Executor:</label>
+              <div class="col-sm-6">
+                <%= form.select :requestor_id, @job.executors.pluck(:email, :id), {}, class: 'form-control' %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="mb-3 row">
+            <label for="auto_execute_on_approval" class="col-sm-2 col-form-label"> Input Arguments</label>
+            <div class="col-sm-10 mt-2">
+              <% @job.input_arguments.each do |argument| %>
+                <% argument_name = argument["name"].downcase.gsub(/\s+/, '_') %>
+                <div class="mb-3 row">
+                  <%= form.label argument_name.split('_').map(&:capitalize).join(' '), class: 'col-sm-2 col-form-label' %>
+                  <div class="col-sm-5 mt-2">
+                    <% case argument["type"] %>
+                    <% when "File" %>
+                      <%= form.file_field :input_file, required: argument["required"], class: 'form-control' %>
+                    <% when "Date" %>
+                      <%= date_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
+                    <% when "DateTime" %>
+                      <%= datetime_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
+                    <% when "String" %>
+                      <%= text_field_tag "arguments[#{argument_name}]", argument_value(argument_name), maxlength: argument["max_length"].presence || 255, required: argument["required"], class: 'form-control' %>
+                    <% when "Integer" %>
+                      <%= number_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

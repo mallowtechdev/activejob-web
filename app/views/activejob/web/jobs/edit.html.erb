@@ -1,0 +1,187 @@
+<%= form_with model: @job do |form| %>
+  <div class="row mt-3 p-3">
+    <div class="col-12 col-md-12 col-xl-12 mt-md-0 mt-4">
+      <div class="card h-100">
+        <div class="card-header p-2">
+          <div class="row">
+            <div class="col-md-8 d-flex align-items-center">
+              <h5 class="mb-0"><%= @job.title %></h5>
+            </div>
+            <div class="col-md-4 text-end mt-1">
+              <%= link_to 'Back', activejob_web_job_path(@job), class: 'btn btn-sm btn-outline-secondary' %>
+              <%= form.submit 'Submit', class: 'btn btn-sm btn-outline-success' %>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-3">
+          <% if @job.errors.any? %>
+            <div class="alert alert-danger" role="alert">
+              <ul>
+                <% @job.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Assigned Approvers:</strong></div>
+            <div class="col-sm-5">
+              <ul class="list-group">
+                <% if @approvers.present? %>
+                  <% @approvers.map do |approver| %>
+                    <li class="list-group-item"><%= approver %></li>
+                  <% end %>
+                <% else %>
+                  <%= 'No approvers assigned' %>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Assigned Executors:</strong></div>
+            <div class="col-sm-5">
+              <ul class="list-group">
+                <% if @executors.present? %>
+                  <% @executors.map do |executor| %>
+                    <li class="list-group-item"><%= executor %></li>
+                  <% end %>
+                <% else %>
+                  <%= 'No executors assigned' %>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Search Approver:</strong></div>
+            <div class="col-sm-5">
+              <input type="text" id="approver-search" class="form-control" placeholder="Enter approver email"/>
+              <button type="button" id="search-approver" class="btn btn-primary mt-2">Search Approver</button>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Approvers:</strong></div>
+            <div class="col-sm-5">
+              <select id="approver-select" class="form-select" name="activejob_web_job[approver_ids][]" multiple size="10" style="height: 150px; overflow-y: auto;">
+                <% @all_approvers.each do |approver| %>
+                  <option value="<%= approver.id %>"><%= approver.email %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Search Executor:</strong></div>
+            <div class="col-sm-5">
+              <input type="text" id="executor-search" class="form-control" placeholder="Enter executor email"/>
+              <button type="button" id="search-executor" class="btn btn-primary mt-2">Search Executor</button>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <div class="col-sm-2"><strong class="text-dark">Executors:</strong></div>
+            <div class="col-sm-5">
+              <select id="executor-select" class="form-select" name="activejob_web_job[executor_ids][]" multiple size="10" style="height: 150px; overflow-y: auto;">
+                <% @all_executors.each do |executor| %>
+                  <option value="<%= executor.id %>"><%= executor.email %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+    $(document).ready(function () {
+        var jobId = `<%= @job.id %>`;
+        var approverSelect = $("#approver-select");
+        var executorSelect = $("#executor-select");
+
+        // Variables for infinite scroll
+        var currentApproverPage = 1;
+        var currentExecutorPage = 1;
+        var loadingApprovers = false;
+        var loadingExecutors = false;
+
+        // Search event listeners
+        $("#search-approver").on("click", function () {
+            var email = $("#approver-search").val().trim();
+            if (email) {
+                searchAndLoadUsers('approver', email);
+            }
+        });
+
+        $("#search-executor").on("click", function () {
+            var email = $("#executor-search").val().trim();
+            if (email) {
+                searchAndLoadUsers('executor', email);
+            }
+        });
+
+        // Infinite scroll event for approvers
+        approverSelect.on('scroll', function () {
+            if (!loadingApprovers && approverSelect[0].scrollTop + approverSelect.outerHeight() >= approverSelect[0].scrollHeight) {
+                loadingApprovers = true;
+                currentApproverPage++;
+                loadOptions('approver', currentApproverPage, $("#approver-search").val().trim());
+            }
+        });
+
+        // Infinite scroll event for executors
+        executorSelect.on('scroll', function () {
+            if (!loadingExecutors && executorSelect[0].scrollTop + executorSelect.outerHeight() >= executorSelect[0].scrollHeight) {
+                loadingExecutors = true;
+                currentExecutorPage++;
+                loadOptions('executor', currentExecutorPage, $("#executor-search").val().trim());
+            }
+        });
+
+        // Load options function (for infinite scroll)
+        function loadOptions(type, page, email) {
+            $.ajax({
+                url: `<%= activejob_web_job_load_more_users_path(@job.id) %>`,
+                method: 'GET',
+                dataType: 'json',
+                data: {type: type, page: page, email: email},
+                success: function (data) {
+                    if (type === 'approver' && data.approvers) {
+                        data.approvers.forEach(function (approver) {
+                            approverSelect.append(new Option(approver.email, approver.id));
+                        });
+                        loadingApprovers = false;
+                    } else if (type === 'executor' && data.executors) {
+                        data.executors.forEach(function (executor) {
+                            executorSelect.append(new Option(executor.email, executor.id));
+                        });
+                        loadingExecutors = false;
+                    }
+                },
+                error: function () {
+                    loadingApprovers = false;
+                    loadingExecutors = false;
+                }
+            });
+        }
+
+        // Function to handle search and reset pagination
+        function searchAndLoadUsers(type, email) {
+            var selectElement = type === 'approver' ? approverSelect : executorSelect;
+            selectElement.empty(); // Clear previous results
+            if (type === 'approver') {
+                currentApproverPage = 1;
+                loadingApprovers = true;
+            } else {
+                currentExecutorPage = 1;
+                loadingExecutors = true;
+            }
+            loadOptions(type, 1, email); // Start loading from the first page with search term
+        }
+    });
+</script>

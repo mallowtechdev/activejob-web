@@ -1,0 +1,46 @@
+<div class="mb-3 row terminal p-3">
+  <% if details['execution_started_at'].present? %>
+    <% if Activejob::Web.aws_credentials_present? %>
+      <% log_events, previous_token, next_token = fetch_log_events(execution_history, page_token) %>
+      <% if log_events.present? %>
+        <div class="col-sm-12 terminal" id="live-logs-terminal" style="max-height: 300px; overflow-y: auto;"><%= log_events.join("\n") %></div>
+      <% else %>
+        <div class="col-sm-12">
+          <h6>No logs found!</h6>
+        </div>
+      <% end %>
+      <% if previous_token.present? || next_token.present? %>
+        <div class="col-sm-12 mt-2 d-flex justify-content-between">
+          <%= link_to 'Previous', logs_activejob_web_job_job_execution_path(job, job_execution, history_id: execution_history.id, page_token: previous_token), class: 'btn btn-outline-primary btn-sm' if previous_token.present? %>
+          <%= link_to 'Next', logs_activejob_web_job_job_execution_path(job, job_execution, history_id: execution_history.id, page_token: next_token), class: 'btn btn-outline-primary btn-sm' if next_token.present? %>
+        </div>
+      <% end %>
+    <% else %>
+      <% log_file_path = "log/activejob_web/job_executions/#{log_stream_name}.log" %>
+      <% if File.exist?(log_file_path) %>
+        <div class="mb-3 row">
+          <div class="col-sm-12 terminal">
+            <% File.open(log_file_path, 'r') do |file| %>
+              <% file.each_with_index do |line, index| %>
+                <div><span class="line-number"><%= index + 1 %></span><%= line %></div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="col-sm-12">
+          <h6>No logs found!</h6>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="col-sm-12">
+      <h6>No logs found!</h6>
+    </div>
+  <% end %>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#live-logs-terminal').scrollTop($('#live-logs-terminal')[0].scrollHeight);
+    });
+</script>

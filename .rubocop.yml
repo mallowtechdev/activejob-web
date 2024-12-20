@@ -1,11 +1,33 @@
 AllCops:
+  TargetRubyVersion: 2.7.0
   NewCops: enable
+  Exclude:
+    - 'test/**/*'
+    - 'spec/**/*'
 
 Layout/LineLength:
   Max: 150
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Style/Documentation:
   Enabled: false
+
+Style/NumericLiterals:
+  Exclude:
+    - 'test/dummy/db/schema.rb'
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'lib/activejob/web/override_cwl_client.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'lib/tasks/activejob/web_tasks.rake'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'lib/generators/activejob/web/setup_generator.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'app/controllers/activejob/web/job_executions_controller.rb'
+    - 'app/models/activejob/web/job_execution.rb'

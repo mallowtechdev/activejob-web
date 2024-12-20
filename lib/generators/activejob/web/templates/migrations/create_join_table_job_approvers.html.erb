@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+class CreateJoinTableJobApprovers < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    create_table :activejob_web_job_approvers, id: false do |t|
+      t.column :job_id, :uuid
+      t.column :approver_id, :integer
+    end
+  end
+end
