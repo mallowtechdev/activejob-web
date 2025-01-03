@@ -93,12 +93,13 @@
     </div>
   <% end %>
 
-  <!-- New Job Button -->
-  <div class="row mb-3">
-    <div class="col-12 text-end">
-      <%= link_to 'New Job', new_activejob_web_job_path, class: 'btn btn-outline-primary' %>
+  <% if admin? %>
+    <div class="row mb-3">
+      <div class="col-12 text-end">
+        <%= link_to 'New Job', new_activejob_web_job_path, class: 'btn btn-outline-primary' %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <% if common_model? %>
     <%= render partial: 'activejob/web/jobs/common_user_index', locals: { approval_jobs: @approval_jobs, execution_jobs: @execution_jobs } %>
