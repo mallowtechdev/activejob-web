@@ -63,16 +63,16 @@
                 <div class="mb-3 row">
                   <%= form.label argument_name.split('_').map(&:capitalize).join(' '), class: 'col-sm-2 col-form-label' %>
                   <div class="col-sm-5 mt-2">
-                    <% case argument["type"] %>
-                    <% when "File" %>
+                    <% case argument["type"].downcase %>
+                    <% when "file" %>
                       <%= form.file_field :input_file, required: argument["required"], class: 'form-control' %>
-                    <% when "Date" %>
+                    <% when "date" %>
                       <%= date_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
-                    <% when "DateTime" %>
+                    <% when "datetime" %>
                       <%= datetime_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
-                    <% when "String" %>
+                    <% when "string" %>
                       <%= text_field_tag "arguments[#{argument_name}]", argument_value(argument_name), maxlength: argument["max_length"].presence || 255, required: argument["required"], class: 'form-control' %>
-                    <% when "Integer" %>
+                    <% when "integer" %>
                       <%= number_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
                     <% end %>
                   </div>

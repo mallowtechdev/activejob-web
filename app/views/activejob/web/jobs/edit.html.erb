@@ -56,10 +56,12 @@
           </div>
 
           <div class="mb-3 row">
-            <div class="col-sm-2"><strong class="text-dark">Search Approver:</strong></div>
-            <div class="col-sm-5">
-              <input type="text" id="approver-search" class="form-control" placeholder="Enter approver email"/>
-              <button type="button" id="search-approver" class="btn btn-primary mt-2">Search Approver</button>
+            <div class="col-sm-2">
+              <strong class="text-dark">Search Approver:</strong>
+            </div>
+            <div class="col-sm-10 d-flex align-items-center">
+              <input type="text" id="approver-search" class="form-control me-2" placeholder="Enter approver email" , style="width: 485px;"/>
+              <button type="button" id="search-approver" class="btn btn-sm btn-primary">Search</button>
             </div>
           </div>
 
@@ -75,10 +77,12 @@
           </div>
 
           <div class="mb-3 row">
-            <div class="col-sm-2"><strong class="text-dark">Search Executor:</strong></div>
-            <div class="col-sm-5">
-              <input type="text" id="executor-search" class="form-control" placeholder="Enter executor email"/>
-              <button type="button" id="search-executor" class="btn btn-primary mt-2">Search Executor</button>
+            <div class="col-sm-2">
+              <strong class="text-dark">Search Executor:</strong>
+            </div>
+            <div class="col-sm-10 d-flex align-items-center">
+              <input type="text" id="executor-search" class="form-control me-2" placeholder="Enter Executor email" , style="width: 485px;"/>
+              <button type="button" id="search-executor" class="btn btn-sm btn-primary">Search</button>
             </div>
           </div>
 
@@ -146,7 +150,7 @@
         // Load options function (for infinite scroll)
         function loadOptions(type, page, email) {
             $.ajax({
-                url: `<%= activejob_web_job_load_more_users_path(@job.id) %>`,
+                url: `<%= load_more_users_activejob_web_jobs_path(@job.id) %>`,
                 method: 'GET',
                 dataType: 'json',
                 data: {type: type, page: page, email: email},

@@ -13,7 +13,7 @@ module Activejob
                               class_name: 'Activejob::Web::Executor',
                               join_table: 'activejob_web_job_executors'
 
-      has_many :job_executions
+      has_many :job_executions, dependent: :destroy
       has_one_attached :template_file
 
       # == Validations ===================================================================================================

@@ -31,7 +31,7 @@ module Activejob
       belongs_to :job
       belongs_to :executor, foreign_key: 'requestor_id'
       has_one_attached :input_file
-      has_many :job_approval_requests
+      has_many :job_approval_requests, dependent: :destroy
       has_many :job_execution_histories
 
       # == Methods =========================================================================================================
