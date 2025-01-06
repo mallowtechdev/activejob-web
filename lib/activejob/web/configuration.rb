@@ -80,7 +80,7 @@ module Activejob
 
       def aws_credentials_present?
         aws_credentials.present? && aws_credentials[:cloudwatch_log_group].present? &&
-          (aws_credentials[:access_key_id].present? && aws_credentials[:secret_access_key].present? || using_iam_role?)
+          ((aws_credentials[:access_key_id].present? && aws_credentials[:secret_access_key].present?) || using_iam_role?)
       end
 
       def using_iam_role?
