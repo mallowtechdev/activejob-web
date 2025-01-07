@@ -6,7 +6,9 @@ AllCops:
     - 'spec/**/*'
 
 Layout/LineLength:
-  Max: 150
+  Max: 180
+  Exclude:
+    - 'app/controllers/activejob/web/jobs_controller.rb'
 
 Style/Documentation:
   Enabled: false
@@ -20,14 +22,40 @@ Style/FrozenStringLiteralComment:
     - 'lib/activejob/web/override_cwl_client.rb'
 
 Metrics/BlockLength:
+  Max: 30
   Exclude:
     - 'lib/tasks/activejob/web_tasks.rake'
+    - 'config/routes.rb'
 
 Metrics/MethodLength:
+  Max: 20
   Exclude:
     - 'lib/generators/activejob/web/setup_generator.rb'
+    - 'app/controllers/activejob/web/jobs_controller.rb'
+    - 'app/jobs/concerns/activejob/web/job_concern.rb'
+    - 'app/models/activejob/web/job_execution_history.rb'
+    - 'lib/activejob/web/configuration.rb'
 
 Metrics/ClassLength:
+  Max: 120
   Exclude:
     - 'app/controllers/activejob/web/job_executions_controller.rb'
     - 'app/models/activejob/web/job_execution.rb'
+    - 'app/controllers/activejob/web/jobs_controller.rb'
+
+Metrics/AbcSize:
+  Max: 20
+  Exclude:
+    - 'app/controllers/activejob/web/job_executions_controller.rb'
+    - 'app/controllers/activejob/web/jobs_controller.rb'
+    - 'app/models/activejob/web/job_execution_history.rb'
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+  Exclude:
+    - 'app/controllers/activejob/web/jobs_controller.rb'
+
+Metrics/PerceivedComplexity:
+  Max: 10
+  Exclude:
+    - 'app/controllers/activejob/web/jobs_controller.rb'

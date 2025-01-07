@@ -3,8 +3,10 @@
 Rails.application.routes.draw do
   namespace :activejob do
     namespace :web do
-      resources :jobs, only: %i[index show update edit] do
-        get 'load_more_users', to: 'jobs#load_more_users'
+      resources :jobs, only: %i[index show create update edit new] do
+        collection do
+          get 'load_more_users', to: 'jobs#load_more_users'
+        end
         resources :job_executions do
           member do
             patch :cancel
