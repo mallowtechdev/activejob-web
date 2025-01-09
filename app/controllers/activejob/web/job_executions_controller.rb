@@ -118,7 +118,7 @@ module Activejob
 
       def job_execution_params
         params.require(:activejob_web_job_execution)
-              .permit(:requestor_id, :requestor_comments, :status, :job_id, :auto_execute_on_approval, :input_file)
+              .permit(:requestor_id, :requestor_comments, :status, :job_id, :auto_execute_on_approval, input_file:[])
       end
 
       def set_job
