@@ -65,7 +65,7 @@
                   <div class="col-sm-5 mt-2">
                     <% case argument["type"].downcase %>
                     <% when "file" %>
-                      <%= form.file_field :input_file, required: argument["required"], class: 'form-control' %>
+                      <%= form.file_field :input_file, required: argument["required"], class: 'form-control', direct_upload: true %>
                     <% when "date" %>
                       <%= date_field_tag "arguments[#{argument_name}]", argument_value(argument_name), required: argument["required"], class: 'form-control' %>
                     <% when "datetime" %>
